@@ -182,194 +182,73 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📚 Documentation
 
-### 📖 Guides
-- **[Setup Guide](docs/Setup.md)** - Complete installation and configuration
-- **[Architecture](docs/Architecture.md)** - System design and data flow
-- **[Personality Profiles](docs/PersonalityProfiles.md)** - AI companion customization
-- **[Plugin API](PLUGIN_API.md)** - Extending the system with plugins
+| Guide | Description |
+|-------|-------------|
+| **[🚀 Quick Start](docs/Setup.md)** | Installation and basic setup |
+| **[🏗️ Architecture](docs/Architecture.md)** | System design and components |
+| **[🎭 Personalities](docs/PersonalityProfiles.md)** | AI companion customization |
+| **[🔌 API Reference](docs/API.md)** | Complete REST API documentation |
+| **[🧩 Plugin System](PLUGIN_API.md)** | Extending with custom plugins |
 
-### 🔧 API Reference
-- **[REST API](docs/API.md)** - Complete API documentation
-- **[Plugin System](PLUGIN_API.md)** - Plugin development guide
-- **[Voice Integration](docs/Setup.md#voice-setup)** - Audio processing setup
+**📖 [Full Documentation](docs/)** - Complete guides, tutorials, and API references
 
-## 🔌 API Summary
+## 🔌 API
 
-### Core Endpoints
-
-```typescript
-// Chat & Conversation
-POST /api/chat              // Send message to AI companion
-GET  /api/chat/history      // Get conversation history
-
-// AI Companions
-GET  /api/companions        // List all companions
-POST /api/companions        // Create new companion
-PUT  /api/companions/{id}   // Update companion
-DELETE /api/companions/{id} // Delete companion
-
-// Memory Management
-GET  /api/memory/{id}       // Get companion memories
-POST /api/memory/{id}       // Create memory
-DELETE /api/memory/{id}/{memoryId} // Delete memory
-
-// Voice Processing
-POST /api/voice/transcribe  // Speech-to-text
-POST /api/voice/synthesize  // Text-to-speech
-GET  /api/voice/voices      // List available voices
-
-// Plugin System
-POST /api/plugins           // External plugin API access
-GET  /api/plugins?action=list // List plugins
-
-// Analytics
-GET  /api/analytics/overview // System analytics
-GET  /api/analytics/companion/{id} // Companion-specific analytics
-```
-
-### Authentication
+AI Hive Mind provides a comprehensive REST API for external integrations:
 
 ```bash
-# API Key Authentication
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-     https://your-domain.com/api/endpoint
+# Quick example: Send a message
+curl -X POST https://your-domain.com/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello!", "companionId": "ai-hive-mind"}'
+```
 
-# Session-based (for web interface)
-# Automatic via NextAuth.js cookies
+**📖 [Complete API Reference](docs/API.md)** - Full endpoint documentation, authentication, and examples
+**🔧 [Plugin API](PLUGIN_API.md)** - Extend functionality with custom plugins
 ```
 
 ## 🛠️ Development
 
-### Project Structure
-
-```
-Hive-Mind/
-├── docs/                    # Documentation
-├── public/                  # Static assets
-├── scripts/                 # Setup and utility scripts
-├── src/
-│   ├── app/                # Next.js app router
-│   │   ├── api/           # API routes
-│   │   ├── globals.css    # Global styles
-│   │   └── layout.tsx     # Root layout
-│   ├── components/        # React components
-│   │   ├── ui/           # Reusable UI components
-│   │   └── *             # Feature components
-│   ├── lib/              # Business logic
-│   │   ├── ai/          # AI processing
-│   │   ├── memory/      # Memory management
-│   │   ├── voice/       # Voice processing
-│   │   └── plugins/     # Plugin system
-│   ├── context/         # React context providers
-│   ├── types/           # TypeScript definitions
-│   └── hooks/           # Custom React hooks
-├── .env.local            # Environment variables
-├── package.json          # Dependencies and scripts
-├── tailwind.config.js    # Tailwind CSS configuration
-└── next.config.ts        # Next.js configuration
-```
-
-### Development Commands
+Get started with development quickly:
 
 ```bash
-# Development
-npm run dev              # Start development server
-npm run build           # Build for production
-npm run start           # Start production server
-
-# Code Quality
-npm run lint            # Run ESLint
-npm run type-check      # TypeScript type checking
-npm run format          # Code formatting with Prettier
-
-# Testing
-npm run test            # Run unit tests
-npm run test:e2e        # Run end-to-end tests
-npm run test:coverage   # Generate coverage report
+git clone https://github.com/jfbinTECHA/Hive-Mind.git
+cd Hive-Mind
+npm install
+npm run dev
 ```
 
-### Environment Setup
-
-#### Local AI (Optional)
-```bash
-# Install Ollama
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Start Ollama service
-ollama serve
-
-# Pull models
-ollama pull llama3:8b
-ollama pull mistral:7b
-ollama pull nomic-embed-text
-```
-
-#### Database Setup (Optional)
-```bash
-# PostgreSQL
-sudo apt install postgresql postgresql-contrib
-sudo systemctl start postgresql
-createdb ai_hive_mind
-
-# Redis (optional)
-sudo apt install redis-server
-sudo systemctl start redis
+**📖 [Development Guide](docs/Setup.md)** - Complete setup instructions, environment configuration, and deployment options
 ```
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions from the community! Here's how to get involved:
 
-### Development Workflow
-
+### Quick Start for Contributors
 1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
-3. **Commit** your changes: `git commit -m 'Add amazing feature'`
-4. **Push** to the branch: `git push origin feature/amazing-feature`
-5. **Open** a Pull Request
+2. **Clone** your fork: `git clone https://github.com/your-username/Hive-Mind.git`
+3. **Create** feature branch: `git checkout -b feature/amazing-feature`
+4. **Make** your changes and test thoroughly
+5. **Commit** with clear messages: `git commit -m 'feat: add amazing feature'`
+6. **Push** and create a Pull Request
 
-### Code Standards
+### Development Standards
+- **TypeScript** with strict type checking
+- **ESLint** + **Prettier** for code quality
+- **Jest** for unit tests, **Playwright** for E2E
+- **Conventional commits** for clear change history
 
-- **TypeScript**: Strict type checking enabled
-- **ESLint**: Airbnb config with React and TypeScript rules
-- **Prettier**: Consistent code formatting
-- **Testing**: Jest for unit tests, Playwright for E2E
-- **Documentation**: JSDoc for functions, Markdown for guides
+**📖 [Contributing Guide](CONTRIBUTING.md)** - Detailed development workflow, coding standards, and review process
 
-## 📊 Performance
+## 📊 System Overview
 
-### Benchmarks
+- **🏆 Performance**: Sub-500ms response times, supports 1000+ concurrent users
+- **🔒 Security**: Enterprise-grade authentication, API keys, and audit logging
+- **📈 Scalability**: Horizontal scaling with database sharding and caching layers
+- **🌐 Deployment**: Docker, Vercel, and manual server deployment options
 
-| Metric | Value | Description |
-|--------|-------|-------------|
-| **Response Time** | < 500ms | Average AI response time |
-| **Memory Usage** | < 200MB | Application memory footprint |
-| **Concurrent Users** | 1000+ | Supported simultaneous connections |
-| **Message Throughput** | 1000/min | Messages processed per minute |
-| **Uptime** | 99.9% | System availability |
-
-### System Requirements
-
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **CPU** | 2 cores | 4+ cores |
-| **RAM** | 4GB | 8GB+ |
-| **Storage** | 10GB | 50GB+ |
-| **Network** | 10 Mbps | 100 Mbps |
-
-## 🔒 Security
-
-### Authentication & Authorization
-- **NextAuth.js**: Session-based authentication
-- **Role-based Access**: Admin, user, and guest roles
-- **API Keys**: Secure external API access
-- **Audit Logging**: Complete activity tracking
-
-### Data Protection
-- **End-to-end Encryption**: Sensitive data encryption
-- **Input Validation**: Comprehensive request validation
-- **Rate Limiting**: DDoS protection and abuse prevention
-- **Privacy Controls**: User data management and GDPR compliance
+**📖 [Technical Specifications](docs/Architecture.md)** - Detailed performance metrics, security features, and system requirements
 
 ## 🌍 Community
 
