@@ -5,6 +5,7 @@
 The AI Hive Mind provides a comprehensive REST API for managing AI companions, conversations, memory, and system operations. All endpoints return JSON responses and use standard HTTP status codes.
 
 ## Base URL
+
 ```
 https://your-domain.com/api
 ```
@@ -12,9 +13,11 @@ https://your-domain.com/api
 ## Authentication
 
 ### Session-based Authentication
+
 Most endpoints require user authentication. Include session cookies or use NextAuth.js session tokens.
 
 ### API Key Authentication (for external integrations)
+
 ```bash
 curl -H "Authorization: Bearer YOUR_API_KEY" \
      https://your-domain.com/api/endpoint
@@ -25,9 +28,11 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 ### 🤖 Chat & Conversation
 
 #### POST `/api/chat`
+
 Send a message to an AI companion and receive a response.
 
 **Request:**
+
 ```typescript
 interface ChatRequest {
   message: string;
@@ -46,6 +51,7 @@ interface ChatRequest {
 ```
 
 **Response:**
+
 ```typescript
 interface ChatResponse {
   success: boolean;
@@ -68,6 +74,7 @@ interface ChatResponse {
 ```
 
 **Example:**
+
 ```bash
 curl -X POST https://your-domain.com/api/chat \
   -H "Content-Type: application/json" \
@@ -86,9 +93,11 @@ curl -X POST https://your-domain.com/api/chat \
 ```
 
 #### GET `/api/chat/history`
+
 Retrieve conversation history for a user.
 
 **Query Parameters:**
+
 - `companionId` (optional): Filter by specific companion
 - `limit` (optional): Number of conversations (default: 50)
 - `offset` (optional): Pagination offset (default: 0)
@@ -120,6 +129,7 @@ data.conversations.forEach(conv => {
 ```
 
 **Response:**
+
 ```typescript
 interface ChatHistoryResponse {
   success: boolean;
@@ -145,6 +155,7 @@ interface ChatHistoryResponse {
 ```
 
 **Sample Response:**
+
 ```json
 {
   "success": true,
@@ -182,519 +193,645 @@ interface ChatHistoryResponse {
 }
 ```
 
-### 👥 AI Companions
+### 🤖 AI Characters
 
-#### GET `/api/companions`
-List all available AI companions.
+#### GET `/api/character`
+
+List all available AI characters.
 
 **Examples:**
 
 ```bash
-# Get all companions
-curl https://your-domain.com/api/companions
+# Get all characters
+curl https://your-domain.com/api/character
 ```
 
 ```javascript
 // JavaScript example
-const response = await fetch('/api/companions');
+const response = await fetch('/api/character');
 const data = await response.json();
 
-data.companions.forEach(companion => {
-  console.log(`${companion.name}: ${companion.personality} (${companion.familiarity}% familiar)`);
+console.log(`Found ${data.total} characters`);
+data.characters.forEach(character => {
+  console.log(`${character.name}: ${character.personality} (${character.familiarity}% familiar)`);
 });
 ```
 
 **Response:**
+
 ```typescript
-interface CompanionsResponse {
-  success: boolean;
-  companions: Array<{
-    id: string;
+interface CharactersResponse {
+  characters: Array<{
+    id: number;
     name: string;
     personality: string;
-    avatar: string;
+    avatar_url: string;
+    description: string;
     traits: string[];
     familiarity: number;
-    isActive: boolean;
-    createdAt: string;
-    lastInteraction: string;
+    lastActive: string;
   }>;
+  total: number;
 }
 ```
 
 **Sample Response:**
+
 ```json
 {
-  "success": true,
-  "companions": [
+  "characters": [
     {
-      "id": "comp_123",
+      "id": 1,
       "name": "Alex",
       "personality": "friendly",
-      "avatar": "🤖",
+      "avatar_url": "🤖",
+      "description": "An AI companion with a friendly personality.",
       "traits": ["warm", "empathetic", "encouraging"],
       "familiarity": 85.5,
-      "isActive": true,
-      "createdAt": "2024-01-01T00:00:00Z",
-      "lastInteraction": "2024-01-15T14:30:00Z"
+      "lastActive": "2024-01-15T14:30:00Z"
     },
     {
-      "id": "comp_456",
+      "id": 2,
       "name": "Jordan",
       "personality": "professional",
-      "avatar": "👔",
+      "avatar_url": "👔",
+      "description": "An AI companion with a professional personality.",
       "traits": ["analytical", "organized", "reliable"],
       "familiarity": 72.3,
-      "isActive": true,
-      "createdAt": "2024-01-05T00:00:00Z",
-      "lastInteraction": "2024-01-15T09:15:00Z"
+      "lastActive": "2024-01-15T09:15:00Z"
     }
-  ]
+  ],
+  "total": 2
 }
 ```
 
-#### POST `/api/companions`
-Create a new AI companion.
+#### POST `/api/character`
+
+Create a new AI character.
 
 **Examples:**
 
 ```bash
-# Create a friendly companion
-curl -X POST https://your-domain.com/api/companions \
+# Create a friendly character
+curl -X POST https://your-domain.com/api/character \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Sam",
     "personality": "friendly",
     "traits": ["warm", "empathetic", "creative"],
-    "avatar": "😊"
+    "avatar": "😊",
+    "description": "A creative and friendly AI companion"
   }'
 
-# Create a professional companion with voice settings
-curl -X POST https://your-domain.com/api/companions \
+# Create a professional character
+curl -X POST https://your-domain.com/api/character \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Dr. Morgan",
     "personality": "professional",
     "traits": ["analytical", "organized", "knowledgeable"],
-    "avatar": "👔",
-    "voiceSettings": {
-      "voiceId": "ErXwobaYiN019PkySvjV",
-      "stability": 0.8,
-      "similarity": 0.9
-    }
+    "avatar": "👔"
   }'
 ```
 
 ```javascript
 // JavaScript example
-const newCompanion = {
-  name: "Luna",
-  personality: "humorous",
-  traits: ["witty", "playful", "creative"],
-  avatar: "🌙"
+const newCharacter = {
+  name: 'Luna',
+  personality: 'humorous',
+  traits: ['witty', 'playful', 'creative'],
+  avatar: '🌙',
+  description: 'A humorous AI companion who loves jokes',
 };
 
-const response = await fetch('/api/companions', {
+const response = await fetch('/api/character', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(newCompanion)
+  body: JSON.stringify(newCharacter),
 });
 
 const data = await response.json();
-console.log(`Created companion: ${data.companion.name} (ID: ${data.companion.id})`);
+if (data.success) {
+  console.log(`Created character: ${data.character.name} (ID: ${data.character.id})`);
+}
 ```
 
 **Request:**
+
 ```typescript
-interface CreateCompanionRequest {
+interface CreateCharacterRequest {
   name: string;
   personality: 'friendly' | 'professional' | 'humorous' | 'serious';
   traits?: string[];
   avatar?: string;
-  voiceSettings?: {
-    voiceId: string;
-    stability: number;
-    similarity: number;
-  };
+  description?: string;
 }
 ```
 
 **Response:**
+
 ```typescript
-interface CreateCompanionResponse {
+interface CreateCharacterResponse {
   success: boolean;
-  companion: {
-    id: string;
+  character: {
+    id: number;
     name: string;
     personality: string;
-    avatar: string;
+    avatar_url: string;
+    description: string;
     traits: string[];
     familiarity: number;
-    createdAt: string;
+    lastActive: string;
   };
 }
 ```
 
 **Sample Response:**
+
 ```json
 {
   "success": true,
-  "companion": {
-    "id": "comp_789",
+  "character": {
+    "id": 3,
     "name": "Sam",
     "personality": "friendly",
-    "avatar": "😊",
+    "avatar_url": "😊",
+    "description": "A creative and friendly AI companion",
     "traits": ["warm", "empathetic", "creative"],
     "familiarity": 0,
-    "createdAt": "2024-01-15T15:30:00Z"
+    "lastActive": "2024-01-15T15:30:00Z"
   }
 }
 ```
 
-#### PUT `/api/companions/{companionId}`
-Update an AI companion's settings.
+### 😊 Emotional State
 
-**Request:**
-```typescript
-interface UpdateCompanionRequest {
-  name?: string;
-  personality?: string;
-  traits?: string[];
-  avatar?: string;
-  voiceSettings?: VoiceSettings;
+#### GET `/api/emotion/{characterId}`
+
+Get the emotional state of a specific AI character.
+
+**Examples:**
+
+```bash
+# Get emotional state for character ID 1
+curl https://your-domain.com/api/emotion/1
+```
+
+```javascript
+// JavaScript example
+const characterId = 1;
+const response = await fetch(`/api/emotion/${characterId}`);
+const data = await response.json();
+
+if (data.emotionalState) {
+  console.log(`Character is feeling: ${data.emotionalState.currentEmotion}`);
+  console.log(`Happiness level: ${data.emotionalState.happiness}`);
 }
 ```
 
-#### DELETE `/api/companions/{companionId}`
-Delete an AI companion.
+**Response:**
+
+```typescript
+interface EmotionalStateResponse {
+  emotionalState: {
+    currentEmotion: string;
+    happiness: number;
+    energy: number;
+    confidence: number;
+    lastUpdated: string;
+  } | null;
+}
+```
+
+**Sample Response:**
+
+```json
+{
+  "emotionalState": {
+    "currentEmotion": "happy",
+    "happiness": 0.85,
+    "energy": 0.72,
+    "confidence": 0.91,
+    "lastUpdated": "2024-01-15T14:30:00Z"
+  }
+}
+```
+
+### 🌐 Live Chat (WebSocket)
+
+#### GET `/api/live`
+
+WebSocket endpoint for real-time chat (currently returns placeholder).
+
+**Note:** Real WebSocket implementation requires custom server setup.
+
+**Examples:**
+
+```javascript
+// WebSocket connection attempt
+const ws = new WebSocket('wss://your-domain.com/api/live');
+
+ws.onopen = () => {
+  console.log('Connected to live chat');
+};
+
+ws.onmessage = event => {
+  const data = JSON.parse(event.data);
+  console.log('Received:', data);
+};
+
+ws.onerror = error => {
+  console.error('WebSocket error:', error);
+};
+```
 
 **Response:**
-```typescript
-interface DeleteCompanionResponse {
-  success: boolean;
-  message: string;
+
+```json
+{
+  "message": "WebSocket endpoint available",
+  "note": "Real WebSocket implementation would require additional server setup"
 }
 ```
 
 ### 🧠 Memory Management
 
-#### GET `/api/memory/{companionId}`
-Retrieve memories for a specific AI companion.
+#### GET `/api/memory`
+
+Get memories with optional filtering.
 
 **Query Parameters:**
-- `type` (optional): Filter by memory type ('personal', 'preference', 'experience', 'relationship')
-- `limit` (optional): Number of memories (default: 20)
-- `search` (optional): Search query for semantic matching
+
+- `aiId` (optional): Filter by AI character ID or name
+- `userId` (optional): Filter by user ID
+- `type` (optional): Filter by memory type
 
 **Examples:**
 
 ```bash
-# Get recent memories for a companion
-curl "https://your-domain.com/api/memory/comp_123?limit=10"
+# Get all memories for a specific AI
+curl "https://your-domain.com/api/memory?aiId=alex&userId=123"
 
-# Get only personal memories
-curl "https://your-domain.com/api/memory/comp_123?type=personal&limit=5"
-
-# Search memories semantically
-curl "https://your-domain.com/api/memory/comp_123?search=loves%20music&limit=3"
+# Get memories by type
+curl "https://your-domain.com/api/memory?type=personal"
 ```
 
 ```javascript
 // JavaScript example
-const companionId = 'comp_123';
-const response = await fetch(`/api/memory/${companionId}?type=personal&limit=5`);
+const response = await fetch('/api/memory?aiId=alex&limit=10');
 const data = await response.json();
 
-console.log(`Found ${data.memories.length} personal memories`);
-data.memories.forEach(memory => {
-  console.log(`- ${memory.content} (${memory.confidence}% confidence)`);
-});
+console.log(`Found ${data.memories.length} memories`);
 ```
 
 **Response:**
+
 ```typescript
-interface MemoryResponse {
-  success: boolean;
+interface MemoryListResponse {
   memories: Array<{
-    id: string;
-    type: string;
-    content: string;
-    confidence: number;
-    lastUsed: string;
-    createdAt: string;
-    metadata: {
-      source: string;
-      tags: string[];
-      embedding?: number[];
-    };
+    id: number;
+    user_id: number;
+    ai_id: number;
+    fact_text: string;
+    fact_type: string;
+    created_at: string;
+    updated_at: string;
   }>;
+  total: number;
 }
 ```
 
-**Sample Response:**
-```json
-{
-  "success": true,
-  "memories": [
-    {
-      "id": "mem_456",
-      "type": "personal",
-      "content": "User enjoys listening to jazz music and plays piano",
-      "confidence": 0.92,
-      "lastUsed": "2024-01-15T14:30:00Z",
-      "createdAt": "2024-01-10T09:15:00Z",
-      "metadata": {
-        "source": "conversation",
-        "tags": ["music", "hobbies", "jazz"],
-        "embedding": [0.123, 0.456, ...]
-      }
-    },
-    {
-      "id": "mem_789",
-      "type": "preference",
-      "content": "User prefers tea over coffee in the morning",
-      "confidence": 0.88,
-      "lastUsed": "2024-01-14T08:20:00Z",
-      "createdAt": "2024-01-08T07:30:00Z",
-      "metadata": {
-        "source": "conversation",
-        "tags": ["beverages", "morning", "preferences"]
-      }
-    }
-  ]
-}
-```
+#### POST `/api/memory`
 
-#### POST `/api/memory/{companionId}`
 Add or update a memory.
 
 **Examples:**
 
 ```bash
 # Add a personal memory
-curl -X POST https://your-domain.com/api/memory/comp_123 \
+curl -X POST https://your-domain.com/api/memory \
   -H "Content-Type: application/json" \
   -d '{
+    "aiId": "alex",
+    "userId": 123,
     "type": "personal",
-    "content": "User has two cats named Whiskers and Mittens",
-    "tags": ["pets", "cats", "family"],
-    "confidence": 0.95
+    "key": "pets",
+    "value": "User has two cats named Whiskers and Mittens"
   }'
 
-# Add a preference memory
-curl -X POST https://your-domain.com/api/memory/comp_123 \
+# Update existing memory
+curl -X POST https://your-domain.com/api/memory \
   -H "Content-Type: application/json" \
   -d '{
+    "aiId": "alex",
+    "userId": 123,
     "type": "preference",
-    "content": "User prefers outdoor activities on weekends",
-    "tags": ["lifestyle", "weekends", "outdoors"],
-    "confidence": 0.88,
-    "metadata": {
-      "source": "conversation",
-      "topic": "hobbies"
-    }
+    "key": "beverages",
+    "value": "User prefers tea over coffee in the morning",
+    "action": "update"
+  }'
+
+# Delete a memory
+curl -X POST https://your-domain.com/api/memory \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aiId": "alex",
+    "userId": 123,
+    "key": "old_hobby",
+    "action": "delete"
   }'
 ```
 
 ```javascript
 // JavaScript example
 const memoryData = {
-  type: 'experience',
-  content: 'User recently traveled to Japan and loved the food',
-  tags: ['travel', 'japan', 'food', 'culture'],
-  confidence: 0.92
+  aiId: 'alex',
+  userId: 123,
+  type: 'personal',
+  key: 'hobbies',
+  value: 'User enjoys playing guitar and listening to jazz music',
 };
 
-const response = await fetch(`/api/memory/comp_123`, {
+const response = await fetch('/api/memory', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(memoryData)
+  body: JSON.stringify(memoryData),
 });
 
 const data = await response.json();
-console.log(`Memory created with ID: ${data.memory.id}`);
+if (data.success) {
+  console.log(`Memory ${data.action}d successfully`);
+}
 ```
 
 **Request:**
+
 ```typescript
 interface MemoryRequest {
-  type: 'personal' | 'preference' | 'experience' | 'relationship' | 'knowledge';
-  content: string;
-  tags?: string[];
-  confidence?: number;
-  metadata?: Record<string, any>;
+  aiId: string | number;
+  userId?: number;
+  type: string;
+  key: string;
+  value?: string;
+  action?: 'add' | 'update' | 'delete';
 }
 ```
 
 **Response:**
+
 ```typescript
-interface MemoryCreateResponse {
+interface MemoryResponse {
   success: boolean;
-  memory: {
-    id: string;
-    type: string;
-    content: string;
-    confidence: number;
-    createdAt: string;
-  };
+  action: string;
+  memory?: any;
 }
 ```
 
 **Sample Response:**
+
 ```json
 {
   "success": true,
+  "action": "added",
   "memory": {
-    "id": "mem_101",
-    "type": "personal",
-    "content": "User has two cats named Whiskers and Mittens",
-    "confidence": 0.95,
-    "createdAt": "2024-01-15T16:00:00Z"
+    "id": 101,
+    "user_id": 123,
+    "ai_id": 1,
+    "fact_text": "pets: User has two cats named Whiskers and Mittens",
+    "fact_type": "personal",
+    "created_at": "2024-01-15T16:00:00Z"
   }
 }
 ```
 
-#### DELETE `/api/memory/{companionId}/{memoryId}`
-Delete a specific memory.
+#### GET `/api/memory/{ai_id}`
 
-#### POST `/api/memory/search`
-Search memories across all companions using semantic similarity.
+Get all memories for a specific AI character, including conversation history.
 
 **Examples:**
 
 ```bash
-# Search all companions for music-related memories
-curl -X POST https://your-domain.com/api/memory/search \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "music and instruments",
-    "limit": 5,
-    "threshold": 0.7
-  }'
+# Get memories for AI character "alex"
+curl https://your-domain.com/api/memory/alex
+```
 
-# Search specific companion
-curl -X POST https://your-domain.com/api/memory/search \
+```javascript
+// JavaScript example
+const aiId = 'alex';
+const response = await fetch(`/api/memory/${aiId}`);
+const data = await response.json();
+
+console.log(`AI ${data.aiName} has ${data.totalMemories} memories`);
+console.log(`Familiarity level: ${data.familiarity}%`);
+```
+
+**Response:**
+
+```typescript
+interface AIMemoryResponse {
+  aiId: number;
+  aiName: string;
+  memories: Array<any>;
+  totalMemories: number;
+  familiarity: number;
+}
+```
+
+**Sample Response:**
+
+```json
+{
+  "aiId": 1,
+  "aiName": "alex",
+  "memories": [
+    {
+      "id": 45,
+      "user_id": 123,
+      "ai_id": 1,
+      "fact_text": "User enjoys jazz music",
+      "fact_type": "personal",
+      "created_at": "2024-01-10T09:15:00Z"
+    },
+    {
+      "id": "conv_12345",
+      "type": "conversation",
+      "key": "conversation",
+      "value": {
+        "userMessage": "Hello, how are you?",
+        "aiResponse": "Hi there! I'm doing great, thank you for asking!",
+        "timestamp": "2024-01-15T10:30:00Z"
+      },
+      "aiId": 1,
+      "userId": 123,
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "totalMemories": 15,
+  "familiarity": 85.5
+}
+```
+
+#### PUT `/api/memory/{ai_id}/{memoryId}`
+
+Update a specific memory.
+
+**Examples:**
+
+```bash
+# Update memory content
+curl -X PUT https://your-domain.com/api/memory/alex/45 \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "favorite foods",
-    "companionId": "comp_123",
-    "limit": 3
+    "content": "User enjoys jazz and classical music",
+    "type": "personal",
+    "tags": ["music", "jazz", "classical"]
   }'
 ```
 
 ```javascript
 // JavaScript example
-const searchQuery = {
-  query: "travel experiences",
-  limit: 10,
-  threshold: 0.8
+const updateData = {
+  content: 'User enjoys jazz and classical music',
+  type: 'personal',
 };
 
-const response = await fetch('/api/memory/search', {
+const response = await fetch('/api/memory/alex/45', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(updateData),
+});
+
+if (response.ok) {
+  console.log('Memory updated successfully');
+}
+```
+
+#### DELETE `/api/memory/{ai_id}/{memoryId}`
+
+Delete a specific memory.
+
+**Examples:**
+
+```bash
+# Delete a memory
+curl -X DELETE https://your-domain.com/api/memory/alex/45
+```
+
+```javascript
+// JavaScript example
+const response = await fetch('/api/memory/alex/45', {
+  method: 'DELETE',
+});
+
+if (response.ok) {
+  console.log('Memory deleted successfully');
+}
+```
+
+### 🕒 Memory Aging
+
+#### POST `/api/memory-aging`
+
+Perform memory aging operations.
+
+**Actions:** `consolidate`, `access`, `search`, `health`
+
+**Examples:**
+
+```bash
+# Consolidate memories for a user and character
+curl -X POST https://your-domain.com/api/memory-aging \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "consolidate",
+    "userId": 123,
+    "characterId": 1
+  }'
+
+# Access a memory (refreshes its age)
+curl -X POST https://your-domain.com/api/memory-aging \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "access",
+    "userId": 123,
+    "memoryId": 45
+  }'
+
+# Search for memory suggestions
+curl -X POST https://your-domain.com/api/memory-aging \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "search",
+    "userId": 123,
+    "query": "music preferences",
+    "limit": 5
+  }'
+```
+
+```javascript
+// JavaScript example - get memory health stats
+const response = await fetch('/api/memory-aging', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(searchQuery)
+  body: JSON.stringify({
+    action: 'health',
+    userId: 123,
+    characterId: 1,
+  }),
 });
 
 const data = await response.json();
-console.log(`Found ${data.results.length} relevant memories`);
-
-data.results.forEach(result => {
-  console.log(`${result.similarity.toFixed(2)}: ${result.excerpt}`);
-});
-```
-
-```python
-# Python example
-import requests
-
-search_payload = {
-    "query": "hobbies and interests",
-    "limit": 5,
-    "threshold": 0.75
-}
-
-response = requests.post('https://your-domain.com/api/memory/search', json=search_payload)
-data = response.json()
-
-for result in data['results']:
-    print(f"Similarity: {result['similarity']:.2f}")
-    print(f"Excerpt: {result['excerpt']}")
-    print("---")
+console.log('Memory health:', data.stats);
 ```
 
 **Request:**
+
 ```typescript
-interface MemorySearchRequest {
-  query: string;
-  companionId?: string; // Optional: search specific companion
+interface MemoryAgingRequest {
+  action: 'consolidate' | 'access' | 'search' | 'health';
+  userId: number;
+  characterId?: number;
+  memoryId?: number;
+  query?: string;
   limit?: number;
-  threshold?: number; // Similarity threshold 0-1
 }
 ```
 
-**Response:**
-```typescript
-interface MemorySearchResponse {
-  success: boolean;
-  results: Array<{
-    memory: Memory;
-    companionId: string;
-    similarity: number;
-    excerpt: string;
-  }>;
-}
+#### GET `/api/memory-aging`
+
+Get memory aging configuration or health stats.
+
+**Query Parameters:**
+
+- `action`: `config` or `health`
+- `userId`: User ID (required for health)
+- `characterId`: Character ID (optional for health)
+
+**Examples:**
+
+```bash
+# Get memory aging configuration
+curl "https://your-domain.com/api/memory-aging?action=config"
+
+# Get memory health stats
+curl "https://your-domain.com/api/memory-aging?action=health&userId=123&characterId=1"
 ```
 
-**Sample Response:**
-```json
-{
-  "success": true,
-  "results": [
-    {
-      "memory": {
-        "id": "mem_456",
-        "type": "personal",
-        "content": "User plays guitar and enjoys jazz music concerts",
-        "confidence": 0.91,
-        "lastUsed": "2024-01-14T20:00:00Z",
-        "createdAt": "2024-01-10T15:30:00Z",
-        "metadata": {
-          "source": "conversation",
-          "tags": ["music", "guitar", "jazz"]
-        }
-      },
-      "companionId": "comp_123",
-      "similarity": 0.89,
-      "excerpt": "User plays guitar and enjoys jazz music concerts"
-    },
-    {
-      "memory": {
-        "id": "mem_789",
-        "type": "experience",
-        "content": "User attended a piano concert last month",
-        "confidence": 0.85,
-        "lastUsed": "2024-01-12T18:45:00Z",
-        "createdAt": "2024-01-05T12:00:00Z",
-        "metadata": {
-          "source": "conversation",
-          "tags": ["music", "concert", "piano"]
-        }
-      },
-      "companionId": "comp_456",
-      "similarity": 0.76,
-      "excerpt": "User attended a piano concert last month"
-    }
-  ]
-}
+```javascript
+// JavaScript example
+const response = await fetch('/api/memory-aging?action=config');
+const config = await response.json();
+console.log('Memory aging config:', config.config);
 ```
 
 ### 📚 Knowledge Base
 
 #### POST `/api/knowledge/process`
+
 Process and store new knowledge content.
 
 **Request:**
+
 ```typescript
 interface KnowledgeProcessRequest {
   type: 'document' | 'url' | 'video';
@@ -707,11 +844,13 @@ interface KnowledgeProcessRequest {
 ```
 
 **Supported Content Types:**
+
 - **Document**: Text files, PDFs, DOCX
 - **URL**: Web pages and articles
 - **Video**: YouTube, Vimeo, direct video URLs
 
 **Response:**
+
 ```typescript
 interface KnowledgeProcessResponse {
   success: boolean;
@@ -734,15 +873,18 @@ interface KnowledgeProcessResponse {
 ```
 
 #### GET `/api/knowledge/search`
+
 Search the knowledge base.
 
 **Query Parameters:**
+
 - `query`: Search terms
 - `companionId` (optional): Filter by companion
 - `type` (optional): Filter by content type
 - `limit` (optional): Results limit (default: 10)
 
 **Response:**
+
 ```typescript
 interface KnowledgeSearchResponse {
   success: boolean;
@@ -757,9 +899,11 @@ interface KnowledgeSearchResponse {
 ```
 
 #### GET `/api/knowledge/stats`
+
 Get knowledge base statistics.
 
 **Response:**
+
 ```typescript
 interface KnowledgeStatsResponse {
   success: boolean;
@@ -778,9 +922,108 @@ interface KnowledgeStatsResponse {
 }
 ```
 
+### 📸 Multimodal Processing
+
+#### POST `/api/multimodal`
+
+Process images, documents, or URLs for AI understanding.
+
+**Examples:**
+
+```bash
+# Process an image file
+curl -X POST https://your-domain.com/api/multimodal \
+  -F "file=@photo.jpg" \
+  -F "type=image" \
+  -F "companionId=alex"
+
+# Process a URL
+curl -X POST https://your-domain.com/api/multimodal \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "url",
+    "sourceUrl": "https://example.com/article",
+    "companionId": "alex"
+  }'
+```
+
+```javascript
+// JavaScript example - process an image
+async function processImage(file, companionId) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('type', 'image');
+  formData.append('companionId', companionId);
+
+  const response = await fetch('/api/multimodal', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await response.json();
+  console.log('Processed content:', data.processedContent);
+  return data;
+}
+
+// Usage
+const fileInput = document.getElementById('imageInput');
+const file = fileInput.files[0];
+const result = await processImage(file, 'alex');
+```
+
+**Request (File Upload):**
+
+- Content-Type: `multipart/form-data`
+- Fields: `file` (File), `type` (string), `companionId` (string)
+
+**Request (URL Processing):**
+
+```typescript
+interface MultimodalUrlRequest {
+  type: 'url';
+  sourceUrl: string;
+  companionId: string;
+}
+```
+
+**Response:**
+
+```typescript
+interface MultimodalResponse {
+  success: boolean;
+  processedContent: string;
+  metadata: {
+    fileName?: string;
+    fileSize?: number;
+    fileType?: string;
+    analysis?: any;
+  };
+}
+```
+
+**Sample Response:**
+
+```json
+{
+  "success": true,
+  "processedContent": "Image uploaded: photo.jpg. A beautiful sunset over mountains with vibrant orange and purple colors.",
+  "metadata": {
+    "fileName": "photo.jpg",
+    "fileSize": 2457600,
+    "fileType": "image/jpeg",
+    "analysis": {
+      "description": "A beautiful sunset over mountains",
+      "objects": ["mountain", "sky", "sun"],
+      "colors": ["orange", "purple", "yellow"]
+    }
+  }
+}
+```
+
 ### 🎙️ Voice Processing
 
 #### POST `/api/voice/transcribe`
+
 Convert speech to text using Whisper.
 
 **Examples:**
@@ -803,7 +1046,7 @@ async function transcribeAudio(audioBlob) {
 
   const response = await fetch('/api/voice/transcribe', {
     method: 'POST',
-    body: formData
+    body: formData,
   });
 
   const data = await response.json();
@@ -818,7 +1061,7 @@ async function recordAndTranscribe() {
   const recorder = new MediaRecorder(stream);
   const chunks = [];
 
-  recorder.ondataavailable = (e) => chunks.push(e.data);
+  recorder.ondataavailable = e => chunks.push(e.data);
   recorder.onstop = async () => {
     const blob = new Blob(chunks, { type: 'audio/webm' });
     const result = await transcribeAudio(blob);
@@ -831,10 +1074,12 @@ async function recordAndTranscribe() {
 ```
 
 **Request:**
+
 - Content-Type: `multipart/form-data`
 - Body: Audio file (WebM, MP3, WAV, etc.)
 
 **Response:**
+
 ```typescript
 interface VoiceTranscribeResponse {
   success: boolean;
@@ -850,6 +1095,7 @@ interface VoiceTranscribeResponse {
 ```
 
 **Sample Response:**
+
 ```json
 {
   "success": true,
@@ -865,6 +1111,7 @@ interface VoiceTranscribeResponse {
 ```
 
 #### POST `/api/voice/synthesize`
+
 Convert text to speech using ElevenLabs.
 
 **Examples:**
@@ -908,9 +1155,9 @@ async function generateSpeech(text, voiceId) {
         stability: 0.75,
         similarity_boost: 0.8,
         style: 0.5,
-        use_speaker_boost: true
-      }
-    })
+        use_speaker_boost: true,
+      },
+    }),
   });
 
   if (response.ok) {
@@ -925,7 +1172,7 @@ async function generateSpeech(text, voiceId) {
 }
 
 // Usage
-const audioUrl = await generateSpeech("Hello there!", "21m00Tcm4TlvDq8ikWAM");
+const audioUrl = await generateSpeech('Hello there!', '21m00Tcm4TlvDq8ikWAM');
 ```
 
 ```python
@@ -958,27 +1205,31 @@ text_to_speech("Welcome to AI Hive Mind!", "21m00Tcm4TlvDq8ikWAM")
 ```
 
 **Request:**
+
 ```typescript
 interface VoiceSynthesizeRequest {
   text: string;
   voiceId: string;
   voiceSettings?: {
-    stability: number;      // 0-1
+    stability: number; // 0-1
     similarity_boost: number; // 0-1
-    style: number;          // 0-1
+    style: number; // 0-1
     use_speaker_boost: boolean;
   };
 }
 ```
 
 **Response:**
+
 - Content-Type: `audio/mpeg`
 - Body: Audio file data (binary)
 
 #### GET `/api/voice/voices`
+
 List available ElevenLabs voices.
 
 **Response:**
+
 ```typescript
 interface VoicesResponse {
   success: boolean;
@@ -995,9 +1246,11 @@ interface VoicesResponse {
 ### 🛡️ Safety & Moderation
 
 #### POST `/api/safety/check`
+
 Check content for safety violations.
 
 **Request:**
+
 ```typescript
 interface SafetyCheckRequest {
   content: string;
@@ -1007,6 +1260,7 @@ interface SafetyCheckRequest {
 ```
 
 **Response:**
+
 ```typescript
 interface SafetyCheckResponse {
   success: boolean;
@@ -1025,9 +1279,11 @@ interface SafetyCheckResponse {
 ```
 
 #### GET `/api/safety/stats`
+
 Get safety and moderation statistics.
 
 **Response:**
+
 ```typescript
 interface SafetyStatsResponse {
   success: boolean;
@@ -1048,15 +1304,376 @@ interface SafetyStatsResponse {
 }
 ```
 
+### 🤖 Ollama Management
+
+#### GET `/api/ollama/status`
+
+Check Ollama service connection status.
+
+**Examples:**
+
+```bash
+# Check if Ollama is running
+curl https://your-domain.com/api/ollama/status
+```
+
+```javascript
+// JavaScript example
+const response = await fetch('/api/ollama/status');
+const status = await response.json();
+
+if (status.connected) {
+  console.log('✅ Ollama is connected');
+} else {
+  console.log('❌ Ollama is not available');
+}
+```
+
+**Response:**
+
+```typescript
+interface OllamaStatusResponse {
+  connected: boolean;
+  url: string;
+}
+```
+
+**Sample Response:**
+
+```json
+{
+  "connected": true,
+  "url": "http://localhost:11434"
+}
+```
+
+#### GET `/api/ollama/models`
+
+List available and installed Ollama models.
+
+**Examples:**
+
+```bash
+# Get model list
+curl https://your-domain.com/api/ollama/models
+```
+
+```javascript
+// JavaScript example
+const response = await fetch('/api/ollama/models');
+const models = await response.json();
+
+console.log('Installed models:', models.installed.length);
+console.log('Available models:', models.available.length);
+```
+
+**Response:**
+
+```typescript
+interface OllamaModelsResponse {
+  installed: Array<{
+    name: string;
+    size: string;
+    modified_at: string;
+  }>;
+  available: string[];
+}
+```
+
+#### POST `/api/ollama/active`
+
+Set the active Ollama model.
+
+**Examples:**
+
+```bash
+# Set active model
+curl -X POST https://your-domain.com/api/ollama/active \
+  -H "Content-Type: application/json" \
+  -d '{"model": "llama3:8b"}'
+```
+
+```javascript
+// JavaScript example
+const response = await fetch('/api/ollama/active', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ model: 'llama3:8b' }),
+});
+
+const result = await response.json();
+console.log('Active model set to:', result.activeModel);
+```
+
+**Request:**
+
+```typescript
+interface SetActiveModelRequest {
+  model: string;
+}
+```
+
+**Response:**
+
+```typescript
+interface SetActiveModelResponse {
+  success: boolean;
+  activeModel: string;
+}
+```
+
+#### GET `/api/ollama/active`
+
+Get the currently active model.
+
+**Examples:**
+
+```bash
+# Get active model
+curl https://your-domain.com/api/ollama/active
+```
+
+#### POST `/api/ollama/pull`
+
+Download and install a new Ollama model.
+
+**Examples:**
+
+```bash
+# Pull a model
+curl -X POST https://your-domain.com/api/ollama/pull \
+  -H "Content-Type: application/json" \
+  -d '{"model": "llama3:70b"}'
+```
+
+```javascript
+// JavaScript example
+const response = await fetch('/api/ollama/pull', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ model: 'llama3:70b' }),
+});
+
+const result = await response.json();
+if (result.success) {
+  console.log('Model pulled successfully');
+}
+```
+
+### 🔌 Plugin System
+
+#### GET `/api/plugins`
+
+List installed plugins or get plugin API keys.
+
+**Query Parameters:**
+
+- `action`: `list` or `keys`
+- `pluginId` (required for keys action)
+
+**Examples:**
+
+```bash
+# List all plugins
+curl "https://your-domain.com/api/plugins?action=list"
+
+# Get API keys for a plugin
+curl "https://your-domain.com/api/plugins?action=keys&pluginId=my-plugin"
+```
+
+```javascript
+// JavaScript example - list plugins
+const response = await fetch('/api/plugins?action=list');
+const data = await response.json();
+
+console.log('Installed plugins:', data.plugins.length);
+data.plugins.forEach(plugin => {
+  console.log(`${plugin.name} v${plugin.version} - ${plugin.enabled ? 'Enabled' : 'Disabled'}`);
+});
+```
+
+**Response (list):**
+
+```typescript
+interface PluginsListResponse {
+  success: boolean;
+  plugins: Array<{
+    id: string;
+    name: string;
+    version: string;
+    description: string;
+    author: string;
+    enabled: boolean;
+  }>;
+}
+```
+
+**Response (keys):**
+
+```typescript
+interface PluginKeysResponse {
+  success: boolean;
+  keys: Array<{
+    name: string;
+    permissions: string[];
+    enabled: boolean;
+    createdAt: string;
+    lastUsed: string;
+  }>;
+}
+```
+
+#### POST `/api/plugins`
+
+Make external API requests through plugins.
+
+**Examples:**
+
+```bash
+# Make an external API call through a plugin
+curl -X POST https://your-domain.com/api/plugins \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pluginId": "weather-api",
+    "endpoint": "https://api.weather.com/v1/current",
+    "method": "GET",
+    "query": {
+      "location": "New York"
+    }
+  }'
+```
+
+```javascript
+// JavaScript example
+const apiRequest = {
+  pluginId: 'weather-api',
+  endpoint: 'https://api.weather.com/v1/current',
+  method: 'GET',
+  query: { location: 'New York' },
+};
+
+const response = await fetch('/api/plugins', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(apiRequest),
+});
+
+// Response will be the actual API response from the external service
+const weatherData = await response.json();
+```
+
+### 🧠 Reflection System
+
+#### POST `/api/reflection`
+
+Trigger reflection processes or get reflection data.
+
+**Actions:** `process`, `trigger`
+
+**Examples:**
+
+```bash
+# Process daily reflection
+curl -X POST https://your-domain.com/api/reflection \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "process",
+    "userId": 123,
+    "characterId": 1
+  }'
+
+# Trigger manual reflection
+curl -X POST https://your-domain.com/api/reflection \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "trigger",
+    "userId": 123,
+    "characterId": 1
+  }'
+```
+
+```javascript
+// JavaScript example
+const reflectionRequest = {
+  action: 'process',
+  userId: 123,
+  characterId: 1,
+};
+
+const response = await fetch('/api/reflection', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(reflectionRequest),
+});
+
+const result = await response.json();
+console.log('Reflection processed:', result.reflection);
+```
+
+**Request:**
+
+```typescript
+interface ReflectionRequest {
+  action: 'process' | 'trigger';
+  userId: number;
+  characterId: number;
+}
+```
+
+**Response:**
+
+```typescript
+interface ReflectionResponse {
+  success: boolean;
+  reflection: {
+    insights: string[];
+    personalityTraits: Record<string, number>;
+    relationshipProgress: number;
+    processedAt: string;
+  };
+}
+```
+
+#### GET `/api/reflection`
+
+Get reflection traits or history.
+
+**Query Parameters:**
+
+- `action`: `traits` or `history`
+- `userId` (required for history)
+- `characterId` (optional for history)
+
+**Examples:**
+
+```bash
+# Get personality traits
+curl "https://your-domain.com/api/reflection?action=traits"
+
+# Get reflection history
+curl "https://your-domain.com/api/reflection?action=history&userId=123&characterId=1"
+```
+
+```javascript
+// JavaScript example - get traits
+const response = await fetch('/api/reflection?action=traits');
+const data = await response.json();
+
+console.log('Personality traits:', data.traits);
+```
+
 ### 📊 Analytics & Insights
 
 #### GET `/api/analytics/overview`
+
 Get system-wide analytics.
 
 **Query Parameters:**
+
 - `period`: 'day' | 'week' | 'month' | 'year'
 
 **Response:**
+
 ```typescript
 interface AnalyticsOverviewResponse {
   success: boolean;
@@ -1082,9 +1699,11 @@ interface AnalyticsOverviewResponse {
 ```
 
 #### GET `/api/analytics/companion/{companionId}`
+
 Get analytics for a specific companion.
 
 **Response:**
+
 ```typescript
 interface CompanionAnalyticsResponse {
   success: boolean;
@@ -1112,6 +1731,7 @@ interface CompanionAnalyticsResponse {
 ### 🔧 System Management
 
 #### GET `/api/health`
+
 System health check.
 
 **Examples:**
@@ -1150,6 +1770,7 @@ async function checkHealth(maxRetries = 3) {
 ```
 
 **Response:**
+
 ```typescript
 interface HealthResponse {
   success: boolean;
@@ -1170,6 +1791,7 @@ interface HealthResponse {
 ```
 
 **Sample Response:**
+
 ```json
 {
   "success": true,
@@ -1190,9 +1812,11 @@ interface HealthResponse {
 ```
 
 #### POST `/api/backup`
+
 Create system backup.
 
 **Request:**
+
 ```typescript
 interface BackupRequest {
   type: 'full' | 'incremental';
@@ -1202,6 +1826,7 @@ interface BackupRequest {
 ```
 
 **Response:**
+
 ```typescript
 interface BackupResponse {
   success: boolean;
@@ -1213,9 +1838,11 @@ interface BackupResponse {
 ```
 
 #### POST `/api/restore`
+
 Restore from backup.
 
 **Request:**
+
 ```typescript
 interface RestoreRequest {
   backupId: string;
@@ -1241,17 +1868,17 @@ class AIHiveMindClient {
       options: {
         voice: options.voice || false,
         temperature: options.temperature || 0.7,
-        ...options
-      }
+        ...options,
+      },
     };
 
     const response = await fetch(`${this.baseUrl}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(this.apiKey && { 'Authorization': `Bearer ${this.apiKey}` })
+        ...(this.apiKey && { Authorization: `Bearer ${this.apiKey}` }),
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -1282,7 +1909,7 @@ class AIHiveMindClient {
 
     const response = await fetch(`${this.baseUrl}/voice/transcribe`, {
       method: 'POST',
-      body: formData
+      body: formData,
     });
 
     return await response.json();
@@ -1292,7 +1919,7 @@ class AIHiveMindClient {
     const response = await fetch(`${this.baseUrl}/voice/synthesize`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, voiceId })
+      body: JSON.stringify({ text, voiceId }),
     });
 
     if (response.ok) {
@@ -1309,15 +1936,14 @@ const client = new AIHiveMindClient();
 async function chatWithAI() {
   try {
     // Send a message
-    const response = await client.sendMessage("Hello!", "friendly-companion");
-    console.log("AI Response:", response.response.text);
+    const response = await client.sendMessage('Hello!', 'friendly-companion');
+    console.log('AI Response:', response.response.text);
 
     // Get chat history
-    const history = await client.getChatHistory("friendly-companion", 5);
-    console.log("Recent conversations:", history.conversations.length);
-
+    const history = await client.getChatHistory('friendly-companion', 5);
+    console.log('Recent conversations:', history.conversations.length);
   } catch (error) {
-    console.error("Integration error:", error);
+    console.error('Integration error:', error);
   }
 }
 ```
@@ -1338,7 +1964,7 @@ class VoiceChatInterface {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.mediaRecorder = new MediaRecorder(stream);
 
-      this.mediaRecorder.ondataavailable = (event) => {
+      this.mediaRecorder.ondataavailable = event => {
         if (event.data.size > 0) {
           this.audioChunks.push(event.data);
         }
@@ -1350,25 +1976,22 @@ class VoiceChatInterface {
         try {
           // Transcribe speech to text
           const transcription = await this.aiClient.transcribeAudio(audioBlob);
-          console.log("You said:", transcription.transcription);
+          console.log('You said:', transcription.transcription);
 
           // Send to AI for response
-          const aiResponse = await this.aiClient.sendMessage(
-            transcription.transcription,
-            null,
-            { voice: true }
-          );
+          const aiResponse = await this.aiClient.sendMessage(transcription.transcription, null, {
+            voice: true,
+          });
 
-          console.log("AI Response:", aiResponse.response.text);
+          console.log('AI Response:', aiResponse.response.text);
 
           // Generate speech response
           if (aiResponse.voice?.audioUrl) {
             const audio = new Audio(aiResponse.voice.audioUrl);
             audio.play();
           }
-
         } catch (error) {
-          console.error("Voice chat error:", error);
+          console.error('Voice chat error:', error);
         }
 
         this.audioChunks = [];
@@ -1376,10 +1999,9 @@ class VoiceChatInterface {
 
       this.mediaRecorder.start();
       this.isRecording = true;
-      console.log("🎤 Listening... Click stop to send.");
-
+      console.log('🎤 Listening... Click stop to send.');
     } catch (error) {
-      console.error("Failed to start voice chat:", error);
+      console.error('Failed to start voice chat:', error);
     }
   }
 
@@ -1387,7 +2009,7 @@ class VoiceChatInterface {
     if (this.mediaRecorder && this.isRecording) {
       this.mediaRecorder.stop();
       this.isRecording = false;
-      console.log("🛑 Processing your message...");
+      console.log('🛑 Processing your message...');
     }
   }
 }
@@ -1409,7 +2031,7 @@ async function robustChatIntegration(message) {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message }),
     });
 
     if (!response.ok) {
@@ -1431,7 +2053,6 @@ async function robustChatIntegration(message) {
 
     const data = await response.json();
     return data;
-
   } catch (error) {
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
       throw new Error('Network connection failed. Check your internet connection.');
@@ -1496,6 +2117,7 @@ API endpoints are rate limited to prevent abuse:
 - **Voice operations**: 20 requests per minute
 
 Rate limit headers are included in responses:
+
 ```
 X-RateLimit-Limit: 50
 X-RateLimit-Remaining: 49
@@ -1505,25 +2127,28 @@ X-RateLimit-Reset: 1640995200
 ## WebSocket Support
 
 ### Real-time Chat
+
 ```javascript
 const ws = new WebSocket('wss://your-domain.com/api/live');
 
-ws.onmessage = (event) => {
+ws.onmessage = event => {
   const data = JSON.parse(event.data);
   // Handle real-time messages
 };
 ```
 
 ### Streaming Responses
+
 For long AI responses, use streaming:
+
 ```javascript
 const response = await fetch('/api/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     message: 'Tell me a story',
-    options: { stream: true }
-  })
+    options: { stream: true },
+  }),
 });
 
 const reader = response.body.getReader();
@@ -1537,6 +2162,7 @@ while (true) {
 ## SDKs and Libraries
 
 ### JavaScript SDK
+
 ```bash
 npm install ai-hive-mind-sdk
 ```
@@ -1546,17 +2172,18 @@ import { HiveMindClient } from 'ai-hive-mind-sdk';
 
 const client = new HiveMindClient({
   apiKey: 'your-api-key',
-  baseUrl: 'https://your-domain.com'
+  baseUrl: 'https://your-domain.com',
 });
 
 // Send a message
 const response = await client.chat({
   message: 'Hello!',
-  companionId: 'ai-hive-mind'
+  companionId: 'ai-hive-mind',
 });
 ```
 
 ### Python SDK
+
 ```bash
 pip install ai-hive-mind
 ```
@@ -1575,12 +2202,14 @@ response = client.chat(
 ## Versioning
 
 API versioning follows semantic versioning:
+
 - **v1**: Current stable version
 - **Breaking changes**: New major version
 - **Additions**: Minor version bump
 - **Bug fixes**: Patch version bump
 
 Specify version in URL:
+
 ```
 https://your-domain.com/api/v1/chat
 ```

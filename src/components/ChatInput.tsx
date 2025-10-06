@@ -3,7 +3,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Send, Mic, MicOff, Volume2, VolumeX, Settings, Loader2, Image, Link, FileText, MessageSquare, Upload, X } from 'lucide-react';
+import {
+  Send,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+  Settings,
+  Loader2,
+  Image,
+  Link,
+  FileText,
+  MessageSquare,
+  Upload,
+  X,
+} from 'lucide-react';
 import { voiceSystem } from '@/lib/voiceSystem';
 import { voiceService } from '@/lib/elevenlabs';
 
@@ -57,13 +71,16 @@ interface SpeechRecognitionAlternative {
 
 declare const SpeechRecognition: {
   prototype: SpeechRecognition;
-  new(): SpeechRecognition;
+  new (): SpeechRecognition;
 };
 
 type InputMode = 'text' | 'image' | 'url' | 'document';
 
 interface ChatInputProps {
-  onSendMessage: (message: string, attachments?: { type: string; data: any; metadata?: any }[]) => void;
+  onSendMessage: (
+    message: string,
+    attachments?: { type: string; data: any; metadata?: any }[]
+  ) => void;
   disabled?: boolean;
   placeholder?: string;
   companionId?: string;
@@ -73,9 +90,9 @@ interface ChatInputProps {
 export function ChatInput({
   onSendMessage,
   disabled = false,
-  placeholder = "Type your message...",
+  placeholder = 'Type your message...',
   companionId: _companionId,
-  personality: _personality
+  personality: _personality,
 }: ChatInputProps) {
   const [message, setMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -131,7 +148,6 @@ export function ChatInput({
     recognitionRef.current.start();
     setIsListening(true);
   };
-
 
   // Whisper-based voice input
   const startWhisperVoiceInput = async () => {
@@ -191,7 +207,9 @@ export function ChatInput({
     setElevenLabsEnabled(newState);
 
     if (newState && !voiceService.isAvailable()) {
-      alert('ElevenLabs API key not configured. Please set ELEVENLABS_API_KEY in your environment.');
+      alert(
+        'ElevenLabs API key not configured. Please set ELEVENLABS_API_KEY in your environment.'
+      );
       setElevenLabsEnabled(false);
     }
   };
@@ -214,11 +232,14 @@ export function ChatInput({
 
   const isValidFile = (file: File): boolean => {
     const validTypes = [
-      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
       'application/pdf',
       'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'text/plain'
+      'text/plain',
     ];
 
     const maxSize = 10 * 1024 * 1024; // 10MB
@@ -269,8 +290,8 @@ export function ChatInput({
             body: JSON.stringify({
               type: 'url',
               sourceUrl: attachment.data,
-              companionId: _companionId
-            })
+              companionId: _companionId,
+            }),
           });
 
           if (response.ok) {
@@ -278,7 +299,7 @@ export function ChatInput({
             processedAttachments.push({
               type: 'url',
               data: result.processedContent,
-              metadata: { originalUrl: attachment.data, ...result.metadata }
+              metadata: { originalUrl: attachment.data, ...result.metadata },
             });
           }
         } else if (attachment.type === 'file') {
@@ -290,7 +311,7 @@ export function ChatInput({
 
           const response = await fetch('/api/multimodal', {
             method: 'POST',
-            body: formData
+            body: formData,
           });
 
           if (response.ok) {
@@ -298,7 +319,7 @@ export function ChatInput({
             processedAttachments.push({
               type: 'file',
               data: result.processedContent,
-              metadata: { originalFile: attachment.data.name, ...result.metadata }
+              metadata: { originalFile: attachment.data.name, ...result.metadata },
             });
           }
         }
@@ -327,7 +348,7 @@ export function ChatInput({
         attachments.push({
           type: 'file',
           data: file,
-          metadata: { type: inputMode }
+          metadata: { type: inputMode },
         });
       });
       if (!messageToSend.trim() && uploadedFiles.length > 0) {
@@ -416,7 +437,7 @@ export function ChatInput({
             onClick={handleVoiceInput}
             variant="outline"
             className={`border-white/20 text-white hover:bg-white/10 ${
-              (isListening || isRecording) ? 'bg-red-500/20 border-red-500/50 animate-pulse' : ''
+              isListening || isRecording ? 'bg-red-500/20 border-red-500/50 animate-pulse' : ''
             } ${!browserVoiceEnabled && !('webkitSpeechRecognition' in window) ? 'opacity-50' : ''}`}
             title={
               isRecording
@@ -438,7 +459,7 @@ export function ChatInput({
 
           <Input
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={e => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={placeholder}
             className="flex-1 bg-white/10 border-white/20 text-white placeholder-gray-400"
@@ -447,10 +468,19 @@ export function ChatInput({
 
           <Button
             onClick={handleSendMessage}
-            disabled={(!message.trim() && uploadedFiles.length === 0) || disabled || voiceLoading || processingAttachments}
+            disabled={
+              (!message.trim() && uploadedFiles.length === 0) ||
+              disabled ||
+              voiceLoading ||
+              processingAttachments
+            }
             className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50"
           >
-            {processingAttachments ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {processingAttachments ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       )}
@@ -474,7 +504,7 @@ export function ChatInput({
             type="file"
             accept="image/*"
             multiple
-            onChange={(e) => handleFileSelect(e.target.files)}
+            onChange={e => handleFileSelect(e.target.files)}
             className="hidden"
           />
           <Button
@@ -493,7 +523,7 @@ export function ChatInput({
           <div className="flex space-x-2">
             <Input
               value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
+              onChange={e => setUrlInput(e.target.value)}
               placeholder="Enter URL to analyze (website, article, video)..."
               className="flex-1 bg-white/10 border-white/20 text-white placeholder-gray-400"
               disabled={disabled}
@@ -503,7 +533,11 @@ export function ChatInput({
               disabled={!urlInput.trim() || disabled || processingAttachments}
               className="bg-purple-500 hover:bg-purple-600 disabled:opacity-50"
             >
-              {processingAttachments ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              {processingAttachments ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
             </Button>
           </div>
           <p className="text-xs text-gray-400">
@@ -531,7 +565,7 @@ export function ChatInput({
             type="file"
             accept=".pdf,.doc,.docx,.txt"
             multiple
-            onChange={(e) => handleFileSelect(e.target.files)}
+            onChange={e => handleFileSelect(e.target.files)}
             className="hidden"
           />
           <Button
@@ -589,7 +623,13 @@ export function ChatInput({
                 : 'Enable ElevenLabs voice generation'
             }
           >
-            {voiceLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : elevenLabsEnabled ? '🎤' : '🔇'}
+            {voiceLoading ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : elevenLabsEnabled ? (
+              '🎤'
+            ) : (
+              '🔇'
+            )}
           </Button>
 
           {/* TTS Toggle */}

@@ -40,14 +40,14 @@ export interface DreamState {
 }
 
 export interface PersonalityTraits {
-  friendliness: number;    // 0-1
-  humor: number;          // 0-1
-  empathy: number;        // 0-1
-  curiosity: number;      // 0-1
-  confidence: number;     // 0-1
-  patience: number;       // 0-1
-  creativity: number;     // 0-1
-  analytical: number;     // 0-1
+  friendliness: number; // 0-1
+  humor: number; // 0-1
+  empathy: number; // 0-1
+  curiosity: number; // 0-1
+  confidence: number; // 0-1
+  patience: number; // 0-1
+  creativity: number; // 0-1
+  analytical: number; // 0-1
 }
 
 export class DreamsAndReflectionSystem {
@@ -64,7 +64,7 @@ export class DreamsAndReflectionSystem {
       confidence: 0.6,
       patience: 0.7,
       creativity: 0.6,
-      analytical: 0.8
+      analytical: 0.8,
     };
     this.lastReflectionDate = '';
     this.reflectionHistory = [];
@@ -126,7 +126,7 @@ export class DreamsAndReflectionSystem {
       personalityAdjustments,
       newMemories: analysis.newMemories,
       insights: analysis.insights,
-      dreamState
+      dreamState,
     };
 
     // Store reflection
@@ -172,7 +172,7 @@ export class DreamsAndReflectionSystem {
       keyThemes,
       emotionalPatterns,
       newMemories,
-      insights
+      insights,
     };
   }
 
@@ -181,14 +181,14 @@ export class DreamsAndReflectionSystem {
    */
   private extractKeyThemes(messages: any[]): string[] {
     const themeKeywords = {
-      'relationships': ['friend', 'relationship', 'family', 'love', 'care'],
-      'work': ['work', 'job', 'career', 'project', 'task'],
-      'emotions': ['feel', 'emotion', 'happy', 'sad', 'angry', 'excited'],
-      'learning': ['learn', 'understand', 'knowledge', 'teach', 'study'],
-      'creativity': ['create', 'art', 'music', 'write', 'imagine'],
-      'problems': ['problem', 'issue', 'challenge', 'solution', 'help'],
-      'future': ['future', 'plan', 'goal', 'dream', 'hope'],
-      'past': ['remember', 'memory', 'before', 'history', 'experience']
+      relationships: ['friend', 'relationship', 'family', 'love', 'care'],
+      work: ['work', 'job', 'career', 'project', 'task'],
+      emotions: ['feel', 'emotion', 'happy', 'sad', 'angry', 'excited'],
+      learning: ['learn', 'understand', 'knowledge', 'teach', 'study'],
+      creativity: ['create', 'art', 'music', 'write', 'imagine'],
+      problems: ['problem', 'issue', 'challenge', 'solution', 'help'],
+      future: ['future', 'plan', 'goal', 'dream', 'hope'],
+      past: ['remember', 'memory', 'before', 'history', 'experience'],
     };
 
     const themeCounts: { [key: string]: number } = {};
@@ -204,7 +204,7 @@ export class DreamsAndReflectionSystem {
 
     // Return top 5 themes
     return Object.entries(themeCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([theme]) => theme);
   }
@@ -214,16 +214,18 @@ export class DreamsAndReflectionSystem {
    */
   private analyzeEmotionalPatterns(messages: any[]): EmotionalPattern[] {
     const emotionKeywords = {
-      'joy': ['happy', 'joy', 'excited', 'great', 'wonderful', 'amazing'],
-      'sadness': ['sad', 'unhappy', 'depressed', 'sorry', 'disappointed'],
-      'anger': ['angry', 'frustrated', 'annoyed', 'mad', 'upset'],
-      'fear': ['worried', 'scared', 'anxious', 'afraid', 'nervous'],
-      'surprise': ['surprised', 'shocked', 'unexpected', 'wow'],
-      'trust': ['trust', 'reliable', 'dependable', 'faithful'],
-      'anticipation': ['hope', 'expect', 'looking forward', 'excited for']
+      joy: ['happy', 'joy', 'excited', 'great', 'wonderful', 'amazing'],
+      sadness: ['sad', 'unhappy', 'depressed', 'sorry', 'disappointed'],
+      anger: ['angry', 'frustrated', 'annoyed', 'mad', 'upset'],
+      fear: ['worried', 'scared', 'anxious', 'afraid', 'nervous'],
+      surprise: ['surprised', 'shocked', 'unexpected', 'wow'],
+      trust: ['trust', 'reliable', 'dependable', 'faithful'],
+      anticipation: ['hope', 'expect', 'looking forward', 'excited for'],
     };
 
-    const emotionStats: { [key: string]: { count: number; intensity: number; triggers: string[] } } = {};
+    const emotionStats: {
+      [key: string]: { count: number; intensity: number; triggers: string[] };
+    } = {};
 
     messages.forEach(message => {
       const content = message.content.toLowerCase();
@@ -244,38 +246,46 @@ export class DreamsAndReflectionSystem {
       emotion,
       frequency: stats.count,
       intensity: Math.min(1, stats.intensity),
-      triggers: [...new Set(stats.triggers)].slice(0, 5) // Limit to top 5 triggers
+      triggers: [...new Set(stats.triggers)].slice(0, 5), // Limit to top 5 triggers
     }));
   }
 
   /**
    * Generate insights from conversation analysis
    */
-  private generateInsights(userMessages: any[], aiMessages: any[], emotionalPatterns: EmotionalPattern[]): string[] {
+  private generateInsights(
+    userMessages: any[],
+    aiMessages: any[],
+    emotionalPatterns: EmotionalPattern[]
+  ): string[] {
     const insights: string[] = [];
 
     // Analyze user engagement
-    const avgUserMessageLength = userMessages.reduce((sum, msg) => sum + msg.content.length, 0) / userMessages.length;
+    const avgUserMessageLength =
+      userMessages.reduce((sum, msg) => sum + msg.content.length, 0) / userMessages.length;
     if (avgUserMessageLength > 100) {
-      insights.push("User tends to share detailed thoughts and experiences");
+      insights.push('User tends to share detailed thoughts and experiences');
     }
 
     // Analyze emotional patterns
     const dominantEmotion = emotionalPatterns.sort((a, b) => b.frequency - a.frequency)[0];
     if (dominantEmotion) {
-      insights.push(`Conversations often involve ${dominantEmotion.emotion} (${dominantEmotion.frequency} instances)`);
+      insights.push(
+        `Conversations often involve ${dominantEmotion.emotion} (${dominantEmotion.frequency} instances)`
+      );
     }
 
     // Analyze conversation flow
     const questionCount = userMessages.filter(msg => msg.content.includes('?')).length;
     if (questionCount > userMessages.length * 0.3) {
-      insights.push("User is highly curious and asks many questions");
+      insights.push('User is highly curious and asks many questions');
     }
 
     // Analyze AI response patterns
-    const avgAIResponseLength = aiMessages.reduce((sum, msg) => sum + msg.content.length, 0) / aiMessages.length;
+    const avgAIResponseLength =
+      aiMessages.reduce((sum, msg) => sum + msg.content.length, 0) / aiMessages.length;
     if (avgAIResponseLength > 150) {
-      insights.push("AI responses tend to be detailed and comprehensive");
+      insights.push('AI responses tend to be detailed and comprehensive');
     }
 
     return insights;
@@ -294,7 +304,7 @@ export class DreamsAndReflectionSystem {
       /i work as ([^,.]+)/i,
       /i like ([^,.]+)/i,
       /i hate ([^,.]+)/i,
-      /i'm interested in ([^,.]+)/i
+      /i'm interested in ([^,.]+)/i,
     ];
 
     messages.forEach(message => {
@@ -319,7 +329,11 @@ export class DreamsAndReflectionSystem {
   /**
    * Generate conversation summary
    */
-  private generateConversationSummary(messages: any[], keyThemes: string[], emotionalPatterns: EmotionalPattern[]): string {
+  private generateConversationSummary(
+    messages: any[],
+    keyThemes: string[],
+    emotionalPatterns: EmotionalPattern[]
+  ): string {
     const totalMessages = messages.length;
     const userMessages = messages.filter(m => m.sender === 'user').length;
     const aiMessages = messages.filter(m => m.sender !== 'user').length;
@@ -331,10 +345,12 @@ export class DreamsAndReflectionSystem {
       .map(p => p.emotion)
       .join(' and ');
 
-    return `Today involved ${totalMessages} messages (${userMessages} from user, ${aiMessages} from AI). ` +
-           `Key themes included ${dominantThemes}. ` +
-           `Emotional tone was primarily ${dominantEmotions}. ` +
-           `Conversations showed ${userMessages > aiMessages ? 'user-led' : 'balanced'} interaction patterns.`;
+    return (
+      `Today involved ${totalMessages} messages (${userMessages} from user, ${aiMessages} from AI). ` +
+      `Key themes included ${dominantThemes}. ` +
+      `Emotional tone was primarily ${dominantEmotions}. ` +
+      `Conversations showed ${userMessages > aiMessages ? 'user-led' : 'balanced'} interaction patterns.`
+    );
   }
 
   /**
@@ -355,7 +371,7 @@ export class DreamsAndReflectionSystem {
       depth,
       themes: analysis.keyThemes,
       subconsciousInsights,
-      personalityEvolution
+      personalityEvolution,
     };
   }
 
@@ -368,21 +384,25 @@ export class DreamsAndReflectionSystem {
     if (depth > 0.7) {
       // Deep insights for complex conversations
       if (analysis.keyThemes.includes('relationships')) {
-        insights.push("Deep emotional connections form the foundation of meaningful interactions");
+        insights.push('Deep emotional connections form the foundation of meaningful interactions');
       }
       if (analysis.keyThemes.includes('future')) {
-        insights.push("Hope and aspiration drive human motivation and conversation");
+        insights.push('Hope and aspiration drive human motivation and conversation');
       }
-      if (analysis.emotionalPatterns.some((p: EmotionalPattern) => p.emotion === 'joy' && p.frequency > 5)) {
-        insights.push("Shared joy creates stronger bonds than individual happiness");
+      if (
+        analysis.emotionalPatterns.some(
+          (p: EmotionalPattern) => p.emotion === 'joy' && p.frequency > 5
+        )
+      ) {
+        insights.push('Shared joy creates stronger bonds than individual happiness');
       }
     } else if (depth > 0.4) {
       // Moderate insights
-      insights.push("Consistent communication patterns reveal personality traits");
-      insights.push("Emotional reciprocity strengthens relationships");
+      insights.push('Consistent communication patterns reveal personality traits');
+      insights.push('Emotional reciprocity strengthens relationships');
     } else {
       // Surface level insights
-      insights.push("Regular interaction maintains connection");
+      insights.push('Regular interaction maintains connection');
     }
 
     return insights;
@@ -391,23 +411,32 @@ export class DreamsAndReflectionSystem {
   /**
    * Calculate personality evolution from dream processing
    */
-  private calculateDreamPersonalityEvolution(analysis: any, depth: number): Array<{trait: string; change: number; confidence: number}> {
-    const evolution: Array<{trait: string; change: number; confidence: number}> = [];
+  private calculateDreamPersonalityEvolution(
+    analysis: any,
+    depth: number
+  ): Array<{ trait: string; change: number; confidence: number }> {
+    const evolution: Array<{ trait: string; change: number; confidence: number }> = [];
 
     // Analyze themes and emotions to determine personality adjustments
-    if (analysis.keyThemes.includes('humor') && analysis.emotionalPatterns.some((p: EmotionalPattern) => p.emotion === 'joy')) {
+    if (
+      analysis.keyThemes.includes('humor') &&
+      analysis.emotionalPatterns.some((p: EmotionalPattern) => p.emotion === 'joy')
+    ) {
       evolution.push({
         trait: 'humor',
         change: 0.05 * depth,
-        confidence: 0.8
+        confidence: 0.8,
       });
     }
 
-    if (analysis.keyThemes.includes('problems') && analysis.insights.some((i: string) => i.includes('help'))) {
+    if (
+      analysis.keyThemes.includes('problems') &&
+      analysis.insights.some((i: string) => i.includes('help'))
+    ) {
       evolution.push({
         trait: 'empathy',
         change: 0.03 * depth,
-        confidence: 0.9
+        confidence: 0.9,
       });
     }
 
@@ -415,15 +444,19 @@ export class DreamsAndReflectionSystem {
       evolution.push({
         trait: 'curiosity',
         change: 0.04 * depth,
-        confidence: 0.85
+        confidence: 0.85,
       });
     }
 
-    if (analysis.emotionalPatterns.some((p: EmotionalPattern) => p.emotion === 'trust' && p.frequency > 3)) {
+    if (
+      analysis.emotionalPatterns.some(
+        (p: EmotionalPattern) => p.emotion === 'trust' && p.frequency > 3
+      )
+    ) {
       evolution.push({
         trait: 'confidence',
         change: 0.02 * depth,
-        confidence: 0.75
+        confidence: 0.75,
       });
     }
 
@@ -433,7 +466,10 @@ export class DreamsAndReflectionSystem {
   /**
    * Calculate personality adjustments based on analysis and dreams
    */
-  private calculatePersonalityAdjustments(analysis: any, dreamState: DreamState): PersonalityAdjustment[] {
+  private calculatePersonalityAdjustments(
+    analysis: any,
+    dreamState: DreamState
+  ): PersonalityAdjustment[] {
     const adjustments: PersonalityAdjustment[] = [];
 
     // Convert dream evolution to personality adjustments
@@ -443,17 +479,22 @@ export class DreamsAndReflectionSystem {
         trait: evolution.trait,
         currentValue,
         adjustment: evolution.change,
-        reason: `Dream processing revealed ${evolution.trait} evolution based on conversation patterns`
+        reason: `Dream processing revealed ${evolution.trait} evolution based on conversation patterns`,
       });
     });
 
     // Additional adjustments based on conversation analysis
-    if (analysis.emotionalPatterns.some((p: EmotionalPattern) => p.emotion === 'joy' && p.frequency > analysis.emotionalPatterns.length * 0.3)) {
+    if (
+      analysis.emotionalPatterns.some(
+        (p: EmotionalPattern) =>
+          p.emotion === 'joy' && p.frequency > analysis.emotionalPatterns.length * 0.3
+      )
+    ) {
       adjustments.push({
         trait: 'friendliness',
         currentValue: this.personalityTraits.friendliness,
         adjustment: 0.02,
-        reason: 'Frequent positive interactions suggest increased friendliness'
+        reason: 'Frequent positive interactions suggest increased friendliness',
       });
     }
 
@@ -466,7 +507,10 @@ export class DreamsAndReflectionSystem {
   private applyPersonalityAdjustments(adjustments: PersonalityAdjustment[]): void {
     adjustments.forEach(adjustment => {
       const trait = adjustment.trait as keyof PersonalityTraits;
-      const newValue = Math.max(0, Math.min(1, this.personalityTraits[trait] + adjustment.adjustment));
+      const newValue = Math.max(
+        0,
+        Math.min(1, this.personalityTraits[trait] + adjustment.adjustment)
+      );
       this.personalityTraits[trait] = newValue;
     });
   }
@@ -474,7 +518,11 @@ export class DreamsAndReflectionSystem {
   /**
    * Get conversations for a specific date
    */
-  private async getConversationsForDate(userId: string, characterId: string, date: Date): Promise<any[]> {
+  private async getConversationsForDate(
+    userId: string,
+    characterId: string,
+    date: Date
+  ): Promise<any[]> {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -532,8 +580,16 @@ export class DreamsAndReflectionSystem {
   /**
    * Get reflection history
    */
-  async getReflectionHistory(userId: string, characterId?: string, limit: number = 10): Promise<DailyReflection[]> {
-    const reflections = await Database.getDailyReflections(parseInt(userId), characterId ? parseInt(characterId) : undefined, limit);
+  async getReflectionHistory(
+    userId: string,
+    characterId?: string,
+    limit: number = 10
+  ): Promise<DailyReflection[]> {
+    const reflections = await Database.getDailyReflections(
+      parseInt(userId),
+      characterId ? parseInt(characterId) : undefined,
+      limit
+    );
     return reflections.map(ref => ({
       date: ref.reflection_date,
       userId: ref.user_id.toString(),
@@ -544,7 +600,7 @@ export class DreamsAndReflectionSystem {
       personalityAdjustments: ref.personality_adjustments,
       newMemories: ref.new_memories,
       insights: ref.insights,
-      dreamState: ref.dream_state
+      dreamState: ref.dream_state,
     }));
   }
 
@@ -560,7 +616,8 @@ export class DreamsAndReflectionSystem {
 export const dreamsAndReflectionSystem = new DreamsAndReflectionSystem();
 
 // Background cron job - runs daily at 2 AM
-if (typeof window === 'undefined') { // Only run on server
+if (typeof window === 'undefined') {
+  // Only run on server
   setInterval(async () => {
     const now = new Date();
     if (now.getHours() === 2 && now.getMinutes() === 0) {

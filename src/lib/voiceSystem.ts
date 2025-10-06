@@ -44,7 +44,9 @@ export class VoiceSystem {
 
   private loadVoiceSettings(): VoiceSettings {
     const stored = localStorage.getItem('voiceSettings');
-    return stored ? { ...this.getDefaultSettings(), ...JSON.parse(stored) } : this.getDefaultSettings();
+    return stored
+      ? { ...this.getDefaultSettings(), ...JSON.parse(stored) }
+      : this.getDefaultSettings();
   }
 
   private getDefaultSettings(): VoiceSettings {
@@ -57,7 +59,7 @@ export class VoiceSystem {
       speakerBoost: true,
       language: 'en',
       autoSpeak: false,
-      speechRate: 1.0
+      speechRate: 1.0,
     };
   }
 
@@ -78,18 +80,18 @@ export class VoiceSystem {
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          sampleRate: 44100
-        }
+          sampleRate: 44100,
+        },
       });
 
       this.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
+        mimeType: 'audio/webm;codecs=opus',
       });
 
       this.audioChunks = [];
       this.isRecording = true;
 
-      this.mediaRecorder.ondataavailable = (event) => {
+      this.mediaRecorder.ondataavailable = event => {
         if (event.data.size > 0) {
           this.audioChunks.push(event.data);
         }
@@ -107,7 +109,6 @@ export class VoiceSystem {
           this.stopRecording();
         }
       }, 30000);
-
     } catch (error) {
       console.error('Recording failed:', error);
       throw new Error('Could not access microphone. Please check permissions.');
@@ -128,7 +129,7 @@ export class VoiceSystem {
         const recording: AudioRecording = {
           blob: audioBlob,
           duration,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         this.isRecording = false;
@@ -161,9 +162,9 @@ export class VoiceSystem {
       const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.settings.whisperApiKey}`
+          Authorization: `Bearer ${this.settings.whisperApiKey}`,
         },
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
@@ -172,7 +173,6 @@ export class VoiceSystem {
 
       const result = await response.json();
       return result.text || '';
-
     } catch (error) {
       console.error('Transcription failed:', error);
       throw new Error('Speech-to-text transcription failed');
@@ -188,28 +188,31 @@ export class VoiceSystem {
     const voiceMessage: VoiceMessage = {
       text,
       voiceSettings: { ...this.settings },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     try {
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${this.settings.voiceId}`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'audio/mpeg',
-          'Content-Type': 'application/json',
-          'xi-api-key': this.settings.elevenLabsApiKey
-        },
-        body: JSON.stringify({
-          text,
-          model_id: this.settings.model,
-          voice_settings: {
-            stability: this.settings.voiceStability,
-            similarity_boost: this.settings.voiceSimilarity,
-            style: this.settings.style,
-            use_speaker_boost: this.settings.speakerBoost
-          }
-        })
-      });
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${this.settings.voiceId}`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': this.settings.elevenLabsApiKey,
+          },
+          body: JSON.stringify({
+            text,
+            model_id: this.settings.model,
+            voice_settings: {
+              stability: this.settings.voiceStability,
+              similarity_boost: this.settings.voiceSimilarity,
+              style: this.settings.style,
+              use_speaker_boost: this.settings.speakerBoost,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`ElevenLabs API error: ${response.status}`);
@@ -222,7 +225,6 @@ export class VoiceSystem {
       voiceMessage.duration = await this.getAudioDuration(audioBlob);
 
       return voiceMessage;
-
     } catch (error) {
       console.error('Speech generation failed:', error);
       throw new Error('Text-to-speech generation failed');
@@ -230,7 +232,7 @@ export class VoiceSystem {
   }
 
   private async getAudioDuration(blob: Blob): Promise<number> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const audio = new Audio(URL.createObjectURL(blob));
       audio.addEventListener('loadedmetadata', () => {
         resolve(audio.duration);
@@ -258,7 +260,7 @@ export class VoiceSystem {
         resolve();
       });
 
-      this.currentAudio.addEventListener('error', (error) => {
+      this.currentAudio.addEventListener('error', error => {
         reject(error);
       });
 
@@ -363,7 +365,7 @@ export class VoiceSystem {
       { pattern: /(?:speak|say|tell me) (.+)/, command: 'speak_text' },
       { pattern: /(?:change|switch) voice/, command: 'change_voice' },
       { pattern: /(?:quieter|softer|louder)/, command: 'adjust_volume' },
-      { pattern: /(?:repeat|say again)/, command: 'repeat_last' }
+      { pattern: /(?:repeat|say again)/, command: 'repeat_last' },
     ];
 
     for (const { pattern, command } of commands) {
@@ -372,7 +374,7 @@ export class VoiceSystem {
         return {
           command,
           parameters: match.slice(1),
-          confidence: 0.8
+          confidence: 0.8,
         };
       }
     }
@@ -380,7 +382,7 @@ export class VoiceSystem {
     return {
       command: 'unknown',
       parameters: [],
-      confidence: 0.0
+      confidence: 0.0,
     };
   }
 
@@ -405,7 +407,12 @@ export class VoiceSystem {
   }
 
   // ElevenLabs Voice Options
-  static getAvailableVoices(): Array<{ id: string; name: string; language: string; gender: string }> {
+  static getAvailableVoices(): Array<{
+    id: string;
+    name: string;
+    language: string;
+    gender: string;
+  }> {
     return [
       { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', language: 'en', gender: 'female' },
       { id: 'AZnzlk1XvdvUeBnXmlld', name: 'Domi', language: 'en', gender: 'female' },
@@ -416,7 +423,7 @@ export class VoiceSystem {
       { id: '29vD33N1CtxCmqQRPOHJ', name: 'Elli', language: 'en', gender: 'female' },
       { id: 'IKne3meq5aSn9XLyUdCD', name: 'Josh', language: 'en', gender: 'male' },
       { id: 'MqgvQMtHz6iHFNTrLvWL', name: 'Sam', language: 'en', gender: 'male' },
-      { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Jessie', language: 'en', gender: 'female' }
+      { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Jessie', language: 'en', gender: 'female' },
     ];
   }
 }

@@ -17,7 +17,7 @@ import {
   ExternalLink,
   Code,
   Shield,
-  Zap
+  Zap,
 } from 'lucide-react';
 
 interface PluginManagerProps {
@@ -129,21 +129,31 @@ export function PluginManager({ onClose }: PluginManagerProps) {
 
   const getPermissionIcon = (type: string) => {
     switch (type) {
-      case 'read': return '👁️';
-      case 'write': return '✏️';
-      case 'admin': return '⚡';
-      default: return '🔒';
+      case 'read':
+        return '👁️';
+      case 'write':
+        return '✏️';
+      case 'admin':
+        return '⚡';
+      default:
+        return '🔒';
     }
   };
 
   const getResourceIcon = (resource: string) => {
     switch (resource) {
-      case 'chat': return '💬';
-      case 'memory': return '🧠';
-      case 'companions': return '👥';
-      case 'analytics': return '📊';
-      case 'system': return '⚙️';
-      default: return '🔧';
+      case 'chat':
+        return '💬';
+      case 'memory':
+        return '🧠';
+      case 'companions':
+        return '👥';
+      case 'analytics':
+        return '📊';
+      case 'system':
+        return '⚙️';
+      default:
+        return '🔧';
     }
   };
 
@@ -187,17 +197,21 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                 <p className="text-sm mt-2">Install your first plugin to get started</p>
               </div>
             ) : (
-              plugins.map((plugin) => (
+              plugins.map(plugin => (
                 <div
                   key={plugin.manifest.id}
                   onClick={() => setSelectedPlugin(plugin)}
                   className={`p-4 border-b border-white/10 cursor-pointer hover:bg-white/5 ${
-                    selectedPlugin?.manifest.id === plugin.manifest.id ? 'bg-blue-500/10 border-l-4 border-l-blue-400' : ''
+                    selectedPlugin?.manifest.id === plugin.manifest.id
+                      ? 'bg-blue-500/10 border-l-4 border-l-blue-400'
+                      : ''
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium text-white">{plugin.manifest.name}</h4>
-                    <div className={`w-2 h-2 rounded-full ${plugin.enabled ? 'bg-green-400' : 'bg-gray-400'}`} />
+                    <div
+                      className={`w-2 h-2 rounded-full ${plugin.enabled ? 'bg-green-400' : 'bg-gray-400'}`}
+                    />
                   </div>
                   <p className="text-sm text-gray-400 mb-2">{plugin.manifest.description}</p>
                   <div className="flex items-center space-x-2 text-xs text-gray-500">
@@ -219,18 +233,34 @@ export function PluginManager({ onClose }: PluginManagerProps) {
               <div className="p-4 border-b border-white/10">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full ${selectedPlugin.enabled ? 'bg-green-400' : 'bg-red-400'}`} />
-                    <h3 className="text-xl font-semibold text-white">{selectedPlugin.manifest.name}</h3>
-                    <span className="text-sm text-gray-400">v{selectedPlugin.manifest.version}</span>
+                    <div
+                      className={`w-3 h-3 rounded-full ${selectedPlugin.enabled ? 'bg-green-400' : 'bg-red-400'}`}
+                    />
+                    <h3 className="text-xl font-semibold text-white">
+                      {selectedPlugin.manifest.name}
+                    </h3>
+                    <span className="text-sm text-gray-400">
+                      v{selectedPlugin.manifest.version}
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
-                      onClick={() => handleTogglePlugin(selectedPlugin.manifest.id, !selectedPlugin.enabled)}
+                      onClick={() =>
+                        handleTogglePlugin(selectedPlugin.manifest.id, !selectedPlugin.enabled)
+                      }
                       variant="outline"
                       size="sm"
-                      className={selectedPlugin.enabled ? 'border-red-500/50 text-red-400' : 'border-green-500/50 text-green-400'}
+                      className={
+                        selectedPlugin.enabled
+                          ? 'border-red-500/50 text-red-400'
+                          : 'border-green-500/50 text-green-400'
+                      }
                     >
-                      {selectedPlugin.enabled ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                      {selectedPlugin.enabled ? (
+                        <Pause className="w-4 h-4" />
+                      ) : (
+                        <Play className="w-4 h-4" />
+                      )}
                       {selectedPlugin.enabled ? 'Disable' : 'Enable'}
                     </Button>
                     <Button
@@ -253,15 +283,21 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                   </div>
                   <div>
                     <span className="text-gray-400">Installed:</span>
-                    <span className="text-white ml-2">{selectedPlugin.installedAt.toLocaleDateString()}</span>
+                    <span className="text-white ml-2">
+                      {selectedPlugin.installedAt.toLocaleDateString()}
+                    </span>
                   </div>
                   <div>
                     <span className="text-gray-400">Last Used:</span>
-                    <span className="text-white ml-2">{selectedPlugin.lastUsed.toLocaleDateString()}</span>
+                    <span className="text-white ml-2">
+                      {selectedPlugin.lastUsed.toLocaleDateString()}
+                    </span>
                   </div>
                   <div>
                     <span className="text-gray-400">Permissions:</span>
-                    <span className="text-white ml-2">{selectedPlugin.manifest.permissions?.length || 0}</span>
+                    <span className="text-white ml-2">
+                      {selectedPlugin.manifest.permissions?.length || 0}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -299,9 +335,7 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                           </div>
                         </div>
                       </div>
-                    )) || (
-                      <p className="text-gray-400">No permissions configured</p>
-                    )}
+                    )) || <p className="text-gray-400">No permissions configured</p>}
 
                     {/* API Keys Section */}
                     <div className="mt-8">
@@ -321,8 +355,11 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                         {apiKeys.length === 0 ? (
                           <p className="text-gray-400">No API keys generated</p>
                         ) : (
-                          apiKeys.map((key) => (
-                            <div key={key.key} className="p-3 rounded border border-white/10 bg-white/5">
+                          apiKeys.map(key => (
+                            <div
+                              key={key.key}
+                              className="p-3 rounded border border-white/10 bg-white/5"
+                            >
                               <div className="flex items-center justify-between">
                                 <div>
                                   <p className="font-medium text-white">{key.name}</p>
@@ -334,7 +371,9 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                                   </p>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                  <div className={`w-2 h-2 rounded-full ${key.enabled ? 'bg-green-400' : 'bg-red-400'}`} />
+                                  <div
+                                    className={`w-2 h-2 rounded-full ${key.enabled ? 'bg-green-400' : 'bg-red-400'}`}
+                                  />
                                   <Button
                                     onClick={() => handleDeleteAPIKey(key.key)}
                                     variant="ghost"
@@ -347,7 +386,10 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                               </div>
                               <div className="mt-2 flex flex-wrap gap-1">
                                 {key.permissions.map((perm, index) => (
-                                  <span key={index} className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">
+                                  <span
+                                    key={index}
+                                    className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded"
+                                  >
                                     {perm}
                                   </span>
                                 ))}
@@ -395,7 +437,7 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                   </label>
                   <textarea
                     value={manifestText}
-                    onChange={(e) => setManifestText(e.target.value)}
+                    onChange={e => setManifestText(e.target.value)}
                     placeholder={`{
   "id": "my-plugin",
   "name": "My Plugin",
@@ -425,7 +467,7 @@ export function PluginManager({ onClose }: PluginManagerProps) {
                   </label>
                   <textarea
                     value={codeText}
-                    onChange={(e) => setCodeText(e.target.value)}
+                    onChange={e => setCodeText(e.target.value)}
                     placeholder={`// Plugin code
 function onMessageReceived(context, data) {
   console.log('Message received:', data);
@@ -481,10 +523,7 @@ module.exports = {
             </div>
 
             <div className="flex items-center justify-end space-x-3 p-4 border-t border-white/10">
-              <Button
-                onClick={() => setShowInstallDialog(false)}
-                variant="outline"
-              >
+              <Button onClick={() => setShowInstallDialog(false)} variant="outline">
                 Cancel
               </Button>
               <Button

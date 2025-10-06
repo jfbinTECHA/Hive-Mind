@@ -6,25 +6,28 @@ export async function POST(request: NextRequest) {
     const { action, userId, characterId } = await request.json();
 
     if (!userId || !characterId) {
-      return NextResponse.json(
-        { error: 'userId and characterId are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'userId and characterId are required' }, { status: 400 });
     }
 
     switch (action) {
       case 'process':
-        const reflection = await dreamsAndReflectionSystem.processDailyReflection(userId, characterId);
+        const reflection = await dreamsAndReflectionSystem.processDailyReflection(
+          userId,
+          characterId
+        );
         return NextResponse.json({
           success: true,
-          reflection
+          reflection,
         });
 
       case 'trigger':
-        const manualReflection = await dreamsAndReflectionSystem.triggerReflection(userId, characterId);
+        const manualReflection = await dreamsAndReflectionSystem.triggerReflection(
+          userId,
+          characterId
+        );
         return NextResponse.json({
           success: true,
-          reflection: manualReflection
+          reflection: manualReflection,
         });
 
       default:
@@ -33,7 +36,6 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Reflection API error:', error);
     return NextResponse.json(
@@ -55,7 +57,7 @@ export async function GET(request: NextRequest) {
         const traits = dreamsAndReflectionSystem.getPersonalityTraits();
         return NextResponse.json({
           success: true,
-          traits
+          traits,
         });
 
       case 'history':
@@ -65,10 +67,14 @@ export async function GET(request: NextRequest) {
             { status: 400 }
           );
         }
-        const history = await dreamsAndReflectionSystem.getReflectionHistory(userId, characterId || undefined, 10);
+        const history = await dreamsAndReflectionSystem.getReflectionHistory(
+          userId,
+          characterId || undefined,
+          10
+        );
         return NextResponse.json({
           success: true,
-          history
+          history,
         });
 
       default:
@@ -77,12 +83,8 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Reflection GET API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

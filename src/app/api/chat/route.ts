@@ -4,57 +4,80 @@ import { localAIService } from '@/lib/ollama';
 import { MemoryManager } from '@/lib/memory';
 import { EmotionalStateManager, EmotionalMemory } from '@/lib/emotion';
 import { GroupChatManager } from '@/lib/groupChat';
+import { chatRequestSchema, validateRequest } from '@/lib/validation';
+import { checkRateLimit, chatRateLimiter } from '@/lib/rateLimit';
+import { moderateContent } from '@/lib/contentModeration';
+import { logger, PerformanceMonitor } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
-  try {
-    const { message, context, aiName, userId, groupChat, participantIds } = await request.json();
+  const startTime = Date.now();
+  const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    if (!message) {
+  try {
+    logger.info('Chat request received', { sessionId });
+
+    // Check rate limit
+    const rateLimitResult = await checkRateLimit(request, chatRateLimiter);
+    if (!rateLimitResult.allowed) {
+      logger.warn('Rate limit exceeded', { sessionId, headers: rateLimitResult.headers });
       return NextResponse.json(
-        { error: 'Missing required field: message' },
-        { status: 400 }
+        { error: 'Rate limit exceeded. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers,
+        }
       );
+    }
+
+    const body = await request.json();
+    const validation = validateRequest(chatRequestSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
+    const { message, context, aiName, userId, groupChat, participantIds } = validation.data;
+
+    // Check content moderation
+    const moderation = await moderateContent(message, 'chat');
+    if (!moderation.allowed) {
+      return NextResponse.json({
+        error: 'Content violates community guidelines',
+        violations: moderation.result.violations,
+        recommendations: moderation.result.recommendations,
+      }, { status: 400 });
     }
 
     // Handle group chat
     if (groupChat && participantIds && participantIds.length > 1) {
-      return await handleGroupChat(message, participantIds, userId, context);
-    }
-
-    if (!aiName) {
-      return NextResponse.json(
-        { error: 'Missing required field: aiName (for single chat)' },
-        { status: 400 }
-      );
+      return await handleGroupChat(message, participantIds, userId ? String(userId) : undefined, context);
     }
 
     // Get or create user
-    let user = userId ? await Database.getUserById(parseInt(userId)) : null;
+    let user = userId ? await Database.getUserById(parseInt(String(userId))) : null;
     if (!user) {
       user = await Database.createUser('Anonymous User');
     }
 
     // Find the AI character
-    let character = await Database.getCharacterByName(aiName);
-    if (!character && !isNaN(parseInt(aiName))) {
-      character = await Database.getCharacterById(parseInt(aiName));
+    const aiNameStr = aiName as string; // Validation ensures it's present for single chat
+    let character = await Database.getCharacterByName(aiNameStr);
+    if (!character && !isNaN(parseInt(aiNameStr))) {
+      character = await Database.getCharacterById(parseInt(aiNameStr));
     }
 
     if (!character) {
-      return NextResponse.json(
-        { error: 'AI character not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'AI character not found' }, { status: 404 });
     }
 
     // Load or initialize emotional state
-    let emotionalState = character.emotional_state ?
-      JSON.parse(JSON.stringify(character.emotional_state)) :
-      EmotionalStateManager.createDefaultState();
+    const emotionalState = character.emotional_state
+      ? JSON.parse(JSON.stringify(character.emotional_state))
+      : EmotionalStateManager.createDefaultState();
 
     // Check cache for similar conversations
     const cacheKey = `chat:${character.id}:${user.id}:${message.slice(0, 50)}`;
-    let cachedResponse = await Cache.get(cacheKey);
+    const cachedResponse = await Cache.get(cacheKey);
 
     let response: string;
     if (cachedResponse) {
@@ -70,10 +93,19 @@ export async function POST(request: NextRequest) {
       );
 
       // Combine conversation context with memory context
-      const fullContext = [...context, ...relevantMemories.map(mem => ({ content: mem, type: 'memory' }))];
+      const fullContext = [
+        ...context,
+        ...relevantMemories.map(mem => ({ content: mem, type: 'memory' })),
+      ];
 
       // Generate AI response using local Ollama model with memory context and emotional state
-      response = await localAIService.generateResponse(message, character, user.id, fullContext, emotionalState);
+      response = await localAIService.generateResponse(
+        message,
+        character,
+        user.id,
+        fullContext,
+        emotionalState
+      );
 
       // Cache the response for 5 minutes
       await Cache.set(cacheKey, response, 300);
@@ -123,28 +155,42 @@ export async function POST(request: NextRequest) {
       undefined // No embedding for emotional memories
     );
 
+    const processingTime = Date.now() - startTime;
+    logger.info('Chat response sent', {
+      sessionId,
+      userId: user.id,
+      characterId: character.id,
+      processingTime,
+      messageLength: message.length,
+      responseLength: response.length,
+    });
+
     return NextResponse.json({
       response,
       character: {
         name: character.name,
         avatar: character.avatar_url,
-        emotion: getEmotionFromResponse(response)
+        emotion: getEmotionFromResponse(response),
       },
-      conversationId
+      conversationId,
     });
-
   } catch (error) {
-    console.error('Chat API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    const processingTime = Date.now() - startTime;
+    logger.error('Chat API error', {
+      sessionId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      processingTime,
+    });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-
-
-async function handleGroupChat(message: string, participantIds: number[], userId: string, context: any) {
+async function handleGroupChat(
+  message: string,
+  participantIds: number[],
+  userId: string | undefined,
+  context: any
+) {
   try {
     // Get or create user
     let user = userId ? await Database.getUserById(parseInt(userId)) : null;
@@ -156,11 +202,7 @@ async function handleGroupChat(message: string, participantIds: number[], userId
     const groupSession = await GroupChatManager.initializeGroupChat(participantIds);
 
     // Process the group chat turn
-    const newMessages = await GroupChatManager.processGroupChatTurn(
-      groupSession,
-      message,
-      user.id
-    );
+    const newMessages = await GroupChatManager.processGroupChatTurn(groupSession, message, user.id);
 
     // Store all messages in database
     const conversationId = `group_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -198,30 +240,32 @@ async function handleGroupChat(message: string, participantIds: number[], userId
     }
 
     return NextResponse.json({
-      responses: newMessages.filter(msg => msg.type !== 'user').map(msg => ({
-        response: msg.content,
-        character: {
-          name: msg.sender,
-          id: msg.senderId,
-          emotion: getEmotionFromResponse(msg.content)
-        }
-      })),
+      responses: newMessages
+        .filter(msg => msg.type !== 'user')
+        .map(msg => ({
+          response: msg.content,
+          character: {
+            name: msg.sender,
+            id: msg.senderId,
+            emotion: getEmotionFromResponse(msg.content),
+          },
+        })),
       conversationId,
-      groupChat: true
+      groupChat: true,
     });
-
   } catch (error) {
     console.error('Group chat error:', error);
-    return NextResponse.json(
-      { error: 'Failed to process group chat' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process group chat' }, { status: 500 });
   }
 }
 
 function getEmotionFromResponse(response: string): string {
   const lowerResponse = response.toLowerCase();
-  if (lowerResponse.includes('😊') || lowerResponse.includes('awesome') || lowerResponse.includes('love')) {
+  if (
+    lowerResponse.includes('😊') ||
+    lowerResponse.includes('awesome') ||
+    lowerResponse.includes('love')
+  ) {
     return 'happy';
   } else if (lowerResponse.includes('😂') || lowerResponse.includes('hilarious')) {
     return 'excited';

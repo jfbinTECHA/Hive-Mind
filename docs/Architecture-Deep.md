@@ -11,12 +11,14 @@ This document provides an in-depth exploration of AI Hive Mind's architecture, i
 **Design Decision**: Each major feature is implemented as an isolated module with clear interfaces.
 
 **Benefits**:
+
 - **Maintainability**: Changes to one module don't affect others
 - **Testability**: Each module can be tested independently
 - **Scalability**: New features can be added without modifying existing code
 - **Team Development**: Multiple developers can work on different modules simultaneously
 
 **Implementation**:
+
 ```typescript
 // Each module exports a clear interface
 export interface MemorySystem {
@@ -35,29 +37,31 @@ const aiEngine = new AIEngine(memorySystem, personalitySystem);
 **Design Decision**: Components communicate through a centralized event system rather than direct dependencies.
 
 **Benefits**:
+
 - **Loose Coupling**: Components don't need to know about each other
 - **Extensibility**: New components can listen to existing events
 - **Debugging**: Event logs provide clear audit trails
 - **Plugin Architecture**: External plugins can hook into the event system
 
 **Implementation**:
+
 ```typescript
 // Event definitions
 export enum SystemEvent {
   MESSAGE_RECEIVED = 'message_received',
   MEMORY_CREATED = 'memory_created',
-  COMPANION_UPDATED = 'companion_updated'
+  COMPANION_UPDATED = 'companion_updated',
 }
 
 // Event emission
 eventEmitter.emit(SystemEvent.MESSAGE_RECEIVED, {
   message: userMessage,
   companionId: activeCompanion,
-  timestamp: Date.now()
+  timestamp: Date.now(),
 });
 
 // Event handling
-eventEmitter.on(SystemEvent.MESSAGE_RECEIVED, async (data) => {
+eventEmitter.on(SystemEvent.MESSAGE_RECEIVED, async data => {
   await memorySystem.extractAndStore(data.message, data.companionId);
   await analyticsSystem.trackInteraction(data);
 });
@@ -70,6 +74,7 @@ eventEmitter.on(SystemEvent.MESSAGE_RECEIVED, async (data) => {
 #### State Management Strategy
 
 **Context API + Reducer Pattern**:
+
 ```typescript
 // App-level state structure
 interface AppState {
@@ -85,7 +90,7 @@ interface AppState {
 export enum ActionType {
   ADD_MESSAGE = 'ADD_MESSAGE',
   UPDATE_COMPANION = 'UPDATE_COMPANION',
-  SET_ACTIVE_COMPANION = 'SET_ACTIVE_COMPANION'
+  SET_ACTIVE_COMPANION = 'SET_ACTIVE_COMPANION',
 }
 
 // Reducer for state updates
@@ -94,7 +99,7 @@ function appReducer(state: AppState, action: Action): AppState {
     case ActionType.ADD_MESSAGE:
       return {
         ...state,
-        messages: [...state.messages, action.payload]
+        messages: [...state.messages, action.payload],
       };
     default:
       return state;
@@ -103,6 +108,7 @@ function appReducer(state: AppState, action: Action): AppState {
 ```
 
 **Why This Approach**:
+
 - **Type Safety**: Full TypeScript support prevents runtime errors
 - **Predictable Updates**: Reducer pattern ensures consistent state changes
 - **Performance**: Context API with selective re-rendering
@@ -133,6 +139,7 @@ App (Context Provider)
 #### API Route Structure
 
 **RESTful Design with Next.js App Router**:
+
 ```
 app/api/
 ├── chat/route.ts              # Main chat endpoint
@@ -152,6 +159,7 @@ app/api/
 ```
 
 **Route Handler Pattern**:
+
 ```typescript
 export async function POST(request: NextRequest) {
   try {
@@ -166,15 +174,11 @@ export async function POST(request: NextRequest) {
     // Response formatting
     return NextResponse.json({
       success: true,
-      data: response
+      data: response,
     });
-
   } catch (error) {
     // Error handling
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
+    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
   }
 }
 ```
@@ -186,6 +190,7 @@ export async function POST(request: NextRequest) {
 **Design Decision**: Use vector embeddings for semantic search rather than keyword matching.
 
 **Implementation**:
+
 ```typescript
 interface Memory {
   id: string;
@@ -210,7 +215,7 @@ class MemorySystem {
       id: generateId(),
       content,
       embedding,
-      metadata: { ...metadata, timestamp: new Date() }
+      metadata: { ...metadata, timestamp: new Date() },
     });
   }
 
@@ -222,7 +227,7 @@ class MemorySystem {
     const results = await this.vectorStore.search(queryEmbedding, {
       filter: { companionId },
       limit: 10,
-      threshold: 0.7
+      threshold: 0.7,
     });
 
     return results;
@@ -231,6 +236,7 @@ class MemorySystem {
 ```
 
 **Why Vector Search**:
+
 - **Semantic Understanding**: Captures meaning, not just keywords
 - **Context Awareness**: Understands relationships between concepts
 - **Multilingual Support**: Works across different languages
@@ -243,6 +249,7 @@ class MemorySystem {
 **Security Strategy**: Plugins run in isolated environments with restricted access.
 
 **Implementation**:
+
 ```typescript
 interface PluginSandbox {
   // Allowed APIs
@@ -283,7 +290,7 @@ class PluginExecutor {
           throw new Error(`Permission denied: ${prop}`);
         }
         return target[prop];
-      }
+      },
     });
   }
 }
@@ -292,6 +299,7 @@ class PluginExecutor {
 #### Event System Architecture
 
 **Pub/Sub Pattern Implementation**:
+
 ```typescript
 class EventEmitter {
   private listeners: Map<string, EventHandler[]> = new Map();
@@ -353,6 +361,7 @@ Raw Message → Entity Extraction → Importance Scoring → Embedding Generatio
 ### Caching Strategy
 
 **Multi-Level Caching**:
+
 ```typescript
 class CacheManager {
   // Memory cache for frequent access
@@ -387,6 +396,7 @@ class CacheManager {
 ### Database Optimization
 
 **Indexing Strategy**:
+
 ```sql
 -- Optimized indexes for common queries
 CREATE INDEX idx_memory_companion_timestamp ON memories(companion_id, created_at DESC);
@@ -463,6 +473,7 @@ class APISecurity {
 ### Containerization Strategy
 
 **Docker Multi-Stage Build**:
+
 ```dockerfile
 # Build stage
 FROM node:18-alpine AS builder
@@ -483,6 +494,7 @@ CMD ["npm", "start"]
 ### Scalability Considerations
 
 **Horizontal Scaling**:
+
 - **Stateless Design**: Application servers can be scaled independently
 - **Database Sharding**: Data distributed across multiple database instances
 - **CDN Integration**: Static assets served via content delivery network

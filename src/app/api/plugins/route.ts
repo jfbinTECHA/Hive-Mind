@@ -20,19 +20,16 @@ export async function POST(request: NextRequest) {
       method: method.toUpperCase(),
       headers: headers || {},
       body: requestBody,
-      query: query || {}
+      query: query || {},
     });
 
     return new NextResponse(result.body, {
       status: result.status,
-      headers: result.headers
+      headers: result.headers,
     });
   } catch (error) {
     console.error('Plugin API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -52,17 +49,14 @@ export async function GET(request: NextRequest) {
             version: p.manifest.version,
             description: p.manifest.description,
             author: p.manifest.author,
-            enabled: p.enabled
-          }))
+            enabled: p.enabled,
+          })),
         });
 
       case 'keys':
         const pluginId = searchParams.get('pluginId');
         if (!pluginId) {
-          return NextResponse.json(
-            { error: 'pluginId parameter required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: 'pluginId parameter required' }, { status: 400 });
         }
         const keys = pluginSystem.getPluginAPIKeys(pluginId);
         return NextResponse.json({
@@ -72,21 +66,15 @@ export async function GET(request: NextRequest) {
             permissions: k.permissions,
             enabled: k.enabled,
             createdAt: k.createdAt,
-            lastUsed: k.lastUsed
-          }))
+            lastUsed: k.lastUsed,
+          })),
         });
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action parameter' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action parameter' }, { status: 400 });
     }
   } catch (error) {
     console.error('Plugin API GET error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

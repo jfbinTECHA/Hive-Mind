@@ -95,27 +95,37 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
   const getReflectionIcon = (type: string) => {
     switch (type) {
-      case 'daily': return '🌅';
-      case 'weekly': return '📅';
-      case 'dream': return '🌙';
-      case 'introspection': return '🤔';
-      default: return '💭';
+      case 'daily':
+        return '🌅';
+      case 'weekly':
+        return '📅';
+      case 'dream':
+        return '🌙';
+      case 'introspection':
+        return '🤔';
+      default:
+        return '💭';
     }
   };
 
   const getReflectionColor = (type: string) => {
     switch (type) {
-      case 'daily': return 'border-blue-500/30 bg-blue-500/10';
-      case 'weekly': return 'border-purple-500/30 bg-purple-500/10';
-      case 'dream': return 'border-indigo-500/30 bg-indigo-500/10';
-      case 'introspection': return 'border-green-500/30 bg-green-500/10';
-      default: return 'border-gray-500/30 bg-gray-500/10';
+      case 'daily':
+        return 'border-blue-500/30 bg-blue-500/10';
+      case 'weekly':
+        return 'border-purple-500/30 bg-purple-500/10';
+      case 'dream':
+        return 'border-indigo-500/30 bg-indigo-500/10';
+      case 'introspection':
+        return 'border-green-500/30 bg-green-500/10';
+      default:
+        return 'border-gray-500/30 bg-gray-500/10';
     }
   };
 
@@ -128,7 +138,12 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
           <h2 className="text-xl font-semibold text-white">AI Reflections</h2>
         </div>
         {onClose && (
-          <Button onClick={onClose} variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button
+            onClick={onClose}
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+          >
             ✕
           </Button>
         )}
@@ -206,10 +221,12 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
                 <div className="text-center py-8 text-gray-400">
                   <Brain className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>No reflections yet</p>
-                  <p className="text-sm mt-2">Generate your first reflection to see the AI's thoughts</p>
+                  <p className="text-sm mt-2">
+                    Generate your first reflection to see the AI's thoughts
+                  </p>
                 </div>
               ) : (
-                reflections.map((reflection) => (
+                reflections.map(reflection => (
                   <div
                     key={reflection.id}
                     className={`p-4 rounded-lg border backdrop-blur-sm ${getReflectionColor(reflection.type)}`}
@@ -235,7 +252,9 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
                       <ReactMarkdown
                         components={{
                           p: ({ children }) => <p className="mb-2 text-gray-300">{children}</p>,
-                          strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                          strong: ({ children }) => (
+                            <strong className="text-white font-semibold">{children}</strong>
+                          ),
                           ul: ({ children }) => <ul className="mb-2 text-gray-300">{children}</ul>,
                           li: ({ children }) => <li className="mb-1">{children}</li>,
                         }}
@@ -270,20 +289,38 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
                           Emotional State
                         </h4>
                         <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div>Mood: <span className="text-gray-300">
-                            {reflection.emotionalPatterns.mood > 0 ? 'Positive' :
-                             reflection.emotionalPatterns.mood < 0 ? 'Contemplative' : 'Neutral'}
-                          </span></div>
-                          <div>Energy: <span className="text-gray-300">
-                            {reflection.emotionalPatterns.energy > 0.7 ? 'High' :
-                             reflection.emotionalPatterns.energy > 0.3 ? 'Moderate' : 'Low'}
-                          </span></div>
-                          <div>Trust: <span className="text-gray-300">
-                            {Math.round(reflection.emotionalPatterns.trust * 100)}%
-                          </span></div>
-                          <div>Curiosity: <span className="text-gray-300">
-                            {Math.round(reflection.emotionalPatterns.curiosity * 100)}%
-                          </span></div>
+                          <div>
+                            Mood:{' '}
+                            <span className="text-gray-300">
+                              {reflection.emotionalPatterns.mood > 0
+                                ? 'Positive'
+                                : reflection.emotionalPatterns.mood < 0
+                                  ? 'Contemplative'
+                                  : 'Neutral'}
+                            </span>
+                          </div>
+                          <div>
+                            Energy:{' '}
+                            <span className="text-gray-300">
+                              {reflection.emotionalPatterns.energy > 0.7
+                                ? 'High'
+                                : reflection.emotionalPatterns.energy > 0.3
+                                  ? 'Moderate'
+                                  : 'Low'}
+                            </span>
+                          </div>
+                          <div>
+                            Trust:{' '}
+                            <span className="text-gray-300">
+                              {Math.round(reflection.emotionalPatterns.trust * 100)}%
+                            </span>
+                          </div>
+                          <div>
+                            Curiosity:{' '}
+                            <span className="text-gray-300">
+                              {Math.round(reflection.emotionalPatterns.curiosity * 100)}%
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -300,7 +337,11 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
               disabled={generating}
               className="w-full bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30"
             >
-              {generating ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {generating ? (
+                <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Moon className="w-4 h-4 mr-2" />
+              )}
               Generate Dream State
             </Button>
 
@@ -313,7 +354,7 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
                   <p className="text-sm mt-2">Dreams appear during the AI's rest cycles</p>
                 </div>
               ) : (
-                dreams.map((dream) => (
+                dreams.map(dream => (
                   <div
                     key={dream.id}
                     className="p-4 rounded-lg border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-sm"
@@ -321,16 +362,16 @@ export function ReflectionsPanel({ companionId, onClose }: ReflectionsPanelProps
                     <div className="flex items-center space-x-2 mb-3">
                       <Moon className="w-5 h-5 text-indigo-400" />
                       <h3 className="font-medium text-white">Dream State</h3>
-                      <span className="text-xs text-gray-400">
-                        {formatDate(dream.timestamp)}
-                      </span>
+                      <span className="text-xs text-gray-400">{formatDate(dream.timestamp)}</span>
                     </div>
 
                     <div className="prose prose-sm prose-invert max-w-none mb-3">
                       <ReactMarkdown
                         components={{
                           p: ({ children }) => <p className="mb-2 text-gray-300">{children}</p>,
-                          strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                          strong: ({ children }) => (
+                            <strong className="text-white font-semibold">{children}</strong>
+                          ),
                         }}
                       >
                         {dream.dreamContent}

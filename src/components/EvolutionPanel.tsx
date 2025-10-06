@@ -31,7 +31,7 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
     try {
       const [evolutionData, progressData] = await Promise.all([
         evolutionSystem.getCompanionEvolution(companionId),
-        evolutionSystem.getEvolutionProgress(companionId)
+        evolutionSystem.getEvolutionProgress(companionId),
       ]);
 
       setEvolution(evolutionData);
@@ -63,34 +63,52 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
 
   const getStageIcon = (stageId: string) => {
     switch (stageId) {
-      case 'acquaintance': return '🤝';
-      case 'familiar': return '👋';
-      case 'friend': return '🤗';
-      case 'close_companion': return '💕';
-      case 'soulmate': return '💖';
-      default: return '⭐';
+      case 'acquaintance':
+        return '🤝';
+      case 'familiar':
+        return '👋';
+      case 'friend':
+        return '🤗';
+      case 'close_companion':
+        return '💕';
+      case 'soulmate':
+        return '💖';
+      default:
+        return '⭐';
     }
   };
 
   const getStageColor = (stageId: string) => {
     switch (stageId) {
-      case 'acquaintance': return 'border-blue-500/30 bg-blue-500/10';
-      case 'familiar': return 'border-green-500/30 bg-green-500/10';
-      case 'friend': return 'border-purple-500/30 bg-purple-500/10';
-      case 'close_companion': return 'border-gold-500/30 bg-gold-500/10';
-      case 'soulmate': return 'border-pink-500/30 bg-pink-500/10';
-      default: return 'border-gray-500/30 bg-gray-500/10';
+      case 'acquaintance':
+        return 'border-blue-500/30 bg-blue-500/10';
+      case 'familiar':
+        return 'border-green-500/30 bg-green-500/10';
+      case 'friend':
+        return 'border-purple-500/30 bg-purple-500/10';
+      case 'close_companion':
+        return 'border-gold-500/30 bg-gold-500/10';
+      case 'soulmate':
+        return 'border-pink-500/30 bg-pink-500/10';
+      default:
+        return 'border-gray-500/30 bg-gray-500/10';
     }
   };
 
   const getTraitIcon = (trait: string) => {
     switch (trait) {
-      case 'empathy': return '❤️';
-      case 'creativity': return '🎨';
-      case 'logic': return '🧠';
-      case 'humor': return '😂';
-      case 'initiative': return '⚡';
-      default: return '✨';
+      case 'empathy':
+        return '❤️';
+      case 'creativity':
+        return '🎨';
+      case 'logic':
+        return '🧠';
+      case 'humor':
+        return '😂';
+      case 'initiative':
+        return '⚡';
+      default:
+        return '✨';
     }
   };
 
@@ -123,7 +141,12 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
           <h2 className="text-xl font-semibold text-white">Companion Evolution</h2>
         </div>
         {onClose && (
-          <Button onClick={onClose} variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+          <Button
+            onClick={onClose}
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white"
+          >
             ✕
           </Button>
         )}
@@ -131,14 +154,14 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
 
       {/* Current Stage Display */}
       <div className="p-4 border-b border-white/10">
-        <div className={`p-4 rounded-lg border backdrop-blur-sm ${getStageColor(evolution.currentStage.id)}`}>
+        <div
+          className={`p-4 rounded-lg border backdrop-blur-sm ${getStageColor(evolution.currentStage.id)}`}
+        >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
               <span className="text-3xl">{getStageIcon(evolution.currentStage.id)}</span>
               <div>
-                <h3 className="text-lg font-semibold text-white">
-                  {evolution.currentStage.name}
-                </h3>
+                <h3 className="text-lg font-semibold text-white">{evolution.currentStage.name}</h3>
                 <p className="text-sm text-gray-300">Level {evolution.currentStage.level}</p>
               </div>
             </div>
@@ -167,11 +190,15 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
               <div className="text-gray-400">Interactions</div>
             </div>
             <div className="text-center">
-              <div className="text-white font-semibold">{Math.round(evolution.intimacyLevel * 100)}%</div>
+              <div className="text-white font-semibold">
+                {Math.round(evolution.intimacyLevel * 100)}%
+              </div>
               <div className="text-gray-400">Intimacy</div>
             </div>
             <div className="text-center">
-              <div className="text-white font-semibold">{Math.round(evolution.trustLevel * 100)}%</div>
+              <div className="text-white font-semibold">
+                {Math.round(evolution.trustLevel * 100)}%
+              </div>
               <div className="text-gray-400">Trust</div>
             </div>
           </div>
@@ -186,7 +213,9 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
             Next Evolution
           </h3>
 
-          <div className={`p-4 rounded-lg border backdrop-blur-sm ${getStageColor(evolution.nextEvolution.id)}`}>
+          <div
+            className={`p-4 rounded-lg border backdrop-blur-sm ${getStageColor(evolution.nextEvolution.id)}`}
+          >
             <div className="flex items-center space-x-3 mb-3">
               <span className="text-2xl">{getStageIcon(evolution.nextEvolution.id)}</span>
               <div>
@@ -200,19 +229,22 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Interactions:</span>
                 <span className="text-white">
-                  {progress.requirements.interactions.current} / {progress.requirements.interactions.required}
+                  {progress.requirements.interactions.current} /{' '}
+                  {progress.requirements.interactions.required}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Intimacy:</span>
                 <span className="text-white">
-                  {Math.round(progress.requirements.intimacy.current * 100)}% / {Math.round(progress.requirements.intimacy.required * 100)}%
+                  {Math.round(progress.requirements.intimacy.current * 100)}% /{' '}
+                  {Math.round(progress.requirements.intimacy.required * 100)}%
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Trust:</span>
                 <span className="text-white">
-                  {Math.round(progress.requirements.trust.current * 100)}% / {Math.round(progress.requirements.trust.required * 100)}%
+                  {Math.round(progress.requirements.trust.current * 100)}% /{' '}
+                  {Math.round(progress.requirements.trust.required * 100)}%
                 </span>
               </div>
             </div>
@@ -223,7 +255,10 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
                 <h5 className="text-sm font-medium text-white mb-2">Trait Enhancements:</h5>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(evolution.nextEvolution.traitChanges).map(([trait, change]) => (
-                    <div key={trait} className="flex items-center space-x-1 bg-white/10 rounded px-2 py-1">
+                    <div
+                      key={trait}
+                      className="flex items-center space-x-1 bg-white/10 rounded px-2 py-1"
+                    >
                       <span>{getTraitIcon(trait)}</span>
                       <span className="text-xs text-white capitalize">{trait}</span>
                       <span className="text-xs text-green-400">+{change}</span>
@@ -239,7 +274,10 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
                 <h5 className="text-sm font-medium text-white mb-2">New Capabilities:</h5>
                 <div className="flex flex-wrap gap-2">
                   {evolution.nextEvolution.newCapabilities.map(capability => (
-                    <div key={capability} className="flex items-center space-x-1 bg-purple-500/20 text-purple-300 rounded px-2 py-1">
+                    <div
+                      key={capability}
+                      className="flex items-center space-x-1 bg-purple-500/20 text-purple-300 rounded px-2 py-1"
+                    >
                       <Sparkles className="w-3 h-3" />
                       <span className="text-xs capitalize">{capability.replace('_', ' ')}</span>
                     </div>
@@ -260,14 +298,12 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
           </h3>
 
           <div className="space-y-3">
-            {evolution.evolutionHistory.map((event) => (
+            {evolution.evolutionHistory.map(event => (
               <div key={event.id} className="p-3 bg-white/5 rounded border border-white/10">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
                     <span className="text-lg">{getStageIcon(event.toStage.id)}</span>
-                    <span className="text-white font-medium">
-                      Evolved to {event.toStage.name}
-                    </span>
+                    <span className="text-white font-medium">Evolved to {event.toStage.name}</span>
                   </div>
                   <span className="text-xs text-gray-400">
                     {event.timestamp.toLocaleDateString()}
@@ -276,7 +312,10 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
                 <p className="text-sm text-gray-300 mb-2">{event.triggerReason}</p>
                 <div className="flex flex-wrap gap-1">
                   {event.insights.map((insight, index) => (
-                    <span key={index} className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">
+                    <span
+                      key={index}
+                      className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded"
+                    >
                       {insight}
                     </span>
                   ))}
@@ -291,7 +330,7 @@ export function EvolutionPanel({ companionId, onClose }: EvolutionPanelProps) {
       <div className="p-4">
         <h3 className="text-lg font-semibold text-white mb-3">Debug Controls</h3>
         <div className="grid grid-cols-2 gap-2">
-          {evolutionSystem.getAllStages().map((stage) => (
+          {evolutionSystem.getAllStages().map(stage => (
             <Button
               key={stage.id}
               onClick={() => handleEvolution(stage.id)}

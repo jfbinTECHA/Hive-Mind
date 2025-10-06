@@ -87,7 +87,9 @@ export class AnalyticsSystem {
   /**
    * Get comprehensive analytics data
    */
-  async getAnalytics(timeRange: { start: Date; end: Date } = this.getDefaultTimeRange()): Promise<AnalyticsData> {
+  async getAnalytics(
+    timeRange: { start: Date; end: Date } = this.getDefaultTimeRange()
+  ): Promise<AnalyticsData> {
     const cacheKey = `analytics_${timeRange.start.getTime()}_${timeRange.end.getTime()}`;
 
     // Check cache first
@@ -100,7 +102,7 @@ export class AnalyticsSystem {
     const [usage, memory, interactions] = await Promise.all([
       this.calculateUsageStats(timeRange),
       this.calculateMemoryStats(timeRange),
-      this.calculateInteractionStats(timeRange)
+      this.calculateInteractionStats(timeRange),
     ]);
 
     const analyticsData: AnalyticsData = {
@@ -108,7 +110,7 @@ export class AnalyticsSystem {
       memory,
       interactions,
       timeRange,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     // Cache the result
@@ -185,7 +187,7 @@ export class AnalyticsSystem {
       series.push({
         timestamp: new Date(time),
         value,
-        label: this.formatTimeLabel(new Date(time), interval)
+        label: this.formatTimeLabel(new Date(time), interval),
       });
     }
 
@@ -208,7 +210,7 @@ export class AnalyticsSystem {
       averageSessionLength: 24.5, // minutes
       peakUsageHour: 14, // 2 PM
       mostActiveDay: 'Wednesday',
-      retentionRate: 0.87
+      retentionRate: 0.87,
     };
   }
 
@@ -223,22 +225,25 @@ export class AnalyticsSystem {
         experience: 156,
         relationship: 98,
         knowledge: 67,
-        shared_experience: 12
+        shared_experience: 12,
       },
       memoriesByCompanion: {
         'companion-1': 234,
         'companion-2': 189,
-        'companion-3': 144
+        'companion-3': 144,
       },
       sharedMemoriesCount: 89,
       memoryClustersCount: 23,
       oldestMemory: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days ago
       newestMemory: new Date(),
-      memoryGrowthRate: 6.3 // memories per day
+      memoryGrowthRate: 6.3, // memories per day
     };
   }
 
-  private async calculateInteractionStats(timeRange: { start: Date; end: Date }): Promise<InteractionStats> {
+  private async calculateInteractionStats(timeRange: {
+    start: Date;
+    end: Date;
+  }): Promise<InteractionStats> {
     // Mock data - would query database in real implementation
     return {
       mostActiveCompanion: 'companion-1',
@@ -247,28 +252,48 @@ export class AnalyticsSystem {
         { topic: 'relationships', count: 132, trend: 0.08 },
         { topic: 'creativity', count: 98, trend: -0.03 },
         { topic: 'technology', count: 87, trend: 0.15 },
-        { topic: 'emotions', count: 76, trend: 0.05 }
+        { topic: 'emotions', count: 76, trend: 0.05 },
       ],
       conversationLengths: {
         average: 12.3,
         longest: 89,
-        shortest: 1
+        shortest: 1,
       },
       responseTimes: {
         average: 2.1, // seconds
         fastest: 0.3,
-        slowest: 15.7
+        slowest: 15.7,
       },
       emotionalTrends: [
         { date: '2024-01-01', averageMood: 0.2, averageEnergy: 0.7, dominantEmotion: 'curious' },
         { date: '2024-01-02', averageMood: 0.4, averageEnergy: 0.8, dominantEmotion: 'excited' },
-        { date: '2024-01-03', averageMood: 0.1, averageEnergy: 0.5, dominantEmotion: 'contemplative' }
+        {
+          date: '2024-01-03',
+          averageMood: 0.1,
+          averageEnergy: 0.5,
+          dominantEmotion: 'contemplative',
+        },
       ],
       companionInteractions: [
-        { companionId: 'companion-1', interactionCount: 456, averageResponseTime: 1.8, satisfactionScore: 0.92 },
-        { companionId: 'companion-2', interactionCount: 389, averageResponseTime: 2.2, satisfactionScore: 0.88 },
-        { companionId: 'companion-3', interactionCount: 234, averageResponseTime: 2.5, satisfactionScore: 0.85 }
-      ]
+        {
+          companionId: 'companion-1',
+          interactionCount: 456,
+          averageResponseTime: 1.8,
+          satisfactionScore: 0.92,
+        },
+        {
+          companionId: 'companion-2',
+          interactionCount: 389,
+          averageResponseTime: 2.2,
+          satisfactionScore: 0.88,
+        },
+        {
+          companionId: 'companion-3',
+          interactionCount: 234,
+          averageResponseTime: 2.5,
+          satisfactionScore: 0.85,
+        },
+      ],
     };
   }
 
@@ -279,12 +304,16 @@ export class AnalyticsSystem {
           { label: 'Messages', value: usage.totalMessages, color: '#3B82F6' },
           { label: 'Interactions', value: usage.totalInteractions, color: '#10B981' },
           { label: 'Voice', value: usage.totalVoiceInteractions, color: '#F59E0B' },
-          { label: 'Memory Ops', value: usage.totalMemoryOperations, color: '#EF4444' }
+          { label: 'Memory Ops', value: usage.totalMemoryOperations, color: '#EF4444' },
         ];
       case 'pie':
         return [
           { label: 'Active Companions', value: usage.activeCompanions, color: '#3B82F6' },
-          { label: 'Total Companions', value: usage.totalCompanions - usage.activeCompanions, color: '#9CA3AF' }
+          {
+            label: 'Total Companions',
+            value: usage.totalCompanions - usage.activeCompanions,
+            color: '#9CA3AF',
+          },
         ];
       default:
         return [];
@@ -297,32 +326,35 @@ export class AnalyticsSystem {
         return Object.entries(memory.memoriesByType).map(([type, count]) => ({
           label: type.replace('_', ' '),
           value: count,
-          color: this.getMemoryTypeColor(type)
+          color: this.getMemoryTypeColor(type),
         }));
       case 'bar':
         return Object.entries(memory.memoriesByCompanion).map(([companion, count]) => ({
           label: `Companion ${companion.split('-')[1]}`,
           value: count,
-          color: '#8B5CF6'
+          color: '#8B5CF6',
         }));
       default:
         return [];
     }
   }
 
-  private generateInteractionChartData(interactions: InteractionStats, chartType: string): ChartDataPoint[] {
+  private generateInteractionChartData(
+    interactions: InteractionStats,
+    chartType: string
+  ): ChartDataPoint[] {
     switch (chartType) {
       case 'bar':
         return interactions.topTopics.slice(0, 5).map(topic => ({
           label: topic.topic,
           value: topic.count,
-          color: '#06B6D4'
+          color: '#06B6D4',
         }));
       case 'line':
         return interactions.emotionalTrends.map(trend => ({
           label: trend.date,
           value: trend.averageMood * 100,
-          color: '#EC4899'
+          color: '#EC4899',
         }));
       default:
         return [];
@@ -342,11 +374,16 @@ export class AnalyticsSystem {
 
   private getIntervalMs(interval: 'hour' | 'day' | 'week' | 'month'): number {
     switch (interval) {
-      case 'hour': return 60 * 60 * 1000;
-      case 'day': return 24 * 60 * 60 * 1000;
-      case 'week': return 7 * 24 * 60 * 60 * 1000;
-      case 'month': return 30 * 24 * 60 * 60 * 1000;
-      default: return 24 * 60 * 60 * 1000;
+      case 'hour':
+        return 60 * 60 * 1000;
+      case 'day':
+        return 24 * 60 * 60 * 1000;
+      case 'week':
+        return 7 * 24 * 60 * 60 * 1000;
+      case 'month':
+        return 30 * 24 * 60 * 60 * 1000;
+      default:
+        return 24 * 60 * 60 * 1000;
     }
   }
 
@@ -371,7 +408,7 @@ export class AnalyticsSystem {
       experience: '#10B981',
       relationship: '#F59E0B',
       knowledge: '#8B5CF6',
-      shared_experience: '#EC4899'
+      shared_experience: '#EC4899',
     };
     return colors[type] || '#6B7280';
   }
@@ -389,7 +426,7 @@ export class AnalyticsSystem {
   getCacheStats(): { size: number; totalEntries: number } {
     return {
       size: this.cache.size,
-      totalEntries: this.cache.size
+      totalEntries: this.cache.size,
     };
   }
 }

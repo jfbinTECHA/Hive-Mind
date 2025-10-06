@@ -190,25 +190,26 @@ export class LocalAIService {
       const systemPrompt = await this.buildSystemPrompt(character, userId, emotionalState);
 
       // Prepare messages for Ollama
-      const messages: ChatMessage[] = [
-        { role: 'system', content: systemPrompt }
-      ];
+      const messages: ChatMessage[] = [{ role: 'system', content: systemPrompt }];
 
       // Add memory context as system messages
       const memoryContext = context.filter(msg => msg.type === 'memory');
       if (memoryContext.length > 0) {
         messages.push({
           role: 'system',
-          content: `Relevant memories from previous conversations:\n${memoryContext.map(mem => `- ${mem.content}`).join('\n')}`
+          content: `Relevant memories from previous conversations:\n${memoryContext.map(mem => `- ${mem.content}`).join('\n')}`,
         });
       }
 
       // Add conversation history
       const conversationContext = context.filter(msg => msg.type !== 'memory');
-      messages.push(...conversationContext.map(msg => ({
-        role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
-        content: msg.sender === 'user' ? msg.userMessage || msg.content : msg.aiResponse || msg.content
-      })));
+      messages.push(
+        ...conversationContext.map(msg => ({
+          role: msg.sender === 'user' ? ('user' as const) : ('assistant' as const),
+          content:
+            msg.sender === 'user' ? msg.userMessage || msg.content : msg.aiResponse || msg.content,
+        }))
+      );
 
       // Add current user message
       messages.push({ role: 'user', content: userMessage });
@@ -221,11 +222,10 @@ export class LocalAIService {
           temperature: this.getTemperatureForPersonality(character.personality),
           num_ctx: 4096, // Context window
           num_predict: 512, // Max response length
-        }
+        },
       });
 
       return response.message.content;
-
     } catch (error) {
       console.error('Local AI response generation failed:', error);
       // Fallback to simple response
@@ -251,14 +251,18 @@ export class LocalAIService {
       ...relevantMemories.map(memory => ({
         role: 'system',
         content: `Relevant memory: ${memory.fact_text}`,
-        type: 'memory'
-      }))
+        type: 'memory',
+      })),
     ];
 
     return context;
   }
 
-  private async buildSystemPrompt(character: any, userId: number, emotionalState?: any): Promise<string> {
+  private async buildSystemPrompt(
+    character: any,
+    userId: number,
+    emotionalState?: any
+  ): Promise<string> {
     const personality = character.personality;
     const traits = character.traits || [];
 
@@ -318,21 +322,42 @@ Never break character. Respond naturally, empathetically, and realistically.`;
   private getTemperatureForPersonality(personality: string): number {
     // Adjust creativity based on personality
     switch (personality) {
-      case 'friendly': return 0.8; // More creative and varied
-      case 'professional': return 0.3; // More consistent and focused
-      case 'humorous': return 1.0; // Highly creative for humor
-      case 'serious': return 0.5; // Balanced creativity
-      default: return 0.7;
+      case 'friendly':
+        return 0.8; // More creative and varied
+      case 'professional':
+        return 0.3; // More consistent and focused
+      case 'humorous':
+        return 1.0; // Highly creative for humor
+      case 'serious':
+        return 0.5; // Balanced creativity
+      default:
+        return 0.7;
     }
   }
 
   private generateFallbackResponse(character: any): string {
-    const personality = character.personality as 'friendly' | 'professional' | 'humorous' | 'serious';
+    const personality = character.personality as
+      | 'friendly'
+      | 'professional'
+      | 'humorous'
+      | 'serious';
     const fallbacks: Record<string, string[]> = {
-      friendly: ["I'd love to chat more, but I'm having trouble connecting right now! 😊", "That's interesting! Tell me more when I'm back online."],
-      professional: ["I apologize for the technical difficulty. Please try again.", "I'm experiencing connectivity issues. Let's continue our conversation later."],
-      humorous: ["Well, this is awkward... my brain seems to have taken a coffee break! ☕", "Error 404: Wit not found. But I'll be back with more jokes soon!"],
-      serious: ["I regret the interruption in our discourse. Technical issues are preventing proper communication.", "This interruption is unfortunate. I shall endeavor to resolve it."]
+      friendly: [
+        "I'd love to chat more, but I'm having trouble connecting right now! 😊",
+        "That's interesting! Tell me more when I'm back online.",
+      ],
+      professional: [
+        'I apologize for the technical difficulty. Please try again.',
+        "I'm experiencing connectivity issues. Let's continue our conversation later.",
+      ],
+      humorous: [
+        'Well, this is awkward... my brain seems to have taken a coffee break! ☕',
+        "Error 404: Wit not found. But I'll be back with more jokes soon!",
+      ],
+      serious: [
+        'I regret the interruption in our discourse. Technical issues are preventing proper communication.',
+        'This interruption is unfortunate. I shall endeavor to resolve it.',
+      ],
     };
 
     const responses = fallbacks[personality] || fallbacks.friendly;

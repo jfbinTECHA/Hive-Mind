@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { multiModalProcessor } from '@/lib/multiModal';
+import { multimodalJsonSchema, validateRequest } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,73 +14,57 @@ export async function POST(request: NextRequest) {
       const companionId = formData.get('companionId') as string;
 
       if (!file) {
-        return NextResponse.json(
-          { error: 'No file provided' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'No file provided' }, { status: 400 });
       }
 
       // Process the file based on type
       let result;
       if (type === 'image') {
-        const imageResult = await multiModalProcessor.processImage(await file.arrayBuffer().then(buf => Buffer.from(buf).toString('base64')), companionId);
+        const imageResult = await multiModalProcessor.processImage(
+          await file.arrayBuffer().then(buf => Buffer.from(buf).toString('base64')),
+          companionId
+        );
         result = {
           content: `Image uploaded: ${file.name}. ${imageResult.description || 'An image with objects: ' + imageResult.objects.join(', ')}`,
           metadata: {
             fileName: file.name,
             fileSize: file.size,
             fileType: file.type,
-            analysis: imageResult
-          }
+            analysis: imageResult,
+          },
         };
       } else if (type === 'document') {
         result = await multiModalProcessor.processDocument(file, companionId);
       } else {
-        return NextResponse.json(
-          { error: 'Unsupported file type' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 });
       }
 
       return NextResponse.json({
         success: true,
         processedContent: result.content,
-        metadata: result.metadata
+        metadata: result.metadata,
       });
-
     } else {
       // Handle JSON requests (URLs, etc.)
       const body = await request.json();
-      const { type, sourceUrl, companionId } = body;
+      const validation = validateRequest(multimodalJsonSchema, body);
 
-      if (type === 'url') {
-        if (!sourceUrl) {
-          return NextResponse.json(
-            { error: 'No URL provided' },
-            { status: 400 }
-          );
-        }
-
-        const result = await multiModalProcessor.processUrl(sourceUrl, companionId);
-
-        return NextResponse.json({
-          success: true,
-          processedContent: result.content,
-          metadata: result.metadata
-        });
+      if (!validation.success) {
+        return NextResponse.json({ error: validation.error }, { status: 400 });
       }
 
-      return NextResponse.json(
-        { error: 'Unsupported request type' },
-        { status: 400 }
-      );
-    }
+      const { type, sourceUrl, companionId } = validation.data;
 
+      const result = await multiModalProcessor.processUrl(sourceUrl, companionId);
+
+      return NextResponse.json({
+        success: true,
+        processedContent: result.content,
+        metadata: result.metadata,
+      });
+    }
   } catch (error) {
     console.error('Multimodal processing error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -21,7 +21,7 @@ export async function GET() {
       'phi3:3.8b',
       'gemma:7b',
       'qwen:7b',
-      'nomic-embed-text'
+      'nomic-embed-text',
     ];
 
     // Filter out already installed models
@@ -30,13 +30,10 @@ export async function GET() {
 
     return NextResponse.json({
       installed,
-      available: availableFiltered
+      available: availableFiltered,
     });
   } catch (error) {
     console.error('Ollama models fetch error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch models' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch models' }, { status: 500 });
   }
 }

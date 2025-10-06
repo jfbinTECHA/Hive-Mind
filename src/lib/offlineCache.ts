@@ -59,7 +59,7 @@ export class OfflineCacheManager {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
         this.createObjectStores(db);
       };
@@ -135,9 +135,13 @@ export class OfflineCacheManager {
       font-weight: bold;
       z-index: 1000;
       max-width: 300px;
-      ${type === 'success' ? 'background-color: #4caf50;' :
-        type === 'warning' ? 'background-color: #ff9800;' :
-        'background-color: #f44336;'}
+      ${
+        type === 'success'
+          ? 'background-color: #4caf50;'
+          : type === 'warning'
+            ? 'background-color: #ff9800;'
+            : 'background-color: #f44336;'
+      }
     `;
 
     document.body.appendChild(notification);
@@ -147,14 +151,16 @@ export class OfflineCacheManager {
   }
 
   // Message caching
-  async cacheMessage(messageData: Omit<CachedMessage, 'id' | 'synced' | 'retryCount'>): Promise<void> {
+  async cacheMessage(
+    messageData: Omit<CachedMessage, 'id' | 'synced' | 'retryCount'>
+  ): Promise<void> {
     if (!this.db) await this.initIndexedDB();
 
     const cachedMessage: CachedMessage = {
       ...messageData,
       id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       synced: this.isOnline,
-      retryCount: 0
+      retryCount: 0,
     };
 
     const transaction = this.db!.transaction(['messages'], 'readwrite');
@@ -169,7 +175,7 @@ export class OfflineCacheManager {
         timestamp: new Date(),
         priority: 'high',
         retryCount: 0,
-        maxRetries: 3
+        maxRetries: 3,
       });
     }
   }
@@ -181,7 +187,7 @@ export class OfflineCacheManager {
     const cachedMemory: CachedMemory = {
       ...memoryData,
       id: `mem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      synced: this.isOnline
+      synced: this.isOnline,
     };
 
     const transaction = this.db!.transaction(['memory'], 'readwrite');
@@ -196,7 +202,7 @@ export class OfflineCacheManager {
         timestamp: new Date(),
         priority: 'medium',
         retryCount: 0,
-        maxRetries: 3
+        maxRetries: 3,
       });
     }
   }
@@ -211,7 +217,11 @@ export class OfflineCacheManager {
   }
 
   // Generate offline responses
-  async generateOfflineResponse(userMessage: string, userId: number, characterId: number): Promise<string> {
+  async generateOfflineResponse(
+    userMessage: string,
+    userId: number,
+    characterId: number
+  ): Promise<string> {
     // Get recent conversation history from cache
     const recentMessages = await this.getRecentMessages(userId, characterId, 10);
 
@@ -222,21 +232,30 @@ export class OfflineCacheManager {
     const relationshipData = await this.getCachedRelationshipData(userId, characterId);
 
     // Generate response using cached context
-    return this.generateContextualResponse(userMessage, recentMessages, relevantMemories, relationshipData);
+    return this.generateContextualResponse(
+      userMessage,
+      recentMessages,
+      relevantMemories,
+      relationshipData
+    );
   }
 
-  private async getRecentMessages(userId: number, characterId: number, limit: number = 10): Promise<CachedMessage[]> {
+  private async getRecentMessages(
+    userId: number,
+    characterId: number,
+    limit: number = 10
+  ): Promise<CachedMessage[]> {
     if (!this.db) await this.initIndexedDB();
 
     const transaction = this.db!.transaction(['messages'], 'readonly');
     const store = transaction.objectStore('messages');
     const index = store.index('userId');
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const request = index.openCursor(IDBKeyRange.only(userId));
       const results: CachedMessage[] = [];
 
-      request.onsuccess = (event) => {
+      request.onsuccess = event => {
         const cursor = (event.target as IDBRequest).result;
         if (cursor && results.length < limit) {
           const message = cursor.value as CachedMessage;
@@ -255,18 +274,22 @@ export class OfflineCacheManager {
     });
   }
 
-  private async getRelevantMemories(userId: number, characterId: number, query: string): Promise<CachedMemory[]> {
+  private async getRelevantMemories(
+    userId: number,
+    characterId: number,
+    query: string
+  ): Promise<CachedMemory[]> {
     if (!this.db) await this.initIndexedDB();
 
     const transaction = this.db!.transaction(['memory'], 'readonly');
     const store = transaction.objectStore('memory');
     const index = store.index('userId');
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const request = index.openCursor(IDBKeyRange.only(userId));
       const results: CachedMemory[] = [];
 
-      request.onsuccess = (event) => {
+      request.onsuccess = event => {
         const cursor = (event.target as IDBRequest).result;
         if (cursor) {
           const memory = cursor.value as CachedMemory;
@@ -317,7 +340,11 @@ export class OfflineCacheManager {
     if (recentMessages.length > 0) {
       const lastExchange = recentMessages[0];
       if (lastExchange.aiResponse) {
-        response = this.continueConversation(userMessage, lastExchange.aiResponse, relationshipLevel);
+        response = this.continueConversation(
+          userMessage,
+          lastExchange.aiResponse,
+          relationshipLevel
+        );
       }
     }
 
@@ -343,14 +370,14 @@ export class OfflineCacheManager {
     if (interactionCount >= 500) return 5; // Confidant
     if (interactionCount >= 300) return 4; // Close Friend
     if (interactionCount >= 150) return 3; // Friend
-    if (interactionCount >= 50) return 2;  // Casual Friend
+    if (interactionCount >= 50) return 2; // Casual Friend
     return 1; // Acquaintance
   }
 
   private analyzeMessageType(message: string): string {
     const lower = message.toLowerCase();
     if (lower.includes('hello') || lower.includes('hi')) return 'greeting';
-    if (lower.includes('how are you') || lower.includes('what\'s up')) return 'inquiry';
+    if (lower.includes('how are you') || lower.includes("what's up")) return 'inquiry';
     if (lower.includes('thank')) return 'gratitude';
     if (lower.includes('sorry') || lower.includes('apologize')) return 'apology';
     if (lower.includes('?')) return 'question';
@@ -358,7 +385,17 @@ export class OfflineCacheManager {
   }
 
   private analyzeEmotionalTone(message: string): 'positive' | 'negative' | 'neutral' {
-    const positiveWords = ['good', 'great', 'awesome', 'happy', 'love', 'excited', '😊', '😄', '❤️'];
+    const positiveWords = [
+      'good',
+      'great',
+      'awesome',
+      'happy',
+      'love',
+      'excited',
+      '😊',
+      '😄',
+      '❤️',
+    ];
     const negativeWords = ['bad', 'sad', 'upset', 'angry', 'hate', 'worried', '😢', '😞', '😠'];
 
     const lower = message.toLowerCase();
@@ -370,14 +407,18 @@ export class OfflineCacheManager {
     return 'neutral';
   }
 
-  private continueConversation(userMessage: string, lastAIResponse: string, relationshipLevel: number): string {
+  private continueConversation(
+    userMessage: string,
+    lastAIResponse: string,
+    relationshipLevel: number
+  ): string {
     // Simple conversation continuation logic
     const responses = {
-      1: ["I understand.", "That's interesting.", "Tell me more."],
-      2: ["That sounds good.", "I agree.", "How do you feel about that?"],
-      3: ["That sounds amazing!", "I totally get it.", "What's your take on this?"],
-      4: ["That's wonderful to hear.", "I completely understand.", "How can I support you?"],
-      5: ["That's absolutely wonderful.", "I cherish hearing about this.", "I'm here for you."]
+      1: ['I understand.', "That's interesting.", 'Tell me more.'],
+      2: ['That sounds good.', 'I agree.', 'How do you feel about that?'],
+      3: ['That sounds amazing!', 'I totally get it.', "What's your take on this?"],
+      4: ["That's wonderful to hear.", 'I completely understand.', 'How can I support you?'],
+      5: ["That's absolutely wonderful.", 'I cherish hearing about this.', "I'm here for you."],
     };
 
     const levelResponses = responses[relationshipLevel as keyof typeof responses] || responses[1];
@@ -386,7 +427,7 @@ export class OfflineCacheManager {
 
   private incorporateMemory(memory: CachedMemory, relationshipLevel: number): string {
     if (relationshipLevel >= 3) {
-      return " I remember something similar from before.";
+      return ' I remember something similar from before.';
     }
     return " That's interesting.";
   }
@@ -398,30 +439,37 @@ export class OfflineCacheManager {
   ): string {
     const responses: { [key: string]: { [key: string]: string[] } } = {
       greeting: {
-        positive: ["Hello! Great to hear from you!", "Hi there! How are you doing?"],
-        neutral: ["Hello!", "Hi!"],
-        negative: ["Hello. Is everything okay?", "Hi. What's on your mind?"]
+        positive: ['Hello! Great to hear from you!', 'Hi there! How are you doing?'],
+        neutral: ['Hello!', 'Hi!'],
+        negative: ['Hello. Is everything okay?', "Hi. What's on your mind?"],
       },
       inquiry: {
-        positive: ["I'm doing well, thank you! How about you?", "Things are going great! What's new with you?"],
-        neutral: ["I'm doing fine. How are you?", "Not too bad. How are you?"],
-        negative: ["I've been better. How are you doing?", "It's been a rough day. How about you?"]
+        positive: [
+          "I'm doing well, thank you! How about you?",
+          "Things are going great! What's new with you?",
+        ],
+        neutral: ["I'm doing fine. How are you?", 'Not too bad. How are you?'],
+        negative: ["I've been better. How are you doing?", "It's been a rough day. How about you?"],
       },
       gratitude: {
-        positive: ["You're very welcome!", "Happy to help!", "Anytime!"],
-        neutral: ["You're welcome.", "No problem.", "Glad I could help."],
-        negative: ["You're welcome.", "It's nothing.", "Don't mention it."]
+        positive: ["You're very welcome!", 'Happy to help!', 'Anytime!'],
+        neutral: ["You're welcome.", 'No problem.', 'Glad I could help.'],
+        negative: ["You're welcome.", "It's nothing.", "Don't mention it."],
       },
       question: {
-        positive: ["That's a great question!", "I'd love to help with that.", "Let me think about that."],
-        neutral: ["That's interesting.", "I see.", "Let me consider that."],
-        negative: ["That's a tough one.", "I'm not sure.", "That's complicated."]
+        positive: [
+          "That's a great question!",
+          "I'd love to help with that.",
+          'Let me think about that.',
+        ],
+        neutral: ["That's interesting.", 'I see.', 'Let me consider that.'],
+        negative: ["That's a tough one.", "I'm not sure.", "That's complicated."],
       },
       statement: {
-        positive: ["That sounds wonderful!", "I'm glad to hear that!", "That's fantastic!"],
-        neutral: ["I see.", "Interesting.", "Noted."],
-        negative: ["I'm sorry to hear that.", "That sounds difficult.", "I understand."]
-      }
+        positive: ['That sounds wonderful!', "I'm glad to hear that!", "That's fantastic!"],
+        neutral: ['I see.', 'Interesting.', 'Noted.'],
+        negative: ["I'm sorry to hear that.", 'That sounds difficult.', 'I understand.'],
+      },
     };
 
     const typeResponses = responses[messageType] || responses.statement;
@@ -468,7 +516,6 @@ export class OfflineCacheManager {
 
       console.log('Offline sync completed');
       this.showStatusNotification('✅ Sync completed successfully', 'success');
-
     } catch (error) {
       console.error('Sync failed:', error);
       this.showStatusNotification('❌ Sync failed - will retry later', 'error');
@@ -483,7 +530,7 @@ export class OfflineCacheManager {
     const transaction = this.db!.transaction(['offlineQueue'], 'readonly');
     const store = transaction.objectStore('offlineQueue');
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const request = store.getAll();
       request.onsuccess = () => resolve(request.result || []);
       request.onerror = () => resolve([]);
@@ -509,7 +556,7 @@ export class OfflineCacheManager {
     const response = await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(messageData)
+      body: JSON.stringify(messageData),
     });
 
     if (!response.ok) {
@@ -525,7 +572,7 @@ export class OfflineCacheManager {
     const response = await fetch('/api/memory', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(memoryData)
+      body: JSON.stringify(memoryData),
     });
 
     if (!response.ok) {
@@ -540,7 +587,7 @@ export class OfflineCacheManager {
     // Sync multimodal data to server
     const response = await fetch('/api/multimodal', {
       method: 'POST',
-      body: multimodalData // FormData or JSON
+      body: multimodalData, // FormData or JSON
     });
 
     if (!response.ok) {
@@ -603,7 +650,7 @@ export class OfflineCacheManager {
     const messageIndex = messageStore.index('timestamp');
 
     const messageCursorRequest = messageIndex.openCursor(IDBKeyRange.upperBound(cutoffDate));
-    messageCursorRequest.onsuccess = (event) => {
+    messageCursorRequest.onsuccess = event => {
       const cursor = (event.target as IDBRequest).result;
       if (cursor) {
         // Only delete if synced
@@ -620,7 +667,7 @@ export class OfflineCacheManager {
     const memoryIndex = memoryStore.index('timestamp');
 
     const memoryCursorRequest = memoryIndex.openCursor(IDBKeyRange.upperBound(cutoffDate));
-    memoryCursorRequest.onsuccess = (event) => {
+    memoryCursorRequest.onsuccess = event => {
       const cursor = (event.target as IDBRequest).result;
       if (cursor) {
         // Only delete if synced
@@ -656,7 +703,7 @@ export class OfflineCacheManager {
     const [messageCount, memoryCount, queueCount] = await Promise.all([
       this.getStoreCount('messages'),
       this.getStoreCount('memory'),
-      this.getStoreCount('offlineQueue')
+      this.getStoreCount('offlineQueue'),
     ]);
 
     // Estimate storage usage (rough calculation)
@@ -666,7 +713,7 @@ export class OfflineCacheManager {
       messages: messageCount,
       memories: memoryCount,
       queueItems: queueCount,
-      storageUsed: estimatedUsage
+      storageUsed: estimatedUsage,
     };
   }
 
@@ -676,7 +723,7 @@ export class OfflineCacheManager {
     const transaction = this.db!.transaction([storeName], 'readonly');
     const store = transaction.objectStore(storeName);
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const request = store.count();
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => resolve(0);

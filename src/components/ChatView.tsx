@@ -11,7 +11,6 @@ import { reflectionSystem } from '@/lib/reflectionSystem';
 import { evolutionSystem } from '@/lib/evolutionSystem';
 import { sharedMemorySystem } from '@/lib/sharedMemorySystem';
 
-
 export function ChatView() {
   const { state, dispatch } = useApp();
   const [isTyping, setIsTyping] = useState(false);
@@ -48,8 +47,10 @@ export function ChatView() {
     }
   };
 
-
-  const sendMessage = async (message: string, attachments?: { type: string; data: any; metadata?: any }[]) => {
+  const sendMessage = async (
+    message: string,
+    attachments?: { type: string; data: any; metadata?: any }[]
+  ) => {
     if (!message.trim() && (!attachments || attachments.length === 0)) return;
 
     const userMessage = {
@@ -57,7 +58,7 @@ export function ChatView() {
       content: message,
       sender: 'user',
       timestamp: new Date(),
-      type: 'text' as const
+      type: 'text' as const,
     };
 
     dispatch({ type: 'ADD_MESSAGE', payload: userMessage });
@@ -77,10 +78,10 @@ export function ChatView() {
           userId: state.user?.id || 'anonymous',
           context: {
             conversationHistory: state.messages.slice(-5), // Last 5 messages for context
-            groupChat: state.groupChatMode
+            groupChat: state.groupChatMode,
           },
           groupChat: state.groupChatMode,
-          participantIds: state.groupChatMode ? state.companions.map(c => c.id) : undefined
+          participantIds: state.groupChatMode ? state.companions.map(c => c.id) : undefined,
         }),
       });
 
@@ -99,7 +100,7 @@ export function ChatView() {
               content: responseData.response,
               sender: responseData.character.name,
               timestamp: new Date(),
-              type: 'text' as const
+              type: 'text' as const,
             };
 
             dispatch({ type: 'ADD_MESSAGE', payload: aiMessage });
@@ -116,7 +117,6 @@ export function ChatView() {
 
               setAvatarStates(prev => new Map(prev.set(companion.id.toString(), avatarState)));
             }
-
           }, index * 1500); // Stagger responses
         });
       } else {
@@ -126,7 +126,7 @@ export function ChatView() {
           content: data.response,
           sender: data.character.name,
           timestamp: new Date(),
-          type: 'text' as const
+          type: 'text' as const,
         };
 
         dispatch({ type: 'ADD_MESSAGE', payload: aiMessage });
@@ -152,12 +152,11 @@ export function ChatView() {
               type: 'UPDATE_COMPANION',
               payload: {
                 id: state.activeCompanion!,
-                updates: { emotion: data.character.emotion }
-              }
+                updates: { emotion: data.character.emotion },
+              },
             });
           }
         }
-
       }
 
       // Refresh emotional state after conversation
@@ -171,7 +170,6 @@ export function ChatView() {
 
       // Check for shared memory references
       await checkSharedMemoryReferences(message, data.response);
-
     } catch (error) {
       console.error('Chat API error:', error);
       // Fallback to local generation
@@ -181,11 +179,10 @@ export function ChatView() {
         content: aiResponse,
         sender: state.activeCompanion || 'ai-hive-mind',
         timestamp: new Date(),
-        type: 'text' as const
+        type: 'text' as const,
       };
 
       dispatch({ type: 'ADD_MESSAGE', payload: aiMessage });
-
     } finally {
       setIsTyping(false);
     }
@@ -198,7 +195,12 @@ export function ChatView() {
     if (!companion) return;
 
     // Check different reflection types
-    const reflectionTypes: ('daily' | 'weekly' | 'dream' | 'introspection')[] = ['daily', 'weekly', 'dream', 'introspection'];
+    const reflectionTypes: ('daily' | 'weekly' | 'dream' | 'introspection')[] = [
+      'daily',
+      'weekly',
+      'dream',
+      'introspection',
+    ];
 
     for (const type of reflectionTypes) {
       if (reflectionSystem.shouldReflect(state.activeCompanion, type)) {
@@ -207,7 +209,12 @@ export function ChatView() {
           const recentConversations = state.messages.slice(-20);
 
           // Get current emotional state
-          const currentEmotionalState = emotionalState || { mood: 0, energy: 0.5, trust: 0.5, curiosity: 0.5 };
+          const currentEmotionalState = emotionalState || {
+            mood: 0,
+            energy: 0.5,
+            trust: 0.5,
+            curiosity: 0.5,
+          };
 
           const reflection = await reflectionSystem.generateReflection(
             state.activeCompanion,
@@ -227,8 +234,8 @@ export function ChatView() {
               isReflection: true,
               reflectionType: reflection.type,
               insights: reflection.insights,
-              emotionalPatterns: reflection.emotionalPatterns
-            }
+              emotionalPatterns: reflection.emotionalPatterns,
+            },
           };
 
           dispatch({ type: 'ADD_MESSAGE', payload: reflectionMessage });
@@ -259,8 +266,8 @@ export function ChatView() {
             isEvolution: true,
             evolutionEvent,
             fromStage: evolutionEvent.fromStage.name,
-            toStage: evolutionEvent.toStage.name
-          }
+            toStage: evolutionEvent.toStage.name,
+          },
         };
 
         dispatch({ type: 'ADD_MESSAGE', payload: evolutionMessage });
@@ -278,7 +285,9 @@ export function ChatView() {
 
     try {
       // Get accessible memories for this companion
-      const accessibleMemories = await sharedMemorySystem.getAccessibleMemories(state.activeCompanion);
+      const accessibleMemories = await sharedMemorySystem.getAccessibleMemories(
+        state.activeCompanion
+      );
 
       // Check if user message or AI response references shared concepts
       const relevantMemories = accessibleMemories.filter(memory => {
@@ -287,13 +296,15 @@ export function ChatView() {
         const aiText = aiResponse.toLowerCase();
 
         // Simple relevance check - can be made more sophisticated
-        return memoryText.split(' ').some(word =>
-          userText.includes(word) || aiText.includes(word)
-        ) && memory.originalCompanionId !== state.activeCompanion; // Don't reference own memories
+        return (
+          memoryText.split(' ').some(word => userText.includes(word) || aiText.includes(word)) &&
+          memory.originalCompanionId !== state.activeCompanion
+        ); // Don't reference own memories
       });
 
       // If relevant shared memories found, occasionally add a reference
-      if (relevantMemories.length > 0 && Math.random() < 0.3) { // 30% chance
+      if (relevantMemories.length > 0 && Math.random() < 0.3) {
+        // 30% chance
         const randomMemory = relevantMemories[Math.floor(Math.random() * relevantMemories.length)];
 
         // Add a shared memory reference message
@@ -306,8 +317,8 @@ export function ChatView() {
           metadata: {
             isMemoryReference: true,
             referencedMemoryId: randomMemory.id,
-            sharedFrom: randomMemory.originalCompanionId
-          }
+            sharedFrom: randomMemory.originalCompanionId,
+          },
         };
 
         setTimeout(() => {
@@ -321,30 +332,30 @@ export function ChatView() {
 
   const generateAIResponse = (userMessage: string): string => {
     const companion = state.companions.find(c => c.id === state.activeCompanion);
-    if (!companion) return "Hello! How can I help you today?";
+    if (!companion) return 'Hello! How can I help you today?';
 
     // Simple response generation based on personality
     const responses = {
       friendly: [
         `That's interesting! 😊 I love hearing about ${userMessage.split(' ')[0]}.`,
         `You know, I was just thinking about something similar. Tell me more!`,
-        `That's awesome! I really enjoy our conversations.`
+        `That's awesome! I really enjoy our conversations.`,
       ],
       professional: [
         `I understand your point about ${userMessage.split(' ')[0]}. Let me help you with that.`,
         `That's a valid consideration. Based on what you've shared...`,
-        `I appreciate you bringing this up. Here's my perspective.`
+        `I appreciate you bringing this up. Here's my perspective.`,
       ],
       humorous: [
         `Haha, ${userMessage.split(' ')[0]}? That's hilarious! 😂`,
         `Wait, let me think of a joke about that...`,
-        `You're too much! I love your sense of humor.`
+        `You're too much! I love your sense of humor.`,
       ],
       serious: [
         `This is quite profound. Let us consider the implications of ${userMessage.split(' ')[0]}.`,
         `Your observation about ${userMessage.split(' ')[0]} merits careful reflection.`,
-        `This touches on deeper philosophical questions.`
-      ]
+        `This touches on deeper philosophical questions.`,
+      ],
     };
 
     const personalityResponses = responses[companion.personality];
@@ -384,9 +395,7 @@ export function ChatView() {
                 style={{ width: `${moodPercent}%` }}
               ></div>
             </div>
-            <span className="text-white w-8 text-right">
-              {Math.round(moodPercent)}%
-            </span>
+            <span className="text-white w-8 text-right">{Math.round(moodPercent)}%</span>
           </div>
 
           <div className="flex items-center">
@@ -398,9 +407,7 @@ export function ChatView() {
                 style={{ width: `${energyPercent}%` }}
               ></div>
             </div>
-            <span className="text-white w-8 text-right">
-              {Math.round(energyPercent)}%
-            </span>
+            <span className="text-white w-8 text-right">{Math.round(energyPercent)}%</span>
           </div>
 
           <div className="flex items-center">
@@ -412,9 +419,7 @@ export function ChatView() {
                 style={{ width: `${trustPercent}%` }}
               ></div>
             </div>
-            <span className="text-white w-8 text-right">
-              {Math.round(trustPercent)}%
-            </span>
+            <span className="text-white w-8 text-right">{Math.round(trustPercent)}%</span>
           </div>
 
           <div className="flex items-center">
@@ -426,9 +431,7 @@ export function ChatView() {
                 style={{ width: `${curiosityPercent}%` }}
               ></div>
             </div>
-            <span className="text-white w-8 text-right">
-              {Math.round(curiosityPercent)}%
-            </span>
+            <span className="text-white w-8 text-right">{Math.round(curiosityPercent)}%</span>
           </div>
         </div>
       </div>
@@ -452,7 +455,7 @@ export function ChatView() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {state.messages.map((msg) => {
+        {state.messages.map(msg => {
           const isUser = msg.sender === 'user';
           const companion = state.companions.find(c => c.id === msg.sender);
           const avatarState = avatarStates.get(msg.sender);
@@ -461,11 +464,10 @@ export function ChatView() {
           const isMemoryReference = msg.type === 'system' && msg.metadata?.isMemoryReference;
 
           return (
-            <div
-              key={msg.id}
-              className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`flex max-w-xs lg:max-w-md xl:max-w-lg ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+            <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`flex max-w-xs lg:max-w-md xl:max-w-lg ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
+              >
                 {/* Dynamic Avatar */}
                 <div className="flex-shrink-0">
                   {isUser ? (
@@ -489,10 +491,13 @@ export function ChatView() {
                       className={`w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-lg transition-all duration-300 ${avatarState ? avatarEngine.getAvatarAnimationClasses(avatarState) : ''}`}
                       style={avatarState ? avatarEngine.getAvatarStyle(avatarState) : {}}
                     >
-                      {avatarState ?
-                        avatarEngine.getAvatarForExpression(avatarState.expression, companion?.personality, avatarState.intensity) :
-                        (companion?.avatar || '🤖')
-                      }
+                      {avatarState
+                        ? avatarEngine.getAvatarForExpression(
+                            avatarState.expression,
+                            companion?.personality,
+                            avatarState.intensity
+                          )
+                        : companion?.avatar || '🤖'}
                     </div>
                   )}
                 </div>
@@ -523,7 +528,9 @@ export function ChatView() {
                           <Share2 className="w-3 h-3 mr-1 text-blue-400" />
                           {companion?.name || 'AI'} Memory
                           <span className="ml-2 px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded text-xs">
-                            Shared from {state.companions.find(c => c.id === msg.metadata?.sharedFrom)?.name || 'another companion'}
+                            Shared from{' '}
+                            {state.companions.find(c => c.id === msg.metadata?.sharedFrom)?.name ||
+                              'another companion'}
                           </span>
                         </>
                       ) : (
@@ -537,27 +544,36 @@ export function ChatView() {
                       isUser
                         ? 'bg-purple-500 text-white'
                         : isReflection
-                        ? 'bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-sm text-white border border-purple-500/30 shadow-lg'
-                        : isEvolution
-                        ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm text-white border border-yellow-500/30 shadow-lg animate-pulse'
-                        : isMemoryReference
-                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm text-white border border-blue-500/30 shadow-lg'
-                        : 'bg-white/10 backdrop-blur-sm text-white border border-white/20'
+                          ? 'bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-sm text-white border border-purple-500/30 shadow-lg'
+                          : isEvolution
+                            ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm text-white border border-yellow-500/30 shadow-lg animate-pulse'
+                            : isMemoryReference
+                              ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm text-white border border-blue-500/30 shadow-lg'
+                              : 'bg-white/10 backdrop-blur-sm text-white border border-white/20'
                     }`}
                   >
                     <div className="text-sm">
                       <ReactMarkdown
                         components={{
                           p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                          strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
-                          em: ({ children }) => <em className="italic text-purple-200">{children}</em>,
+                          strong: ({ children }) => (
+                            <strong className="text-white font-semibold">{children}</strong>
+                          ),
+                          em: ({ children }) => (
+                            <em className="italic text-purple-200">{children}</em>
+                          ),
                           code: ({ children }) => (
                             <code className="bg-black/20 px-1 py-0.5 rounded text-xs font-mono">
                               {children}
                             </code>
                           ),
                           ul: ({ children }) => <ul className="mb-2 text-gray-200">{children}</ul>,
-                          li: ({ children }) => <li className="mb-1 flex items-start"><span className="text-purple-400 mr-2">•</span>{children}</li>,
+                          li: ({ children }) => (
+                            <li className="mb-1 flex items-start">
+                              <span className="text-purple-400 mr-2">•</span>
+                              {children}
+                            </li>
+                          ),
                         }}
                       >
                         {msg.content}
@@ -572,19 +588,23 @@ export function ChatView() {
                           Key Insights
                         </h4>
                         <ul className="text-xs text-gray-300 space-y-1">
-                          {msg.metadata.insights.slice(0, 3).map((insight: string, index: number) => (
-                            <li key={index} className="flex items-start">
-                              <span className="text-purple-400 mr-2">•</span>
-                              {insight}
-                            </li>
-                          ))}
+                          {msg.metadata.insights
+                            .slice(0, 3)
+                            .map((insight: string, index: number) => (
+                              <li key={index} className="flex items-start">
+                                <span className="text-purple-400 mr-2">•</span>
+                                {insight}
+                              </li>
+                            ))}
                         </ul>
                       </div>
                     )}
                   </div>
 
                   {/* Timestamp */}
-                  <div className={`text-xs text-gray-400 mt-1 ${isUser ? 'text-right' : 'text-left'}`}>
+                  <div
+                    className={`text-xs text-gray-400 mt-1 ${isUser ? 'text-right' : 'text-left'}`}
+                  >
                     {formatTime(msg.timestamp)}
                   </div>
                 </div>
@@ -604,9 +624,18 @@ export function ChatView() {
                 <div className="px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-sm text-white border border-white/20">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.45s' }}></div>
+                    <div
+                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                      style={{ animationDelay: '0.15s' }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                      style={{ animationDelay: '0.3s' }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                      style={{ animationDelay: '0.45s' }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -616,7 +645,6 @@ export function ChatView() {
 
         <div ref={messagesEndRef} />
       </div>
-
 
       {/* Chat Input */}
       <ChatInput

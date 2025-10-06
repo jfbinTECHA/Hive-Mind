@@ -54,7 +54,7 @@ export class GroupChatManager {
           personality: character.personality,
           traits: character.traits || [],
           emotionalState: character.emotional_state,
-          speakingOrder: i
+          speakingOrder: i,
         });
       }
     }
@@ -68,7 +68,7 @@ export class GroupChatManager {
       messages: [],
       isActive: true,
       moderatorEnabled,
-      turnTakingMode: moderatorEnabled ? 'moderator-controlled' : 'round-robin'
+      turnTakingMode: moderatorEnabled ? 'moderator-controlled' : 'round-robin',
     };
   }
 
@@ -173,17 +173,18 @@ export class GroupChatManager {
       const context = conversationHistory.slice(-5).map(msg => ({
         content: msg.content,
         sender: msg.sender,
-        type: 'message'
+        type: 'message',
       }));
 
       // Add memories to context
       const fullContext = [
         ...context,
-        ...relevantMemories.map(mem => ({ content: mem, type: 'memory' }))
+        ...relevantMemories.map(mem => ({ content: mem, type: 'memory' })),
       ];
 
       // Get emotional state
-      const emotionalState = participant.emotionalState || EmotionalStateManager.createDefaultState();
+      const emotionalState =
+        participant.emotionalState || EmotionalStateManager.createDefaultState();
 
       // Generate response
       const response = await localAIService.generateResponse(
@@ -192,7 +193,7 @@ export class GroupChatManager {
           id: participant.id,
           name: participant.name,
           personality: participant.personality,
-          traits: participant.traits
+          traits: participant.traits,
         },
         userId,
         fullContext,
@@ -221,22 +222,38 @@ export class GroupChatManager {
 
     switch (participant.personality) {
       case 'friendly':
-        if (lowerMessage.includes('help') || lowerMessage.includes('friend') || lowerMessage.includes('happy')) {
+        if (
+          lowerMessage.includes('help') ||
+          lowerMessage.includes('friend') ||
+          lowerMessage.includes('happy')
+        ) {
           score += 0.8;
         }
         break;
       case 'professional':
-        if (lowerMessage.includes('work') || lowerMessage.includes('business') || lowerMessage.includes('advice')) {
+        if (
+          lowerMessage.includes('work') ||
+          lowerMessage.includes('business') ||
+          lowerMessage.includes('advice')
+        ) {
           score += 0.8;
         }
         break;
       case 'humorous':
-        if (lowerMessage.includes('funny') || lowerMessage.includes('joke') || lowerMessage.includes('laugh')) {
+        if (
+          lowerMessage.includes('funny') ||
+          lowerMessage.includes('joke') ||
+          lowerMessage.includes('laugh')
+        ) {
           score += 0.8;
         }
         break;
       case 'serious':
-        if (lowerMessage.includes('think') || lowerMessage.includes('important') || lowerMessage.includes('philosophy')) {
+        if (
+          lowerMessage.includes('think') ||
+          lowerMessage.includes('important') ||
+          lowerMessage.includes('philosophy')
+        ) {
           score += 0.8;
         }
         break;
@@ -276,7 +293,10 @@ Participants: ${session.participants.map(p => `${p.name} (${p.personality})`).jo
 Last message from ${lastMessage.sender}: "${lastMessage.content}"
 
 Recent conversation:
-${session.messages.slice(-3).map(m => `${m.sender}: ${m.content}`).join('\n')}
+${session.messages
+  .slice(-3)
+  .map(m => `${m.sender}: ${m.content}`)
+  .join('\n')}
 
 Consider:
 - Who hasn't spoken recently?
@@ -292,7 +312,7 @@ Respond with only the name of the participant who should speak next, or "continu
           id: -1,
           name: this.MODERATOR_NAME,
           personality: this.MODERATOR_PERSONALITY,
-          traits: ['organized', 'fair', 'engaging']
+          traits: ['organized', 'fair', 'engaging'],
         },
         0, // System user
         []
@@ -303,7 +323,7 @@ Respond with only the name of the participant who should speak next, or "continu
         if (moderatorResponse.toLowerCase().includes(participant.name.toLowerCase())) {
           return {
             participantId: participant.id,
-            reasoning: moderatorResponse
+            reasoning: moderatorResponse,
           };
         }
       }
@@ -314,9 +334,8 @@ Respond with only the name of the participant who should speak next, or "continu
 
       return {
         participantId: session.participants[nextIndex].id,
-        reasoning: 'Round-robin fallback'
+        reasoning: 'Round-robin fallback',
       };
-
     } catch (error) {
       console.error('Moderator decision failed:', error);
       return { participantId: null, reasoning: 'Error in moderation' };
@@ -326,15 +345,16 @@ Respond with only the name of the participant who should speak next, or "continu
   /**
    * Check if user wants to intervene in group conversation
    */
-  static shouldAllowUserIntervention(
-    userMessage: string,
-    session: GroupChatSession
-  ): boolean {
+  static shouldAllowUserIntervention(userMessage: string, session: GroupChatSession): boolean {
     const lowerMessage = userMessage.toLowerCase();
 
     // Direct interventions
-    if (lowerMessage.includes('@') || lowerMessage.includes('stop') ||
-        lowerMessage.includes('wait') || lowerMessage.includes('question')) {
+    if (
+      lowerMessage.includes('@') ||
+      lowerMessage.includes('stop') ||
+      lowerMessage.includes('wait') ||
+      lowerMessage.includes('question')
+    ) {
       return true;
     }
 
@@ -364,7 +384,7 @@ Respond with only the name of the participant who should speak next, or "continu
       sender: 'User',
       senderId: userId,
       timestamp: new Date(),
-      type: 'user'
+      type: 'user',
     };
 
     session.messages.push(userChatMessage);
@@ -374,7 +394,8 @@ Respond with only the name of the participant who should speak next, or "continu
     let currentMessage = userMessage;
     let lastSpeaker = userChatMessage;
 
-    for (let i = 0; i < Math.min(session.participants.length, 3); i++) { // Limit to 3 responses per turn
+    for (let i = 0; i < Math.min(session.participants.length, 3); i++) {
+      // Limit to 3 responses per turn
       const nextSpeaker = await this.determineNextSpeaker(session, lastSpeaker);
 
       if (!nextSpeaker) break;
@@ -394,7 +415,7 @@ Respond with only the name of the participant who should speak next, or "continu
           senderId: nextSpeaker.id,
           timestamp: new Date(),
           type: 'ai',
-          emotionalContext: nextSpeaker.emotionalState
+          emotionalContext: nextSpeaker.emotionalState,
         };
 
         session.messages.push(aiMessage);
@@ -406,7 +427,6 @@ Respond with only the name of the participant who should speak next, or "continu
 
         // Small delay between responses
         await new Promise(resolve => setTimeout(resolve, 1000));
-
       } catch (error) {
         console.error(`Failed to generate response for ${nextSpeaker.name}:`, error);
         break;

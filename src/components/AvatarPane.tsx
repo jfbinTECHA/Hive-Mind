@@ -7,7 +7,7 @@ const emotionEmojis = {
   sad: '😢',
   excited: '🤩',
   thinking: '🤔',
-  neutral: '😐'
+  neutral: '😐',
 };
 
 const emotionColors = {
@@ -15,7 +15,7 @@ const emotionColors = {
   sad: 'ring-red-400',
   excited: 'ring-yellow-400',
   thinking: 'ring-blue-400',
-  neutral: 'ring-gray-400'
+  neutral: 'ring-gray-400',
 };
 
 export function AvatarPane() {
@@ -27,7 +27,7 @@ export function AvatarPane() {
 
   return (
     <div className="w-20 backdrop-blur-xl bg-white/5 border-r border-white/10 flex flex-col items-center py-4 space-y-4">
-      {activeCompanions.map((companion) => (
+      {activeCompanions.map(companion => (
         <div key={companion.id} className="relative group">
           {/* Avatar */}
           <div

@@ -89,7 +89,7 @@ export class KnowledgeBaseManager {
         processedAt: new Date(),
         lastAccessed: new Date(),
         accessCount: 0,
-        relevanceScore: 1.0
+        relevanceScore: 1.0,
       };
 
       await this.storeDocument(document);
@@ -103,11 +103,7 @@ export class KnowledgeBaseManager {
   }
 
   // URL Processing
-  async processUrl(
-    url: string,
-    userId: number,
-    characterId: number
-  ): Promise<KnowledgeDocument> {
+  async processUrl(url: string, userId: number, characterId: number): Promise<KnowledgeDocument> {
     try {
       const content = await this.fetchUrlContent(url);
       const title = await this.extractTitleFromUrl(url);
@@ -125,7 +121,7 @@ export class KnowledgeBaseManager {
         processedAt: new Date(),
         lastAccessed: new Date(),
         accessCount: 0,
-        relevanceScore: 1.0
+        relevanceScore: 1.0,
       };
 
       await this.storeDocument(document);
@@ -164,12 +160,12 @@ export class KnowledgeBaseManager {
           topics: await this.extractTopics(transcript),
           entities: await this.extractEntities(transcript),
           summary: await this.generateSummary(transcript),
-          keyPoints: await this.extractKeyPoints(transcript)
+          keyPoints: await this.extractKeyPoints(transcript),
         },
         processedAt: new Date(),
         lastAccessed: new Date(),
         accessCount: 0,
-        relevanceScore: 1.0
+        relevanceScore: 1.0,
       };
 
       await this.storeDocument(document);
@@ -183,14 +179,17 @@ export class KnowledgeBaseManager {
   }
 
   // Content Analysis
-  private async analyzeContent(content: string, title: string): Promise<KnowledgeDocument['metadata']> {
+  private async analyzeContent(
+    content: string,
+    title: string
+  ): Promise<KnowledgeDocument['metadata']> {
     return {
       wordCount: content.split(' ').length,
       language: await this.detectLanguage(content),
       topics: await this.extractTopics(content),
       entities: await this.extractEntities(content),
       summary: await this.generateSummary(content),
-      keyPoints: await this.extractKeyPoints(content)
+      keyPoints: await this.extractKeyPoints(content),
     };
   }
 
@@ -198,7 +197,7 @@ export class KnowledgeBaseManager {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = async (event) => {
+      reader.onload = async event => {
         const result = event.target?.result as string;
 
         if (file.type === 'text/plain') {
@@ -242,7 +241,9 @@ export class KnowledgeBaseManager {
     }
   }
 
-  private async extractVideoContent(videoUrl: string): Promise<{ transcript: string; metadata: any }> {
+  private async extractVideoContent(
+    videoUrl: string
+  ): Promise<{ transcript: string; metadata: any }> {
     // This would integrate with YouTube API, video transcription services, etc.
     // For now, return simulated content
     const transcript = `This is a simulated transcript of the video content from ${videoUrl}. In a full implementation, this would use speech-to-text APIs to transcribe the video audio.`;
@@ -252,7 +253,7 @@ export class KnowledgeBaseManager {
       views: 1000,
       uploadDate: new Date(),
       channel: 'Unknown Channel',
-      title: 'Video Title'
+      title: 'Video Title',
     };
 
     return { transcript, metadata };
@@ -269,7 +270,14 @@ export class KnowledgeBaseManager {
 
   private async extractTopics(text: string): Promise<string[]> {
     // Simple topic extraction - in reality, use NLP APIs
-    const commonTopics = ['technology', 'science', 'business', 'health', 'education', 'entertainment'];
+    const commonTopics = [
+      'technology',
+      'science',
+      'business',
+      'health',
+      'education',
+      'entertainment',
+    ];
     const foundTopics: string[] = [];
 
     const lowerText = text.toLowerCase();
@@ -290,7 +298,13 @@ export class KnowledgeBaseManager {
     // Look for capitalized words (potential proper nouns)
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
-      if (word.length > 1 && word[0] === word[0].toUpperCase() && word !== 'The' && word !== 'A' && word !== 'An') {
+      if (
+        word.length > 1 &&
+        word[0] === word[0].toUpperCase() &&
+        word !== 'The' &&
+        word !== 'A' &&
+        word !== 'An'
+      ) {
         // Check if it's already in entities
         const existing = entities.find(e => e.name === word);
         if (existing) {
@@ -302,7 +316,7 @@ export class KnowledgeBaseManager {
             type: this.guessEntityType(word),
             confidence: 0.7,
             mentions: 1,
-            context: [this.getContext(text, i)]
+            context: [this.getContext(text, i)],
           });
         }
       }
@@ -451,7 +465,7 @@ export class KnowledgeBaseManager {
           relevanceScore,
           matchedEntities,
           excerpt: excerpt || document.metadata.summary,
-          reasoning: this.generateReasoning(relevanceScore, matchedEntities.length, excerpt)
+          reasoning: this.generateReasoning(relevanceScore, matchedEntities.length, excerpt),
         });
       }
     }
@@ -462,7 +476,11 @@ export class KnowledgeBaseManager {
     return results.slice(0, maxResults);
   }
 
-  private generateReasoning(relevanceScore: number, entityMatches: number, excerpt: string): string {
+  private generateReasoning(
+    relevanceScore: number,
+    entityMatches: number,
+    excerpt: string
+  ): string {
     let reasoning = '';
 
     if (relevanceScore > 0.5) {
@@ -524,15 +542,19 @@ export class KnowledgeBaseManager {
   }
 
   // Statistics
-  getKnowledgeStats(userId: number, characterId: number): {
+  getKnowledgeStats(
+    userId: number,
+    characterId: number
+  ): {
     totalDocuments: number;
     totalWords: number;
     topTopics: string[];
     topEntities: KnowledgeEntity[];
     averageRelevance: number;
   } {
-    const userDocs = Array.from(this.documents.values())
-      .filter(doc => doc.userId === userId && doc.characterId === characterId);
+    const userDocs = Array.from(this.documents.values()).filter(
+      doc => doc.userId === userId && doc.characterId === characterId
+    );
 
     const totalWords = userDocs.reduce((sum, doc) => sum + doc.metadata.wordCount, 0);
 
@@ -562,16 +584,17 @@ export class KnowledgeBaseManager {
       .sort((a, b) => b.mentions - a.mentions)
       .slice(0, 5);
 
-    const averageRelevance = userDocs.length > 0
-      ? userDocs.reduce((sum, doc) => sum + doc.relevanceScore, 0) / userDocs.length
-      : 0;
+    const averageRelevance =
+      userDocs.length > 0
+        ? userDocs.reduce((sum, doc) => sum + doc.relevanceScore, 0) / userDocs.length
+        : 0;
 
     return {
       totalDocuments: userDocs.length,
       totalWords,
       topTopics,
       topEntities,
-      averageRelevance
+      averageRelevance,
     };
   }
 }

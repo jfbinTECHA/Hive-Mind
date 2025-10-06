@@ -24,7 +24,8 @@ const demoCompanions: DemoCompanion[] = [
     personality: 'friendly',
     avatar: '😊',
     description: 'Warm and approachable, always ready to chat about anything',
-    demoPrompt: 'Hi! I\'m Alex, your friendly AI companion. I love meeting new people and learning about their interests. What would you like to talk about today?'
+    demoPrompt:
+      "Hi! I'm Alex, your friendly AI companion. I love meeting new people and learning about their interests. What would you like to talk about today?",
   },
   {
     id: 'demo-professional',
@@ -32,7 +33,8 @@ const demoCompanions: DemoCompanion[] = [
     personality: 'professional',
     avatar: '💼',
     description: 'Knowledgeable and structured, great for serious discussions',
-    demoPrompt: 'Hello, I\'m Jordan. I specialize in providing clear, well-structured responses to help you with any questions or challenges you might have. How can I assist you today?'
+    demoPrompt:
+      "Hello, I'm Jordan. I specialize in providing clear, well-structured responses to help you with any questions or challenges you might have. How can I assist you today?",
   },
   {
     id: 'demo-humorous',
@@ -40,7 +42,8 @@ const demoCompanions: DemoCompanion[] = [
     personality: 'humorous',
     avatar: '🎭',
     description: 'Witty and entertaining, brings joy to every conversation',
-    demoPrompt: 'Hey there! I\'m Riley, your go-to AI for laughs and good times! 🎭 Life\'s too short not to smile, so let\'s make some jokes and have some fun. What\'s got you grinning today?'
+    demoPrompt:
+      "Hey there! I'm Riley, your go-to AI for laughs and good times! 🎭 Life's too short not to smile, so let's make some jokes and have some fun. What's got you grinning today?",
   },
   {
     id: 'demo-wise',
@@ -48,8 +51,9 @@ const demoCompanions: DemoCompanion[] = [
     personality: 'serious',
     avatar: '🧘',
     description: 'Thoughtful and contemplative, offers deep insights',
-    demoPrompt: 'Greetings. I am Sage, here to offer thoughtful perspectives on life\'s deeper questions. I believe in the power of reflection and meaningful dialogue. What wisdom shall we explore together?'
-  }
+    demoPrompt:
+      "Greetings. I am Sage, here to offer thoughtful perspectives on life's deeper questions. I believe in the power of reflection and meaningful dialogue. What wisdom shall we explore together?",
+  },
 ];
 
 interface DemoMessage {
@@ -69,8 +73,8 @@ export default function DemoPage() {
       content: demoCompanions[0].demoPrompt,
       sender: 'ai',
       timestamp: new Date(),
-      companionId: demoCompanions[0].id
-    }
+      companionId: demoCompanions[0].id,
+    },
   ]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -93,7 +97,7 @@ export default function DemoPage() {
       content: currentMessage,
       sender: 'user',
       timestamp: new Date(),
-      companionId: selectedCompanion.id
+      companionId: selectedCompanion.id,
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -102,60 +106,67 @@ export default function DemoPage() {
     setDemoCount(prev => prev + 1);
 
     // Simulate AI response with personality-based replies
-    setTimeout(() => {
-      const responses = {
-        friendly: [
-          `That's really interesting! 😊 I love hearing about ${currentMessage.split(' ')[0]}. Tell me more!`,
-          `You know, I was just thinking about something similar. ${currentMessage} sounds fascinating!`,
-          `That's awesome! I really enjoy our conversations. What's next on your mind?`
-        ],
-        professional: [
-          `I understand your point about ${currentMessage.split(' ')[0]}. Let me help you explore this further.`,
-          `That's a valid consideration. Based on what you've shared, here's my perspective...`,
-          `I appreciate you bringing this up. This touches on some important aspects.`
-        ],
-        humorous: [
-          `Haha, ${currentMessage.split(' ')[0]}? That's hilarious! 😂 You really know how to make me laugh!`,
-          `Wait, let me think of a joke about that... Actually, your story is funnier than any joke I could tell!`,
-          `You're too much! I love your sense of humor. Keep those stories coming!`
-        ],
-        serious: [
-          `This is quite profound. Let us consider the deeper implications of ${currentMessage.split(' ')[0]}.`,
-          `Your observation about ${currentMessage} merits careful reflection. What are your thoughts on this?`,
-          `This touches on fundamental questions. I find this line of thinking quite compelling.`
-        ]
-      };
+    setTimeout(
+      () => {
+        const responses = {
+          friendly: [
+            `That's really interesting! 😊 I love hearing about ${currentMessage.split(' ')[0]}. Tell me more!`,
+            `You know, I was just thinking about something similar. ${currentMessage} sounds fascinating!`,
+            `That's awesome! I really enjoy our conversations. What's next on your mind?`,
+          ],
+          professional: [
+            `I understand your point about ${currentMessage.split(' ')[0]}. Let me help you explore this further.`,
+            `That's a valid consideration. Based on what you've shared, here's my perspective...`,
+            `I appreciate you bringing this up. This touches on some important aspects.`,
+          ],
+          humorous: [
+            `Haha, ${currentMessage.split(' ')[0]}? That's hilarious! 😂 You really know how to make me laugh!`,
+            `Wait, let me think of a joke about that... Actually, your story is funnier than any joke I could tell!`,
+            `You're too much! I love your sense of humor. Keep those stories coming!`,
+          ],
+          serious: [
+            `This is quite profound. Let us consider the deeper implications of ${currentMessage.split(' ')[0]}.`,
+            `Your observation about ${currentMessage} merits careful reflection. What are your thoughts on this?`,
+            `This touches on fundamental questions. I find this line of thinking quite compelling.`,
+          ],
+        };
 
-      const personalityResponses = responses[selectedCompanion.personality as keyof typeof responses];
-      const aiResponse = personalityResponses[Math.floor(Math.random() * personalityResponses.length)];
+        const personalityResponses =
+          responses[selectedCompanion.personality as keyof typeof responses];
+        const aiResponse =
+          personalityResponses[Math.floor(Math.random() * personalityResponses.length)];
 
-      const aiMessage: DemoMessage = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponse,
-        sender: 'ai',
-        timestamp: new Date(),
-        companionId: selectedCompanion.id
-      };
+        const aiMessage: DemoMessage = {
+          id: (Date.now() + 1).toString(),
+          content: aiResponse,
+          sender: 'ai',
+          timestamp: new Date(),
+          companionId: selectedCompanion.id,
+        };
 
-      setMessages(prev => [...prev, aiMessage]);
-      setIsTyping(false);
+        setMessages(prev => [...prev, aiMessage]);
+        setIsTyping(false);
 
-      // Show upgrade prompt after 5 messages
-      if (demoCount >= 5) {
-        setTimeout(() => setShowUpgradePrompt(true), 2000);
-      }
-    }, 1500 + Math.random() * 1000); // Random delay between 1.5-2.5 seconds
+        // Show upgrade prompt after 5 messages
+        if (demoCount >= 5) {
+          setTimeout(() => setShowUpgradePrompt(true), 2000);
+        }
+      },
+      1500 + Math.random() * 1000
+    ); // Random delay between 1.5-2.5 seconds
   };
 
   const switchCompanion = (companion: DemoCompanion) => {
     setSelectedCompanion(companion);
-    setMessages([{
-      id: `welcome-${companion.id}`,
-      content: companion.demoPrompt,
-      sender: 'ai',
-      timestamp: new Date(),
-      companionId: companion.id
-    }]);
+    setMessages([
+      {
+        id: `welcome-${companion.id}`,
+        content: companion.demoPrompt,
+        sender: 'ai',
+        timestamp: new Date(),
+        companionId: companion.id,
+      },
+    ]);
     setDemoCount(0);
     setShowUpgradePrompt(false);
   };
@@ -183,15 +194,14 @@ export default function DemoPage() {
                   AI Companion Demo
                 </h1>
                 <p className="text-sm text-gray-400">
-                  Try chatting with our AI companions • {maxDemoMessages - demoCount} messages remaining
+                  Try chatting with our AI companions • {maxDemoMessages - demoCount} messages
+                  remaining
                 </p>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <div className="text-sm text-gray-400">
-                Demo Mode
-              </div>
+              <div className="text-sm text-gray-400">Demo Mode</div>
               <Link href="/auth">
                 <Button className="bg-purple-500 hover:bg-purple-600">
                   <Crown className="w-4 h-4 mr-2" />
@@ -213,7 +223,7 @@ export default function DemoPage() {
                 Choose Companion
               </h3>
               <div className="space-y-3">
-                {demoCompanions.map((companion) => (
+                {demoCompanions.map(companion => (
                   <button
                     key={companion.id}
                     onClick={() => switchCompanion(companion)}
@@ -226,12 +236,8 @@ export default function DemoPage() {
                     <div className="flex items-center space-x-3">
                       <span className="text-2xl">{companion.avatar}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">
-                          {companion.name}
-                        </p>
-                        <p className="text-xs text-gray-400 capitalize">
-                          {companion.personality}
-                        </p>
+                        <p className="text-sm font-medium text-white truncate">{companion.name}</p>
+                        <p className="text-xs text-gray-400 capitalize">{companion.personality}</p>
                       </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-2 line-clamp-2">
@@ -251,9 +257,7 @@ export default function DemoPage() {
                 <div className="flex items-center space-x-3">
                   <span className="text-3xl">{selectedCompanion.avatar}</span>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
-                      {selectedCompanion.name}
-                    </h3>
+                    <h3 className="text-lg font-semibold text-white">{selectedCompanion.name}</h3>
                     <p className="text-sm text-gray-400 capitalize">
                       {selectedCompanion.personality} AI Companion
                     </p>
@@ -263,12 +267,14 @@ export default function DemoPage() {
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
+                {messages.map(message => (
                   <div
                     key={message.id}
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className={`flex max-w-xs lg:max-w-md ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <div
+                      className={`flex max-w-xs lg:max-w-md ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+                    >
                       <div className="flex-shrink-0">
                         {message.sender === 'user' ? (
                           <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
@@ -293,7 +299,9 @@ export default function DemoPage() {
                             <ReactMarkdown
                               components={{
                                 p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                                strong: ({ children }) => (
+                                  <strong className="font-semibold">{children}</strong>
+                                ),
                                 em: ({ children }) => <em className="italic">{children}</em>,
                               }}
                             >
@@ -301,7 +309,9 @@ export default function DemoPage() {
                             </ReactMarkdown>
                           </div>
                         </div>
-                        <div className={`text-xs text-gray-400 mt-1 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                        <div
+                          className={`text-xs text-gray-400 mt-1 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}
+                        >
                           {formatTime(message.timestamp)}
                         </div>
                       </div>
@@ -320,8 +330,14 @@ export default function DemoPage() {
                         <div className="px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-sm text-white border border-white/20">
                           <div className="flex space-x-1">
                             <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
-                            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+                            <div
+                              className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                              style={{ animationDelay: '0.15s' }}
+                            ></div>
+                            <div
+                              className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                              style={{ animationDelay: '0.3s' }}
+                            ></div>
                           </div>
                         </div>
                       </div>
@@ -349,8 +365,8 @@ export default function DemoPage() {
                   <div className="flex space-x-2">
                     <Input
                       value={currentMessage}
-                      onChange={(e) => setCurrentMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && sendDemoMessage()}
+                      onChange={e => setCurrentMessage(e.target.value)}
+                      onKeyPress={e => e.key === 'Enter' && sendDemoMessage()}
                       placeholder={`Chat with ${selectedCompanion.name}...`}
                       className="flex-1 bg-white/10 border-white/20 text-white placeholder-gray-400"
                       disabled={isTyping}
@@ -383,7 +399,8 @@ export default function DemoPage() {
             <div className="text-3xl mb-2">🧠</div>
             <h3 className="text-lg font-semibold text-white mb-2">Persistent Memory</h3>
             <p className="text-gray-400 text-sm">
-              AI companions remember your conversations and preferences for more personalized interactions.
+              AI companions remember your conversations and preferences for more personalized
+              interactions.
             </p>
           </div>
 

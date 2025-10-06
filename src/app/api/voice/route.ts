@@ -15,10 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Check if voice service is available
     if (!voiceService.isAvailable()) {
-      return NextResponse.json(
-        { error: 'Voice service not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: 'Voice service not configured' }, { status: 503 });
     }
 
     // Get character for additional context
@@ -28,34 +25,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate voice audio
-    const audioUrl = await voiceService.generateAndCacheVoice(
-      text,
-      personality,
-      emotionalState
-    );
+    const audioUrl = await voiceService.generateAndCacheVoice(text, personality, emotionalState);
 
     if (!audioUrl) {
-      return NextResponse.json(
-        { error: 'Failed to generate voice audio' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to generate voice audio' }, { status: 500 });
     }
 
     return NextResponse.json({
       audioUrl,
-      character: character ? {
-        name: character.name,
-        personality: character.personality
-      } : null,
-      voiceStats: voiceService.getVoiceStats()
+      character: character
+        ? {
+            name: character.name,
+            personality: character.personality,
+          }
+        : null,
+      voiceStats: voiceService.getVoiceStats(),
     });
-
   } catch (error) {
     console.error('Voice generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -79,16 +67,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ settings });
     }
 
-    return NextResponse.json(
-      { error: 'Invalid action parameter' },
-      { status: 400 }
-    );
-
+    return NextResponse.json({ error: 'Invalid action parameter' }, { status: 400 });
   } catch (error) {
     console.error('Voice API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

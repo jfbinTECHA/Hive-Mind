@@ -16,6 +16,7 @@ This guide covers multiple deployment options for the AI Hive Mind application, 
 **Best for:** Quick deployment, prototyping, and development
 
 #### 1. Frontend (Vercel)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -27,6 +28,7 @@ vercel --prod
 ```
 
 #### 2. Database (Neon.tech)
+
 1. Sign up at [neon.tech](https://neon.tech)
 2. Create a new project
 3. Enable pgvector extension:
@@ -36,11 +38,13 @@ vercel --prod
 4. Copy connection string
 
 #### 3. Redis (Redis Cloud)
+
 1. Sign up at [redis.com](https://redis.com)
 2. Create a Redis Cloud database
 3. Copy connection URL
 
 #### 4. Environment Variables
+
 ```bash
 DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
 REDIS_URL="redis://user:pass@host:port"
@@ -55,6 +59,7 @@ VECTOR_DB_TYPE="pgvector"
 **Best for:** Complete application with managed services
 
 #### Deploy with Railway
+
 ```bash
 # Run deployment script
 ./scripts/deploy-railway.sh
@@ -66,6 +71,7 @@ railway up
 ```
 
 #### Railway Services Setup
+
 1. **PostgreSQL**: Automatically provided by Railway
 2. **Redis**: Add Redis service to your Railway project
 3. **Ollama**: Deploy Ollama as a separate service
@@ -77,6 +83,7 @@ railway up
 **Best for:** Local development and on-premise deployment
 
 #### Quick Start
+
 ```bash
 # Clone and setup
 git clone <repository>
@@ -93,6 +100,7 @@ docker-compose exec postgres psql -U postgres -d ai_hive_mind -f /docker-entrypo
 ```
 
 #### Services Included
+
 - **AI Hive Mind**: Main application (Port 3000)
 - **PostgreSQL + pgvector**: Database with vector search
 - **Redis**: Caching and session storage
@@ -107,6 +115,7 @@ docker-compose exec postgres psql -U postgres -d ai_hive_mind -f /docker-entrypo
 **Best for:** Production deployment on Ubuntu servers
 
 #### Server Setup
+
 ```bash
 # Update system
 sudo apt update && sudo apt upgrade -y
@@ -128,6 +137,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
 #### Production Docker Compose Override
+
 ```yaml
 # docker-compose.prod.yml
 version: '3.8'
@@ -150,12 +160,14 @@ services:
 ### Neon.tech (Managed PostgreSQL)
 
 1. **Create Project**
+
    ```bash
    # Visit https://neon.tech and create account
    # Create new project
    ```
 
 2. **Enable Extensions**
+
    ```sql
    -- Run in Neon SQL Editor
    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -208,12 +220,14 @@ ollama serve
 ### Cloud LLM Alternatives
 
 #### Together AI
+
 ```bash
 export TOGETHER_API_KEY="your-api-key"
 # Set OLLAMA_BASE_URL="" to disable local Ollama
 ```
 
 #### OpenAI
+
 ```bash
 export OPENAI_API_KEY="your-api-key"
 # Application will automatically use OpenAI if available
@@ -298,6 +312,7 @@ LOG_LEVEL="info"
 ## 🚀 Deployment Commands
 
 ### Vercel Deployment
+
 ```bash
 # Install CLI
 npm i -g vercel
@@ -315,6 +330,7 @@ vercel env add REDIS_URL
 ```
 
 ### Railway Deployment
+
 ```bash
 # Run automated script
 ./scripts/deploy-railway.sh
@@ -326,6 +342,7 @@ railway up
 ```
 
 ### Docker Deployment
+
 ```bash
 # Development
 docker-compose up
@@ -385,16 +402,19 @@ docker-compose exec ai-hive-mind logrotate /etc/logrotate.d/ai-hive-mind
 ## 🔒 Security Considerations
 
 ### API Keys
+
 - Store API keys in environment variables
 - Use secret management services (Railway, Vercel, etc.)
 - Rotate keys regularly
 
 ### Database Security
+
 - Use SSL connections (`sslmode=require`)
 - Implement row-level security (RLS)
 - Regular security updates
 
 ### Network Security
+
 - Use HTTPS in production
 - Implement rate limiting
 - Configure CORS properly
@@ -405,6 +425,7 @@ docker-compose exec ai-hive-mind logrotate /etc/logrotate.d/ai-hive-mind
 ## 📈 Scaling Considerations
 
 ### Horizontal Scaling
+
 ```bash
 # Scale application instances
 docker-compose up -d --scale ai-hive-mind=5
@@ -419,11 +440,13 @@ upstream ai_hive_mind {
 ```
 
 ### Database Scaling
+
 - Use connection pooling (pgbouncer)
 - Implement read replicas
 - Consider database sharding for large datasets
 
 ### Caching Strategy
+
 - Redis for session storage
 - CDN for static assets
 - Application-level caching for API responses
@@ -435,6 +458,7 @@ upstream ai_hive_mind {
 ### Common Issues
 
 **Ollama Connection Failed**
+
 ```bash
 # Check Ollama status
 curl http://localhost:11434/api/tags
@@ -444,6 +468,7 @@ sudo systemctl restart ollama
 ```
 
 **Database Connection Issues**
+
 ```bash
 # Test connection
 psql "your-connection-string"
@@ -453,6 +478,7 @@ docker-compose logs postgres
 ```
 
 **Build Failures**
+
 ```bash
 # Clear build cache
 docker system prune -a

@@ -14,15 +14,26 @@ export class EnhancedAIMemory {
    * Enhanced memory retrieval with aging consideration
    */
   async getRelevantMemories(query: string, userId: string, limit: number = 5): Promise<string[]> {
-    const agedMemories = await this.agingSystem.getMemorySuggestions(query, userId, undefined, limit);
+    const agedMemories = await this.agingSystem.getMemorySuggestions(
+      query,
+      userId,
+      undefined,
+      limit
+    );
 
     // Convert to response-ready strings
     return agedMemories.map(memory => {
-      const decayedContent = this.agingSystem.applyFuzziness(memory.originalContent, memory.decayFactor);
-      return this.agingSystem.createMemoryReference({
-        ...memory,
-        fuzzyContent: decayedContent
-      }, query);
+      const decayedContent = this.agingSystem.applyFuzziness(
+        memory.originalContent,
+        memory.decayFactor
+      );
+      return this.agingSystem.createMemoryReference(
+        {
+          ...memory,
+          fuzzyContent: decayedContent,
+        },
+        query
+      );
     });
   }
 
@@ -57,24 +68,24 @@ export class EnhancedAIMemory {
 
 export interface MemoryDecayConfig {
   // Time-based decay parameters
-  shortTermDecay: number;    // Hours for short-term memory decay
-  mediumTermDecay: number;   // Days for medium-term memory decay
-  longTermDecay: number;     // Weeks for long-term memory decay
+  shortTermDecay: number; // Hours for short-term memory decay
+  mediumTermDecay: number; // Days for medium-term memory decay
+  longTermDecay: number; // Weeks for long-term memory decay
 
   // Decay rates (0-1, where 1 = no decay, 0 = complete decay)
-  shortTermDecayRate: number;  // How fast short-term memories decay
+  shortTermDecayRate: number; // How fast short-term memories decay
   mediumTermDecayRate: number; // How fast medium-term memories decay
-  longTermDecayRate: number;   // How fast long-term memories decay
+  longTermDecayRate: number; // How fast long-term memories decay
 
   // Access-based strengthening
   accessStrengthFactor: number; // How much access strengthens memory
 
   // Importance thresholds
-  archiveThreshold: number;     // Decay factor below which memories are archived
-  deleteThreshold: number;      // Decay factor below which memories are deleted
+  archiveThreshold: number; // Decay factor below which memories are archived
+  deleteThreshold: number; // Decay factor below which memories are deleted
 
   // Fuzzy memory parameters
-  fuzzinessFactor: number;      // How fuzzy memories become over time
+  fuzzinessFactor: number; // How fuzzy memories become over time
   consolidationInterval: number; // Hours between memory consolidation runs
 }
 
@@ -82,14 +93,14 @@ export interface AgedMemory {
   id: string;
   originalContent: string;
   fuzzyContent: string;
-  decayFactor: number;        // 0-1, where 1 = perfect recall, 0 = forgotten
-  importanceScore: number;    // 0-1, based on access frequency and emotional impact
+  decayFactor: number; // 0-1, where 1 = perfect recall, 0 = forgotten
+  importanceScore: number; // 0-1, based on access frequency and emotional impact
   lastAccessed: Date;
   createdAt: Date;
   memoryType: 'conversation' | 'fact' | 'emotional' | 'personal';
   tags: string[];
   isArchived: boolean;
-  consolidationCount: number;  // How many times this memory has been consolidated
+  consolidationCount: number; // How many times this memory has been consolidated
 }
 
 export class MemoryAgingSystem {
@@ -98,18 +109,18 @@ export class MemoryAgingSystem {
 
   constructor(config?: Partial<MemoryDecayConfig>) {
     this.config = {
-      shortTermDecay: 24,      // 24 hours
-      mediumTermDecay: 7,      // 7 days
-      longTermDecay: 30,       // 30 days
-      shortTermDecayRate: 0.95,  // 5% decay per hour initially
+      shortTermDecay: 24, // 24 hours
+      mediumTermDecay: 7, // 7 days
+      longTermDecay: 30, // 30 days
+      shortTermDecayRate: 0.95, // 5% decay per hour initially
       mediumTermDecayRate: 0.98, // 2% decay per day
-      longTermDecayRate: 0.995,  // 0.5% decay per week
+      longTermDecayRate: 0.995, // 0.5% decay per week
       accessStrengthFactor: 0.1, // 10% strength increase per access
-      archiveThreshold: 0.3,     // Archive below 30% decay
-      deleteThreshold: 0.1,       // Delete below 10% decay
-      fuzzinessFactor: 0.1,       // 10% fuzziness increase over time
-      consolidationInterval: 6,   // 6 hours between consolidation
-      ...config
+      archiveThreshold: 0.3, // Archive below 30% decay
+      deleteThreshold: 0.1, // Delete below 10% decay
+      fuzzinessFactor: 0.1, // 10% fuzziness increase over time
+      consolidationInterval: 6, // 6 hours between consolidation
+      ...config,
     };
     this.lastConsolidationRun = new Date();
   }
@@ -119,7 +130,8 @@ export class MemoryAgingSystem {
    */
   calculateDecayFactor(memory: AgedMemory, currentTime: Date = new Date()): number {
     const ageInHours = (currentTime.getTime() - memory.createdAt.getTime()) / (1000 * 60 * 60);
-    const timeSinceAccess = (currentTime.getTime() - memory.lastAccessed.getTime()) / (1000 * 60 * 60);
+    const timeSinceAccess =
+      (currentTime.getTime() - memory.lastAccessed.getTime()) / (1000 * 60 * 60);
 
     let baseDecay = 1.0;
 
@@ -137,14 +149,20 @@ export class MemoryAgingSystem {
     } else {
       // Long-term decay (7+ days)
       const shortTermDecay = Math.pow(this.config.shortTermDecayRate, this.config.shortTermDecay);
-      const mediumTermDecay = Math.pow(this.config.mediumTermDecayRate, this.config.mediumTermDecay);
+      const mediumTermDecay = Math.pow(
+        this.config.mediumTermDecayRate,
+        this.config.mediumTermDecay
+      );
       const longTermDays = (ageInHours - this.config.mediumTermDecay * 24) / 24;
       const longTermDecay = Math.pow(this.config.longTermDecayRate, longTermDays / 7);
       baseDecay = shortTermDecay * mediumTermDecay * longTermDecay;
     }
 
     // Apply access-based strengthening
-    const accessStrength = Math.min(0.5, memory.consolidationCount * this.config.accessStrengthFactor);
+    const accessStrength = Math.min(
+      0.5,
+      memory.consolidationCount * this.config.accessStrengthFactor
+    );
     const importanceBoost = memory.importanceScore * 0.3;
 
     return Math.min(1.0, baseDecay + accessStrength + importanceBoost);
@@ -173,27 +191,29 @@ export class MemoryAgingSystem {
   }
 
   private applyLightFuzziness(words: string[], fuzziness: number): string {
-    return words.map(word => {
-      if (Math.random() < fuzziness * 0.3) {
-        // Occasionally replace with similar-sounding word or add "something like"
-        return Math.random() < 0.5 ? `something like ${word}` : word;
-      }
-      return word;
-    }).join(' ');
+    return words
+      .map(word => {
+        if (Math.random() < fuzziness * 0.3) {
+          // Occasionally replace with similar-sounding word or add "something like"
+          return Math.random() < 0.5 ? `something like ${word}` : word;
+        }
+        return word;
+      })
+      .join(' ');
   }
 
   private applyMediumFuzziness(words: string[], fuzziness: number): string {
-    const result = words.map(word => {
-      if (Math.random() < fuzziness * 0.5) {
-        return `...${word}...`;
-      }
-      return word;
-    }).join(' ');
+    const result = words
+      .map(word => {
+        if (Math.random() < fuzziness * 0.5) {
+          return `...${word}...`;
+        }
+        return word;
+      })
+      .join(' ');
 
     // Add uncertainty phrases
-    const uncertaintyPhrases = [
-      "I think ", "As I recall, ", "If memory serves, ", "I believe "
-    ];
+    const uncertaintyPhrases = ['I think ', 'As I recall, ', 'If memory serves, ', 'I believe '];
 
     if (Math.random() < fuzziness) {
       const phrase = uncertaintyPhrases[Math.floor(Math.random() * uncertaintyPhrases.length)];
@@ -222,13 +242,18 @@ export class MemoryAgingSystem {
   /**
    * Consolidate memories - strengthen important ones, archive old ones
    */
-  async consolidateMemories(userId: string, characterId?: string): Promise<{
+  async consolidateMemories(
+    userId: string,
+    characterId?: string
+  ): Promise<{
     consolidated: number;
     archived: number;
     deleted: number;
   }> {
     const currentTime = new Date();
-    const cutoffTime = new Date(currentTime.getTime() - (this.config.consolidationInterval * 60 * 60 * 1000));
+    const cutoffTime = new Date(
+      currentTime.getTime() - this.config.consolidationInterval * 60 * 60 * 1000
+    );
 
     // Only run consolidation if enough time has passed
     if (this.lastConsolidationRun > cutoffTime) {
@@ -238,7 +263,10 @@ export class MemoryAgingSystem {
     this.lastConsolidationRun = currentTime;
 
     // Get memories to process
-    const memories = await Database.getMemoriesForConsolidation(parseInt(userId), characterId ? parseInt(characterId) : undefined);
+    const memories = await Database.getMemoriesForConsolidation(
+      parseInt(userId),
+      characterId ? parseInt(characterId) : undefined
+    );
 
     let consolidated = 0;
     let archived = 0;
@@ -301,7 +329,7 @@ export class MemoryAgingSystem {
       memoryType: dbMemory.fact_type || 'fact',
       tags: dbMemory.tags || [],
       isArchived: dbMemory.is_archived || false,
-      consolidationCount: dbMemory.consolidation_count || 0
+      consolidationCount: dbMemory.consolidation_count || 0,
     };
   }
 
@@ -314,7 +342,12 @@ export class MemoryAgingSystem {
     characterId?: string,
     limit: number = 5
   ): Promise<AgedMemory[]> {
-    const candidates = await Database.searchMemories(query, parseInt(userId), characterId ? parseInt(characterId) : undefined, limit * 2);
+    const candidates = await Database.searchMemories(
+      query,
+      parseInt(userId),
+      characterId ? parseInt(characterId) : undefined,
+      limit * 2
+    );
 
     // Apply decay and ranking
     const agedMemories = candidates.map(mem => {
@@ -372,7 +405,10 @@ export class MemoryAgingSystem {
   /**
    * Calculate memory health statistics
    */
-  async getMemoryHealthStats(userId: string, characterId?: string): Promise<{
+  async getMemoryHealthStats(
+    userId: string,
+    characterId?: string
+  ): Promise<{
     totalMemories: number;
     activeMemories: number;
     archivedMemories: number;
@@ -380,7 +416,10 @@ export class MemoryAgingSystem {
     oldestMemory: Date | null;
     newestMemory: Date | null;
   }> {
-    const stats = await Database.getMemoryStats(parseInt(userId), characterId ? parseInt(characterId) : undefined);
+    const stats = await Database.getMemoryStats(
+      parseInt(userId),
+      characterId ? parseInt(characterId) : undefined
+    );
 
     return {
       totalMemories: stats.total,
@@ -388,7 +427,7 @@ export class MemoryAgingSystem {
       archivedMemories: stats.archived,
       averageDecay: stats.average_decay || 1.0,
       oldestMemory: stats.oldest_memory ? new Date(stats.oldest_memory) : null,
-      newestMemory: stats.newest_memory ? new Date(stats.newest_memory) : null
+      newestMemory: stats.newest_memory ? new Date(stats.newest_memory) : null,
     };
   }
 
@@ -411,12 +450,15 @@ export class MemoryAgingSystem {
 export const memoryAgingSystem = new MemoryAgingSystem();
 
 // Periodic consolidation (run every 6 hours)
-setInterval(async () => {
-  try {
-    // This would need to be called for each user - in a real implementation,
-    // this would be handled by a background job system
-    console.log('Memory consolidation cycle started');
-  } catch (error) {
-    console.error('Memory consolidation error:', error);
-  }
-}, 6 * 60 * 60 * 1000); // 6 hours
+setInterval(
+  async () => {
+    try {
+      // This would need to be called for each user - in a real implementation,
+      // this would be handled by a background job system
+      console.log('Memory consolidation cycle started');
+    } catch (error) {
+      console.error('Memory consolidation error:', error);
+    }
+  },
+  6 * 60 * 60 * 1000
+); // 6 hours

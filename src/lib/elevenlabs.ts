@@ -56,29 +56,29 @@ export class ElevenLabsService {
         stability: 0.75,
         similarity: 0.8,
         style: 0.6,
-        speed: 1.1
+        speed: 1.1,
       },
       professional: {
         voiceId: '29vD33N1CtxCmqQRPOHJ', // Drew (professional, clear)
         stability: 0.8,
         similarity: 0.85,
         style: 0.4,
-        speed: 0.95
+        speed: 0.95,
       },
       humorous: {
         voiceId: 'AZnzlk1XvdvUeBnXmlld', // Antoni (expressive, fun)
         stability: 0.7,
         similarity: 0.75,
         style: 0.8,
-        speed: 1.2
+        speed: 1.2,
       },
       serious: {
         voiceId: 'ErXwobaYiN019PkySvjV', // Arnold (deep, serious)
         stability: 0.85,
         similarity: 0.9,
         style: 0.3,
-        speed: 0.9
-      }
+        speed: 0.9,
+      },
     };
 
     return personalityVoices[personality] || personalityVoices.friendly;
@@ -87,16 +87,13 @@ export class ElevenLabsService {
   /**
    * Adjust voice settings based on emotional state
    */
-  static adjustVoiceForEmotion(
-    baseSettings: VoiceSettings,
-    emotionalState?: any
-  ): VoiceSettings {
+  static adjustVoiceForEmotion(baseSettings: VoiceSettings, emotionalState?: any): VoiceSettings {
     if (!emotionalState) return baseSettings;
 
     const adjusted = { ...baseSettings };
 
     // Adjust speed based on energy
-    adjusted.speed *= (0.8 + emotionalState.energy * 0.4); // 0.8-1.2 range
+    adjusted.speed *= 0.8 + emotionalState.energy * 0.4; // 0.8-1.2 range
 
     // Adjust stability based on mood (negative moods = less stable)
     if (emotionalState.mood < 0) {
@@ -126,24 +123,27 @@ export class ElevenLabsService {
     }
 
     try {
-      const response = await fetch(`${ElevenLabsService.API_BASE}/text-to-speech/${request.voiceSettings.voiceId}`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'audio/mpeg',
-          'Content-Type': 'application/json',
-          'xi-api-key': this.apiKey!
-        },
-        body: JSON.stringify({
-          text: request.text,
-          model_id: request.model || 'eleven_monolingual_v1',
-          voice_settings: {
-            stability: request.voiceSettings.stability,
-            similarity_boost: request.voiceSettings.similarity,
-            style: request.voiceSettings.style,
-            use_speaker_boost: true
-          }
-        })
-      });
+      const response = await fetch(
+        `${ElevenLabsService.API_BASE}/text-to-speech/${request.voiceSettings.voiceId}`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': this.apiKey!,
+          },
+          body: JSON.stringify({
+            text: request.text,
+            model_id: request.model || 'eleven_monolingual_v1',
+            voice_settings: {
+              stability: request.voiceSettings.stability,
+              similarity_boost: request.voiceSettings.similarity,
+              style: request.voiceSettings.style,
+              use_speaker_boost: true,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         const error = await response.text();
@@ -180,7 +180,7 @@ export class ElevenLabsService {
 
     const audioBuffer = await this.generateVoice({
       text,
-      voiceSettings: adjustedSettings
+      voiceSettings: adjustedSettings,
     });
 
     if (!audioBuffer) return null;
@@ -195,7 +195,7 @@ export class ElevenLabsService {
       voiceId: adjustedSettings.voiceId,
       audioUrl,
       timestamp: Date.now(),
-      expiresAt: Date.now() + ElevenLabsService.CACHE_DURATION
+      expiresAt: Date.now() + ElevenLabsService.CACHE_DURATION,
     });
 
     return audioUrl;
@@ -210,8 +210,8 @@ export class ElevenLabsService {
     try {
       const response = await fetch(`${ElevenLabsService.API_BASE}/voices`, {
         headers: {
-          'xi-api-key': this.apiKey!
-        }
+          'xi-api-key': this.apiKey!,
+        },
       });
 
       if (!response.ok) return [];
@@ -228,9 +228,9 @@ export class ElevenLabsService {
    * Generate cache key for voice caching
    */
   private getCacheKey(text: string, personality: string, emotionalState?: any): string {
-    const stateHash = emotionalState ?
-      `${emotionalState.mood}_${emotionalState.energy}_${emotionalState.trust}_${emotionalState.curiosity}` :
-      'neutral';
+    const stateHash = emotionalState
+      ? `${emotionalState.mood}_${emotionalState.energy}_${emotionalState.trust}_${emotionalState.curiosity}`
+      : 'neutral';
     return `${personality}_${stateHash}_${btoa(text).slice(0, 50)}`;
   }
 
@@ -253,7 +253,7 @@ export class ElevenLabsService {
   getVoiceStats(): { cached: number; totalRequests: number } {
     return {
       cached: this.voiceCache.size,
-      totalRequests: this.voiceCache.size // Simplified
+      totalRequests: this.voiceCache.size, // Simplified
     };
   }
 }
@@ -262,6 +262,9 @@ export class ElevenLabsService {
 export const voiceService = new ElevenLabsService();
 
 // Clean cache periodically
-setInterval(() => {
-  voiceService.cleanCache();
-}, 60 * 60 * 1000); // Clean every hour
+setInterval(
+  () => {
+    voiceService.cleanCache();
+  },
+  60 * 60 * 1000
+); // Clean every hour

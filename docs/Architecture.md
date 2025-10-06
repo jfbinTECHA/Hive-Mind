@@ -9,6 +9,7 @@ The AI Hive Mind is a comprehensive multi-companion AI system built with modern 
 ### 🧠 AI & Personality Layer
 
 #### Multi-Companion System
+
 ```mermaid
 graph TD
     A[User] --> B{AI Companion Selector}
@@ -25,6 +26,7 @@ graph TD
 ```
 
 #### Personality Engine
+
 Each AI companion has a unique personality profile:
 
 ```typescript
@@ -33,8 +35,8 @@ interface PersonalityProfile {
   traits: string[];
   communicationStyle: 'formal' | 'casual' | 'humorous' | 'serious';
   emotionalRange: number; // 0-1
-  creativity: number;     // 0-1
-  empathy: number;        // 0-1
+  creativity: number; // 0-1
+  empathy: number; // 0-1
   responsePatterns: ResponsePattern[];
 }
 ```
@@ -42,6 +44,7 @@ interface PersonalityProfile {
 ### 🧬 Memory & Knowledge Layer
 
 #### Memory Architecture
+
 ```mermaid
 graph TD
     A[Conversation Input] --> B[Memory Extraction]
@@ -63,6 +66,7 @@ graph TD
 ```
 
 #### Knowledge Graph Structure
+
 ```typescript
 interface KnowledgeNode {
   id: string;
@@ -83,6 +87,7 @@ interface KnowledgeEdge {
 ### 💝 Relationship Evolution Layer
 
 #### Relationship Progression System
+
 ```mermaid
 stateDiagram-v2
     [*] --> Stranger: First Interaction
@@ -113,21 +118,23 @@ stateDiagram-v2
 ```
 
 #### Relationship Metrics
+
 ```typescript
 interface RelationshipMetrics {
   interactionCount: number;
   averageResponseTime: number;
-  emotionalAlignment: number;    // How well emotions match
-  topicDiversity: number;        // Range of conversation topics
-  consistencyScore: number;      // Response predictability
-  trustLevel: number;           // Based on reliability
-  intimacyLevel: number;        // Depth of shared information
+  emotionalAlignment: number; // How well emotions match
+  topicDiversity: number; // Range of conversation topics
+  consistencyScore: number; // Response predictability
+  trustLevel: number; // Based on reliability
+  intimacyLevel: number; // Depth of shared information
 }
 ```
 
 ### 🎙️ Voice & Multimodal Layer
 
 #### Voice Processing Pipeline
+
 ```mermaid
 graph LR
     A[User Speech] --> B[Microphone Capture]
@@ -147,6 +154,7 @@ graph LR
 ```
 
 #### Multimodal Integration
+
 ```typescript
 interface MultimodalMessage {
   text?: string;
@@ -165,6 +173,7 @@ interface MultimodalMessage {
 ### 🛡️ Safety & Moderation Layer
 
 #### Content Filtering Pipeline
+
 ```mermaid
 graph TD
     A[User Input] --> B[Content Analysis]
@@ -182,6 +191,7 @@ graph TD
 ```
 
 #### Safety Metrics
+
 ```typescript
 interface SafetyMetrics {
   contentViolations: number;
@@ -196,6 +206,7 @@ interface SafetyMetrics {
 ### 🔄 Offline & Synchronization Layer
 
 #### Offline Architecture
+
 ```mermaid
 graph TD
     A[Online Mode] --> B[Cache Conversations]
@@ -218,6 +229,7 @@ graph TD
 ```
 
 #### Synchronization Strategy
+
 ```typescript
 interface SyncOperation {
   type: 'create' | 'update' | 'delete';
@@ -232,6 +244,7 @@ interface SyncOperation {
 ## Data Flow Architecture
 
 ### Message Processing Flow
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -262,6 +275,7 @@ sequenceDiagram
 ```
 
 ### Memory Formation Flow
+
 ```mermaid
 sequenceDiagram
     participant C as Conversation
@@ -286,6 +300,7 @@ sequenceDiagram
 ## Component Architecture
 
 ### Frontend Architecture
+
 ```
 src/
 ├── app/                    # Next.js App Router
@@ -308,6 +323,7 @@ src/
 ```
 
 ### Backend Architecture
+
 ```
 api/
 ├── chat/                # Chat Processing
@@ -321,17 +337,20 @@ api/
 ## Performance Considerations
 
 ### Caching Strategy
+
 - **Memory Caching**: Frequently accessed data in IndexedDB
 - **Response Caching**: AI responses for similar queries
 - **Asset Caching**: Static resources with service worker
 
 ### Optimization Techniques
+
 - **Lazy Loading**: Components loaded on demand
 - **Code Splitting**: Bundle splitting for faster loads
 - **Memory Management**: Automatic cleanup of old data
 - **Background Processing**: Non-blocking operations
 
 ### Scalability Features
+
 - **Horizontal Scaling**: Multiple AI instances
 - **Load Balancing**: Distributed processing
 - **Caching Layers**: Multi-level caching strategy
@@ -340,6 +359,7 @@ api/
 ## Security Architecture
 
 ### Authentication & Authorization
+
 ```typescript
 interface AuthContext {
   user: User | null;
@@ -350,12 +370,14 @@ interface AuthContext {
 ```
 
 ### Data Protection
+
 - **Encryption**: End-to-end encryption for sensitive data
 - **Access Control**: Role-based permissions
 - **Audit Logging**: Comprehensive activity tracking
 - **Privacy Controls**: User data management
 
 ### API Security
+
 - **Rate Limiting**: Request throttling per user
 - **Input Validation**: Comprehensive data validation
 - **CORS Configuration**: Cross-origin request handling

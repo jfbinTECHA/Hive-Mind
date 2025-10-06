@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Database, Cache } from '@/lib/database';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { ai_id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { ai_id: string } }) {
   try {
     const aiId = params.ai_id;
 
     if (!aiId) {
-      return NextResponse.json(
-        { error: 'AI ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'AI ID is required' }, { status: 400 });
     }
 
     // Check cache first
@@ -31,10 +25,7 @@ export async function GET(
     }
 
     if (!character) {
-      return NextResponse.json(
-        { error: 'AI character not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'AI character not found' }, { status: 404 });
     }
 
     // Get memories for this AI
@@ -51,11 +42,11 @@ export async function GET(
       value: {
         userMessage: conv.user_message,
         aiResponse: conv.ai_response,
-        timestamp: conv.timestamp
+        timestamp: conv.timestamp,
       },
       aiId: character.id,
       userId: conv.user_id,
-      timestamp: conv.timestamp
+      timestamp: conv.timestamp,
     }));
 
     const allMemories = [...aiMemories, ...conversationMemories];
@@ -65,19 +56,15 @@ export async function GET(
       aiName: character.name,
       memories: allMemories,
       totalMemories: allMemories.length,
-      familiarity: character.familiarity
+      familiarity: character.familiarity,
     };
 
     // Cache the result for 5 minutes
     await Cache.set(cacheKey, result, 300);
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error('Memory fetch error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

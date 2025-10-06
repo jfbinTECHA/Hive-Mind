@@ -61,10 +61,6 @@
 
 ## 🌟 Overview
 
----
-
-## 🌟 Overview
-
 AI Hive Mind is a revolutionary multi-companion AI platform that creates rich, evolving relationships between users and AI companions. Built with modern web technologies, it features:
 
 - **🧠 Persistent Memory**: Long-term memory with semantic search and relationship context
@@ -80,47 +76,52 @@ AI Hive Mind is a revolutionary multi-companion AI platform that creates rich, e
 
 ![AI Hive Mind Architecture](architecture-diagram.svg)
 
-*High-level system architecture showing core components and data flow*
+_High-level system architecture showing core components and data flow_
 
 </div>
 
 ### Core Components
 
-| Component | Description | Technologies |
-|-----------|-------------|--------------|
-| **Frontend** | React-based chat interface with real-time updates | Next.js, TypeScript, Tailwind CSS |
-| **AI Engine** | Multi-companion personality system with context awareness | Custom AI orchestration |
-| **Memory System** | Vector-based persistent memory with relationship tracking | IndexedDB, semantic search |
-| **Voice System** | Speech-to-text and text-to-speech integration | Whisper API, ElevenLabs |
-| **Plugin System** | Extensible architecture for third-party integrations | Node.js, REST APIs |
-| **Analytics** | Usage tracking and performance monitoring | Custom metrics system |
+| Component         | Description                                               | Technologies                      |
+| ----------------- | --------------------------------------------------------- | --------------------------------- |
+| **Frontend**      | React-based chat interface with real-time updates         | Next.js, TypeScript, Tailwind CSS |
+| **AI Engine**     | Multi-companion personality system with context awareness | Custom AI orchestration           |
+| **Memory System** | Vector-based persistent memory with relationship tracking | IndexedDB, semantic search        |
+| **Voice System**  | Speech-to-text and text-to-speech integration             | Whisper API, ElevenLabs           |
+| **Plugin System** | Extensible architecture for third-party integrations      | Node.js, REST APIs                |
+| **Analytics**     | Usage tracking and performance monitoring                 | Custom metrics system             |
 
 ## ✨ Key Features
 
 ### 🤖 Multi-Companion System
+
 - **Unique Personalities**: Each AI companion has distinct traits, communication styles, and relationship dynamics
 - **Relationship Evolution**: Companions grow and change based on interaction patterns
 - **Group Chat**: Multiple companions can interact simultaneously
 
 ### 🧠 Advanced Memory
+
 - **Semantic Search**: Find memories by meaning, not just keywords
 - **Relationship Context**: Memories are tied to specific companion relationships
 - **Memory Aging**: Automatic memory importance assessment and cleanup
 - **Shared Memories**: Companions can share and reference collective experiences
 
 ### 🎙️ Voice & Multimodal
+
 - **Real-time Speech**: Browser-based speech recognition and synthesis
 - **Voice Cloning**: Personalized voice synthesis for each companion
 - **Multimodal Input**: Support for text, voice, and image inputs
 - **Offline Mode**: Local processing when APIs are unavailable
 
 ### 🔌 Plugin Ecosystem
+
 - **Custom Integrations**: Extend functionality with plugins
 - **External APIs**: RESTful API for third-party applications
 - **Event System**: Hook into system events for custom behaviors
 - **Security Sandbox**: Isolated plugin execution with permission controls
 
 ### 📊 Analytics & Insights
+
 - **Usage Metrics**: Track interaction patterns and companion performance
 - **Memory Analytics**: Monitor memory growth and relationship dynamics
 - **Performance Monitoring**: System health and response time tracking
@@ -129,6 +130,7 @@ AI Hive Mind is a revolutionary multi-companion AI platform that creates rich, e
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 18.0 or higher
 - **npm** 8.0 or higher
 - **Git** (latest version)
@@ -182,13 +184,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📚 Documentation
 
-| Guide | Description |
-|-------|-------------|
-| **[🚀 Quick Start](docs/Setup.md)** | Installation and basic setup |
-| **[🏗️ Architecture](docs/Architecture.md)** | System design and components |
-| **[🎭 Personalities](docs/PersonalityProfiles.md)** | AI companion customization |
-| **[🔌 API Reference](docs/API.md)** | Complete REST API documentation |
-| **[🧩 Plugin System](PLUGIN_API.md)** | Extending with custom plugins |
+| Guide                                                 | Description                                 |
+| ----------------------------------------------------- | ------------------------------------------- |
+| **[🚀 Quick Start](docs/Setup.md)**                   | Installation and basic setup                |
+| **[🏗️ Architecture](docs/Architecture.md)**           | System design and components                |
+| **[🔍 Deep Architecture](docs/Architecture-Deep.md)** | Design decisions and implementation details |
+| **[🌊 Data Flow](docs/Data-Flow.md)**                 | Data flow diagrams and processing pipelines |
+| **[🎭 Personalities](docs/PersonalityProfiles.md)**   | AI companion customization                  |
+| **[🔌 API Reference](docs/API.md)**                   | Complete REST API documentation             |
+| **[🧩 Plugin System](PLUGIN_API.md)**                 | Extending with custom plugins               |
+| **[💻 Code Walkthrough](docs/Code-Walkthrough.md)**   | Key implementation details and patterns     |
+| **[🧩 Component Guide](docs/Component-Guide.md)**     | Component architecture and relationships    |
 
 **📖 [Full Documentation](docs/)** - Complete guides, tutorials, and API references
 
@@ -205,7 +211,6 @@ curl -X POST https://your-domain.com/api/chat \
 
 **📖 [Complete API Reference](docs/API.md)** - Full endpoint documentation, authentication, and examples
 **🔧 [Plugin API](PLUGIN_API.md)** - Extend functionality with custom plugins
-```
 
 ## 🛠️ Development
 
@@ -219,6 +224,7 @@ npm run dev
 ```
 
 **📖 [Development Guide](docs/Setup.md)** - Complete setup instructions, environment configuration, and deployment options
+
 ```
 
 ## 🤝 Contributing
@@ -278,3 +284,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [⭐ Star us on GitHub](https://github.com/jfbinTECHA/Hive-Mind) • [📧 Contact](mailto:contact@aihivemind.com) • [🌐 Website](https://aihivemind.com)
 
 </div>
+```

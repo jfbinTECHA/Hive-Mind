@@ -29,18 +29,12 @@ app/
 
 ```tsx
 // app/layout.tsx - Root layout with context providers
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
         <AppProvider>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </AppProvider>
       </body>
     </html>
@@ -106,6 +100,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 ```
 
 **Why this pattern?**
+
 - **Type Safety**: Full TypeScript support prevents runtime errors
 - **Predictable Updates**: Reducer pattern ensures consistent state changes
 - **Performance**: Context with selective re-rendering
@@ -140,7 +135,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = 'en-US';
 
-      recognitionRef.current.onresult = (event) => {
+      recognitionRef.current.onresult = event => {
         const transcript = event.results[0][0].transcript;
         setMessage(transcript);
         setIsListening(false);
@@ -191,7 +186,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
 
       <Input
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={e => setMessage(e.target.value)}
         placeholder="Type your message or use voice..."
         className="flex-1"
         disabled={disabled}
@@ -215,6 +210,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
 ```
 
 **Key Features**:
+
 - **Browser Speech API**: Direct integration with Web Speech API
 - **Fallback Handling**: Graceful degradation when speech recognition unavailable
 - **State Management**: Local component state for voice interaction
@@ -244,7 +240,7 @@ export class MemorySystem {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Create memories store
@@ -276,7 +272,7 @@ export class MemorySystem {
       importance: metadata.importance || 0.5,
       tags: metadata.tags || [],
       createdAt: new Date(),
-      metadata: metadata.additionalData || {}
+      metadata: metadata.additionalData || {},
     };
 
     return new Promise((resolve, reject) => {
@@ -289,7 +285,7 @@ export class MemorySystem {
       const vectorRequest = transaction.objectStore('vectors').add({
         id: memory.id,
         memoryId: memory.id,
-        embedding: memory.embedding
+        embedding: memory.embedding,
       });
 
       transaction.oncomplete = () => resolve(memory.id);
@@ -309,7 +305,7 @@ export class MemorySystem {
     // Calculate similarities
     const similarities = vectors.map(vector => ({
       vector,
-      similarity: this.cosineSimilarity(queryEmbedding, vector.embedding)
+      similarity: this.cosineSimilarity(queryEmbedding, vector.embedding),
     }));
 
     // Sort by similarity and filter
@@ -333,6 +329,7 @@ export class MemorySystem {
 ```
 
 **Key Implementation Details**:
+
 - **IndexedDB**: Browser-native database for persistence
 - **Vector Search**: Cosine similarity for semantic search
 - **Dual Storage**: Separate stores for memories and vectors for optimization
@@ -375,7 +372,7 @@ export class PluginSystem {
         manifest,
         code: pluginCode,
         enabled: true,
-        settings: this.initializeSettings(manifest.settings)
+        settings: this.initializeSettings(manifest.settings),
       };
 
       // Register hooks
@@ -388,7 +385,7 @@ export class PluginSystem {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -406,7 +403,7 @@ export class PluginSystem {
           return target[prop];
         }
         throw new Error(`Permission denied: ${prop}`);
-      }
+      },
     });
   }
 
@@ -454,13 +451,14 @@ export class PluginSystem {
     return {
       status: 200,
       body: JSON.stringify(result),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     };
   }
 }
 ```
 
 **Security Features**:
+
 - **Sandboxed Execution**: Plugins run in isolated environments
 - **Permission System**: Granular access control
 - **API Key Validation**: Secure external access
@@ -481,10 +479,12 @@ export async function POST(request: NextRequest) {
     const chatRequestSchema = z.object({
       message: z.string().min(1).max(1000),
       companionId: z.string().optional(),
-      context: z.object({
-        conversationHistory: z.array(z.any()).optional(),
-        groupChat: z.boolean().optional()
-      }).optional()
+      context: z
+        .object({
+          conversationHistory: z.array(z.any()).optional(),
+          groupChat: z.boolean().optional(),
+        })
+        .optional(),
     });
 
     const validatedData = chatRequestSchema.parse(body);
@@ -504,7 +504,7 @@ export async function POST(request: NextRequest) {
       message: validatedData.message,
       companion,
       memories,
-      conversationHistory: validatedData.context?.conversationHistory || []
+      conversationHistory: validatedData.context?.conversationHistory || [],
     });
 
     // Call AI service
@@ -532,12 +532,11 @@ export async function POST(request: NextRequest) {
       companion: {
         id: companion.id,
         name: companion.name,
-        personality: companion.personality
+        personality: companion.personality,
       },
       memoriesUsed: memories.length,
-      voiceUrl
+      voiceUrl,
     });
-
   } catch (error) {
     console.error('Chat API error:', error);
 
@@ -556,15 +555,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 ```
 
 **Error Handling Strategy**:
+
 - **Input Validation**: Zod schemas for type safety
 - **Error Classification**: Different error types get appropriate responses
 - **Logging**: Comprehensive error logging for debugging
@@ -587,7 +584,7 @@ export const companionSchema = z.object({
   avatar: z.string().url().optional(),
   voiceEnabled: z.boolean().default(false),
   createdAt: z.date(),
-  settings: z.record(z.any()).optional()
+  settings: z.record(z.any()).optional(),
 });
 
 export const messageSchema = z.object({
@@ -596,7 +593,7 @@ export const messageSchema = z.object({
   sender: z.string(),
   timestamp: z.date(),
   type: z.enum(['text', 'voice', 'image']).default('text'),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 // Validation helper functions
@@ -608,7 +605,10 @@ export function validateMessage(data: unknown): Message {
   return messageSchema.parse(data);
 }
 
-export function safeParse<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; error: z.ZodError } {
+export function safeParse<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown
+): { success: true; data: T } | { success: false; error: z.ZodError } {
   const result = schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };
@@ -628,33 +628,33 @@ export const config = {
   // API Keys
   openai: {
     apiKey: process.env.OPENAI_API_KEY,
-    available: !!process.env.OPENAI_API_KEY
+    available: !!process.env.OPENAI_API_KEY,
   },
 
   elevenlabs: {
     apiKey: process.env.ELEVENLABS_API_KEY,
-    available: !!process.env.ELEVENLABS_API_KEY
+    available: !!process.env.ELEVENLABS_API_KEY,
   },
 
   // Database
   database: {
     url: process.env.DATABASE_URL || 'indexeddb',
-    type: process.env.DATABASE_TYPE || 'indexeddb'
+    type: process.env.DATABASE_TYPE || 'indexeddb',
   },
 
   // Feature flags
   features: {
     voice: process.env.FEATURE_VOICE !== 'false',
     analytics: process.env.FEATURE_ANALYTICS !== 'false',
-    plugins: process.env.FEATURE_PLUGINS !== 'false'
+    plugins: process.env.FEATURE_PLUGINS !== 'false',
   },
 
   // Performance settings
   performance: {
     maxMemories: parseInt(process.env.MAX_MEMORIES || '1000'),
     cacheSize: parseInt(process.env.CACHE_SIZE || '100'),
-    requestTimeout: parseInt(process.env.REQUEST_TIMEOUT || '30000')
-  }
+    requestTimeout: parseInt(process.env.REQUEST_TIMEOUT || '30000'),
+  },
 };
 
 // Configuration validation
@@ -671,7 +671,7 @@ export function validateConfig(): { valid: boolean; errors: string[] } {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 ```
@@ -751,8 +751,8 @@ describe('/api/chat', () => {
       method: 'POST',
       body: JSON.stringify({
         message: 'Hello AI!',
-        companionId: 'test-companion'
-      })
+        companionId: 'test-companion',
+      }),
     });
 
     const response = await POST(request);
@@ -769,7 +769,7 @@ describe('/api/chat', () => {
       method: 'POST',
       body: JSON.stringify({
         message: '', // Empty message should fail
-      })
+      }),
     });
 
     const response = await POST(request);
@@ -787,8 +787,8 @@ describe('/api/chat', () => {
     const request = new NextRequest('http://localhost:3000/api/chat', {
       method: 'POST',
       body: JSON.stringify({
-        message: 'Test message'
-      })
+        message: 'Test message',
+      }),
     });
 
     const response = await POST(request);

@@ -69,6 +69,7 @@ AI Hive Mind App
 **Purpose**: Main chat interface managing conversation state, message display, and user interactions.
 
 **Props**:
+
 ```typescript
 interface ChatViewProps {
   companionId?: string;
@@ -78,6 +79,7 @@ interface ChatViewProps {
 ```
 
 **State Management**:
+
 ```typescript
 const [message, setMessage] = useState('');
 const [isTyping, setIsTyping] = useState(false);
@@ -95,12 +97,14 @@ const [emotionalState, setEmotionalState] = useState(null);
 4. **fetchEmotionalState()**: Retrieves companion emotional state
 
 **Child Components**:
+
 - `MessageList`: Displays conversation history
 - `ChatInput`: Handles user input (text/voice)
 - `EmotionalStateDisplay`: Shows companion mood/energy
 - `TypingIndicator`: Animated typing indicator
 
 **Data Flow**:
+
 ```
 User Input → ChatInput → ChatView.sendMessage() → API Call → State Update → MessageList Re-render
 ```
@@ -112,6 +116,7 @@ User Input → ChatInput → ChatView.sendMessage() → API Call → State Updat
 **Purpose**: Handles all user input methods (text, voice) with accessibility and error handling.
 
 **Props**:
+
 ```typescript
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -122,6 +127,7 @@ interface ChatInputProps {
 ```
 
 **Features**:
+
 - **Text Input**: Standard text input with keyboard shortcuts
 - **Voice Input**: Browser Speech API integration with visual feedback
 - **Voice Toggle**: Enable/disable ElevenLabs voice responses
@@ -129,12 +135,14 @@ interface ChatInputProps {
 - **Error Handling**: Graceful degradation when APIs unavailable
 
 **Accessibility**:
+
 - ARIA labels for screen readers
 - Keyboard navigation support
 - Visual feedback for voice recording state
 - Error announcements for failed operations
 
 **Integration Points**:
+
 - `SpeechRecognition` API for voice input
 - `elevenlabs.ts` for voice synthesis
 - `AppContext` for global state
@@ -147,12 +155,14 @@ interface ChatInputProps {
 **Purpose**: Comprehensive analytics interface showing usage metrics, companion performance, and system health.
 
 **Data Sources**:
+
 - Local storage for cached metrics
 - API calls for real-time data
 - IndexedDB for historical data
 - WebSocket for live updates
 
 **Chart Components**:
+
 ```typescript
 // Metrics overview cards
 <MetricsCard title="Total Messages" value={stats.totalMessages} trend={stats.trend} />
@@ -168,6 +178,7 @@ interface ChatInputProps {
 ```
 
 **Features**:
+
 - **Time Range Selection**: 7d, 30d, 90d, 1y views
 - **Real-time Updates**: Live data refresh
 - **Export Functionality**: CSV/JSON export options
@@ -187,6 +198,7 @@ interface ChatInputProps {
    - Plugin ratings and reviews
 
 2. **Installation Workflow**:
+
    ```typescript
    const installPlugin = async (pluginId: string) => {
      setInstalling(true);
@@ -215,6 +227,7 @@ interface ChatInputProps {
    - Monitor usage and revoke access
 
 **Security Considerations**:
+
 - Plugin manifest validation
 - Permission review before installation
 - Sandboxed execution monitoring
@@ -225,6 +238,7 @@ interface ChatInputProps {
 ### Props Drilling vs Context
 
 **When to use props**:
+
 ```typescript
 // Direct parent-child communication
 <ChatInput
@@ -235,25 +249,27 @@ interface ChatInputProps {
 ```
 
 **When to use Context**:
+
 ```typescript
 // Global state shared across component tree
 const { state, dispatch } = useApp();
 
 dispatch({
   type: 'ADD_MESSAGE',
-  payload: newMessage
+  payload: newMessage,
 });
 ```
 
 ### Event-Driven Communication
 
 **Custom Hooks for Events**:
+
 ```typescript
 function usePluginEvents() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = pluginSystem.on('message_processed', (data) => {
+    const unsubscribe = pluginSystem.on('message_processed', data => {
       setEvents(prev => [...prev, data]);
     });
 
@@ -267,6 +283,7 @@ function usePluginEvents() {
 ### Component Composition
 
 **Compound Components Pattern**:
+
 ```typescript
 // MessageList compound component
 function MessageList({ children, ...props }) {
@@ -335,7 +352,7 @@ function useCompanionData(companionId: string) {
   return useSWR(`/api/companions/${companionId}`, fetcher, {
     refreshInterval: 30000, // Refresh every 30 seconds
     revalidateOnFocus: true,
-    dedupingInterval: 10000
+    dedupingInterval: 10000,
   });
 }
 ```
@@ -345,6 +362,7 @@ function useCompanionData(companionId: string) {
 ### Error Boundaries
 
 **Component-Level Error Handling**:
+
 ```typescript
 class ChatErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
@@ -376,6 +394,7 @@ class ChatErrorBoundary extends React.Component {
 ### API Error Handling
 
 **Centralized Error Processing**:
+
 ```typescript
 async function apiCall(endpoint: string, options: RequestInit) {
   try {
@@ -416,6 +435,7 @@ async function apiCall(endpoint: string, options: RequestInit) {
 ### Code Splitting
 
 **Route-Based Splitting**:
+
 ```typescript
 // Automatic with Next.js App Router
 // app/analytics/page.tsx → analytics.[hash].js
@@ -423,6 +443,7 @@ async function apiCall(endpoint: string, options: RequestInit) {
 ```
 
 **Component-Based Splitting**:
+
 ```typescript
 const HeavyChart = dynamic(() => import('../components/HeavyChart'), {
   loading: () => <ChartSkeleton />,
@@ -433,6 +454,7 @@ const HeavyChart = dynamic(() => import('../components/HeavyChart'), {
 ### Memoization
 
 **Component Memoization**:
+
 ```typescript
 const MessageBubble = memo(function MessageBubble({ message, user }) {
   return (
@@ -445,6 +467,7 @@ const MessageBubble = memo(function MessageBubble({ message, user }) {
 ```
 
 **Value Memoization**:
+
 ```typescript
 const filteredMessages = useMemo(() => {
   return messages.filter(msg => msg.sender === activeUser);
@@ -454,6 +477,7 @@ const filteredMessages = useMemo(() => {
 ### Virtualization
 
 **Large List Optimization**:
+
 ```typescript
 import { FixedSizeList as List } from 'react-window';
 
@@ -479,6 +503,7 @@ function MessageList({ messages }) {
 ### Component Testing
 
 **Unit Tests with React Testing Library**:
+
 ```typescript
 describe('ChatInput', () => {
   it('sends message on form submission', async () => {
@@ -499,6 +524,7 @@ describe('ChatInput', () => {
 ### Integration Testing
 
 **API Integration Tests**:
+
 ```typescript
 describe('Chat API Integration', () => {
   it('creates conversation and returns AI response', async () => {
@@ -506,7 +532,7 @@ describe('Chat API Integration', () => {
       .post('/api/chat')
       .send({
         message: 'Hello!',
-        companionId: 'test-companion'
+        companionId: 'test-companion',
       })
       .expect(200);
 
@@ -520,6 +546,7 @@ describe('Chat API Integration', () => {
 ### E2E Testing
 
 **User Journey Tests**:
+
 ```typescript
 test('complete chat interaction', async ({ page }) => {
   await page.goto('/');
@@ -544,6 +571,7 @@ test('complete chat interaction', async ({ page }) => {
 ### ARIA Implementation
 
 **Semantic HTML with ARIA**:
+
 ```typescript
 function AccessibleChatInput() {
   return (
@@ -585,6 +613,7 @@ function AccessibleChatInput() {
 ### Keyboard Navigation
 
 **Focus Management**:
+
 ```typescript
 function KeyboardNavigation() {
   const [focusedIndex, setFocusedIndex] = useState(0);

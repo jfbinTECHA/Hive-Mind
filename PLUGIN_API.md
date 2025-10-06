@@ -73,7 +73,9 @@ Every plugin must include a valid manifest file defining its capabilities:
 
 ```javascript
 // plugin.js
-const pluginManifest = { /* manifest object */ };
+const pluginManifest = {
+  /* manifest object */
+};
 
 // Plugin state
 let pluginState = {};
@@ -93,40 +95,44 @@ function myAPIHandler(context, data) {
 module.exports = {
   manifest: pluginManifest,
   myEventHandler,
-  myAPIHandler
+  myAPIHandler,
 };
 ```
 
 ### Available Permissions
 
-| Resource | Read | Write | Admin | Description |
-|----------|------|-------|-------|-------------|
-| `chat` | View messages | Send messages | Full chat control | Access to conversation system |
-| `memory` | View memories | Create/edit memories | Full memory control | Access to companion memories |
-| `companions` | View companions | Modify companions | Full companion control | Access to AI companion management |
-| `analytics` | View analytics | N/A | Full analytics control | Access to usage statistics |
-| `system` | System status | System configuration | Full system control | Access to system settings |
+| Resource     | Read            | Write                | Admin                  | Description                       |
+| ------------ | --------------- | -------------------- | ---------------------- | --------------------------------- |
+| `chat`       | View messages   | Send messages        | Full chat control      | Access to conversation system     |
+| `memory`     | View memories   | Create/edit memories | Full memory control    | Access to companion memories      |
+| `companions` | View companions | Modify companions    | Full companion control | Access to AI companion management |
+| `analytics`  | View analytics  | N/A                  | Full analytics control | Access to usage statistics        |
+| `system`     | System status   | System configuration | Full system control    | Access to system settings         |
 
 ### Event Hooks
 
 Plugins can hook into system events to extend functionality:
 
 #### Message Events
+
 - `message_received`: When a user sends a message
 - `message_sent`: When AI sends a response
 - `message_deleted`: When a message is removed
 
 #### Companion Events
+
 - `companion_created`: When a new companion is created
 - `companion_updated`: When companion settings change
 - `companion_deleted`: When a companion is removed
 
 #### Memory Events
+
 - `memory_created`: When a new memory is stored
 - `memory_accessed`: When a memory is retrieved
 - `memory_updated`: When memory content changes
 
 #### System Events
+
 - `analytics_viewed`: When analytics are accessed
 - `plugin_installed`: When a plugin is installed
 - `plugin_uninstalled`: When a plugin is removed
@@ -158,15 +164,15 @@ const response = await fetch('https://your-domain.com/api/plugins', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'x-api-key': 'your-plugin-api-key'
+    'x-api-key': 'your-plugin-api-key',
   },
   body: JSON.stringify({
     pluginId: 'your-plugin-id',
     endpoint: '/custom-endpoint',
     method: 'GET',
     body: { param: 'value' },
-    query: { filter: 'active' }
-  })
+    query: { filter: 'active' },
+  }),
 });
 
 const result = await response.json();
@@ -192,19 +198,17 @@ const pluginManifest = {
   author: 'AI Hive Mind',
   permissions: [
     { type: 'read', resource: 'chat' },
-    { type: 'read', resource: 'memory' }
+    { type: 'read', resource: 'memory' },
   ],
-  hooks: [
-    { event: 'message_received', handler: 'onMessageReceived' }
-  ],
+  hooks: [{ event: 'message_received', handler: 'onMessageReceived' }],
   apiEndpoints: [
     {
       path: '/notifications',
       method: 'GET',
       handler: 'getNotifications',
-      authRequired: true
-    }
-  ]
+      authRequired: true,
+    },
+  ],
 };
 
 function onMessageReceived(context, data) {
@@ -221,7 +225,7 @@ function getNotifications(context, data) {
 module.exports = {
   manifest: pluginManifest,
   onMessageReceived,
-  getNotifications
+  getNotifications,
 };
 ```
 
@@ -236,19 +240,17 @@ const pluginManifest = {
   author: 'Analytics Corp',
   permissions: [
     { type: 'read', resource: 'analytics' },
-    { type: 'read', resource: 'companions' }
+    { type: 'read', resource: 'companions' },
   ],
-  hooks: [
-    { event: 'analytics_viewed', handler: 'onAnalyticsViewed' }
-  ],
+  hooks: [{ event: 'analytics_viewed', handler: 'onAnalyticsViewed' }],
   apiEndpoints: [
     {
       path: '/reports',
       method: 'GET',
       handler: 'generateReport',
-      authRequired: true
-    }
-  ]
+      authRequired: true,
+    },
+  ],
 };
 
 function onAnalyticsViewed(context, data) {
@@ -264,15 +266,15 @@ function generateReport(context, data) {
     data: {
       reportType: data.type || 'summary',
       generatedAt: new Date(),
-      data: {}
-    }
+      data: {},
+    },
   };
 }
 
 module.exports = {
   manifest: pluginManifest,
   onAnalyticsViewed,
-  generateReport
+  generateReport,
 };
 ```
 
@@ -302,18 +304,21 @@ module.exports = {
 ## Best Practices
 
 ### Security
+
 - **Minimal Permissions**: Request only necessary permissions
 - **Input Validation**: Validate all external inputs
 - **Error Handling**: Don't expose internal system details in errors
 - **API Key Rotation**: Regularly rotate API keys
 
 ### Performance
+
 - **Efficient Code**: Optimize plugin execution time
 - **Resource Limits**: Be mindful of memory and CPU usage
 - **Caching**: Cache expensive operations when appropriate
 - **Async Operations**: Use async/await for I/O operations
 
 ### User Experience
+
 - **Clear Documentation**: Document plugin capabilities and usage
 - **Error Messages**: Provide helpful error messages
 - **Configuration**: Make plugins configurable for different use cases

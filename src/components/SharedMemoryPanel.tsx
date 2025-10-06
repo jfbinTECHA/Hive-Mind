@@ -446,7 +446,7 @@ export function SharedMemoryPanel({ companionId, onClose }: SharedMemoryPanelPro
               </div>
             )}
           </div>
-        ) : (
+        ) : activeTab === 'clusters' ? (
           <div className="space-y-4">
             {/* Memory clusters */}
             <div className="space-y-3">
@@ -646,7 +646,7 @@ export function SharedMemoryPanel({ companionId, onClose }: SharedMemoryPanelPro
               </ul>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -1,4 +1,9 @@
-import { sharedMemorySystem, SharedMemory, CompanionMemoryNetwork, MemoryCluster } from './sharedMemorySystem';
+import {
+  sharedMemorySystem,
+  SharedMemory,
+  CompanionMemoryNetwork,
+  MemoryCluster,
+} from './sharedMemorySystem';
 import { evolutionSystem, CompanionEvolution } from './evolutionSystem';
 
 export interface MindMapNode {
@@ -56,7 +61,13 @@ export class ExportImportSystem {
    */
   async exportMemoryNetwork(
     companionId: string,
-    options: ExportOptions = { format: 'json', includePrivateMemories: true, includeEvolutionData: true, includeNetworkInsights: true, maxDepth: 3 }
+    options: ExportOptions = {
+      format: 'json',
+      includePrivateMemories: true,
+      includeEvolutionData: true,
+      includeNetworkInsights: true,
+      maxDepth: 3,
+    }
   ): Promise<string> {
     const network = await sharedMemorySystem.getCompanionNetwork(companionId);
     const memories = await sharedMemorySystem.getAccessibleMemories(companionId);
@@ -88,7 +99,13 @@ export class ExportImportSystem {
    */
   async exportCompanionEcosystem(
     userId: string,
-    options: ExportOptions = { format: 'json', includePrivateMemories: false, includeEvolutionData: true, includeNetworkInsights: true, maxDepth: 5 }
+    options: ExportOptions = {
+      format: 'json',
+      includePrivateMemories: false,
+      includeEvolutionData: true,
+      includeNetworkInsights: true,
+      maxDepth: 5,
+    }
   ): Promise<string> {
     // Get all companions for the user
     const companions = await this.getUserCompanions(userId);
@@ -104,18 +121,18 @@ export class ExportImportSystem {
         style: {
           backgroundColor: '#4F46E5',
           fontSize: 18,
-          fontWeight: 'bold'
-        }
+          fontWeight: 'bold',
+        },
       },
       settings: {
         layout: 'radial',
-        theme: options.theme || 'dark'
+        theme: options.theme || 'dark',
       },
       metadata: {
         exportedAt: new Date(),
         exportType: 'companion_ecosystem',
-        version: '1.0'
-      }
+        version: '1.0',
+      },
     };
 
     // Add each companion as a major branch
@@ -131,8 +148,8 @@ export class ExportImportSystem {
       content: 'Shared memories and relationships between companions',
       children: [],
       style: {
-        backgroundColor: '#7C3AED'
-      }
+        backgroundColor: '#7C3AED',
+      },
     };
 
     // Analyze and add cross-companion relationships
@@ -153,7 +170,13 @@ export class ExportImportSystem {
    */
   async exportEvolutionHistory(
     companionId: string,
-    options: ExportOptions = { format: 'json', includePrivateMemories: false, includeEvolutionData: true, includeNetworkInsights: false, maxDepth: 2 }
+    options: ExportOptions = {
+      format: 'json',
+      includePrivateMemories: false,
+      includeEvolutionData: true,
+      includeNetworkInsights: false,
+      maxDepth: 2,
+    }
   ): Promise<string> {
     const evolution = await evolutionSystem.getCompanionEvolution(companionId);
 
@@ -168,20 +191,20 @@ export class ExportImportSystem {
         style: {
           backgroundColor: '#F59E0B',
           fontSize: 16,
-          fontWeight: 'bold'
-        }
+          fontWeight: 'bold',
+        },
       },
       settings: {
         layout: 'tree',
         direction: 'right',
-        theme: options.theme || 'evolution'
+        theme: options.theme || 'evolution',
       },
       metadata: {
         exportedAt: new Date(),
         companionId,
         exportType: 'evolution_history',
-        version: '1.0'
-      }
+        version: '1.0',
+      },
     };
 
     // Add evolution stages as timeline
@@ -193,12 +216,12 @@ export class ExportImportSystem {
         content: `${event.triggerReason}\nUnlocked: ${event.toStage.newCapabilities.join(', ')}`,
         children: [],
         style: {
-          backgroundColor: this.getEvolutionStageColor(event.toStage.level)
+          backgroundColor: this.getEvolutionStageColor(event.toStage.level),
         },
         metadata: {
           evolutionEvent: event,
-          stage: event.toStage
-        }
+          stage: event.toStage,
+        },
       };
 
       // Add trait changes
@@ -209,8 +232,8 @@ export class ExportImportSystem {
           children: Object.entries(event.toStage.traitChanges).map(([trait, change]) => ({
             id: `trait_${trait}_${event.toStage.id}`,
             label: `${trait}: +${change}`,
-            style: { backgroundColor: '#10B981' }
-          }))
+            style: { backgroundColor: '#10B981' },
+          })),
         });
       }
 
@@ -231,25 +254,25 @@ export class ExportImportSystem {
             {
               id: 'interactions',
               label: `Interactions: ${evolution.totalInteractions}`,
-              style: { backgroundColor: '#3B82F6' }
+              style: { backgroundColor: '#3B82F6' },
             },
             {
               id: 'intimacy',
               label: `Intimacy: ${Math.round(evolution.intimacyLevel * 100)}%`,
-              style: { backgroundColor: '#8B5CF6' }
+              style: { backgroundColor: '#8B5CF6' },
             },
             {
               id: 'trust',
               label: `Trust: ${Math.round(evolution.trustLevel * 100)}%`,
-              style: { backgroundColor: '#06B6D4' }
-            }
-          ]
-        }
+              style: { backgroundColor: '#06B6D4' },
+            },
+          ],
+        },
       ],
       style: {
         backgroundColor: '#EF4444',
-        fontWeight: 'bold'
-      }
+        fontWeight: 'bold',
+      },
     };
 
     if (evolution.nextEvolution) {
@@ -257,7 +280,7 @@ export class ExportImportSystem {
         id: 'next_evolution',
         label: `Next: ${evolution.nextEvolution.name}`,
         content: `Progress: ${Math.round(evolution.progressToNext * 100)}%`,
-        style: { backgroundColor: '#F59E0B' }
+        style: { backgroundColor: '#F59E0B' },
       });
     }
 
@@ -282,7 +305,7 @@ export class ExportImportSystem {
         importedNodes: 0,
         importedConnections: 0,
         warnings: [],
-        errors: []
+        errors: [],
       };
 
       // Process based on export type
@@ -308,7 +331,9 @@ export class ExportImportSystem {
         importedNodes: 0,
         importedConnections: 0,
         warnings: [],
-        errors: [`Failed to parse mind map: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [
+          `Failed to parse mind map: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -318,7 +343,7 @@ export class ExportImportSystem {
    */
   downloadExport(data: string, filename: string, format: 'json' | 'xmind'): void {
     const blob = new Blob([data], {
-      type: format === 'xmind' ? 'application/xmind' : 'application/json'
+      type: format === 'xmind' ? 'application/xmind' : 'application/json',
     });
 
     const url = URL.createObjectURL(blob);
@@ -354,19 +379,19 @@ export class ExportImportSystem {
         style: {
           backgroundColor: '#3B82F6',
           fontSize: 16,
-          fontWeight: 'bold'
-        }
+          fontWeight: 'bold',
+        },
       },
       settings: {
         layout: 'radial',
-        theme: options.theme || 'network'
+        theme: options.theme || 'network',
       },
       metadata: {
         exportedAt: new Date(),
         companionId,
         exportType: 'memory_network',
-        version: '1.0'
-      }
+        version: '1.0',
+      },
     };
 
     // Add memory clusters
@@ -384,11 +409,11 @@ export class ExportImportSystem {
               id: `memory_${memoryId}`,
               label: memory?.content.substring(0, 50) + '...' || 'Unknown Memory',
               content: memory?.content,
-              style: { backgroundColor: this.getMemoryTypeColor(memory?.memoryType) }
+              style: { backgroundColor: this.getMemoryTypeColor(memory?.memoryType) },
             };
           }),
-          style: { backgroundColor: '#8B5CF6' }
-        }))
+          style: { backgroundColor: '#8B5CF6' },
+        })),
       };
       mindMap.root.children!.push(clustersNode);
     }
@@ -406,16 +431,16 @@ export class ExportImportSystem {
             {
               id: `confidence_${insight.type}`,
               label: `Confidence: ${Math.round(insight.confidence * 100)}%`,
-              style: { backgroundColor: '#10B981' }
+              style: { backgroundColor: '#10B981' },
             },
             ...insight.relatedCompanions.map(companionId => ({
               id: `companion_${companionId}`,
               label: `Companion ${companionId}`,
-              style: { backgroundColor: '#F59E0B' }
-            }))
+              style: { backgroundColor: '#F59E0B' },
+            })),
           ],
-          style: { backgroundColor: '#06B6D4' }
-        }))
+          style: { backgroundColor: '#06B6D4' },
+        })),
       };
       mindMap.root.children!.push(insightsNode);
     }
@@ -426,7 +451,7 @@ export class ExportImportSystem {
         id: 'evolution',
         label: `Evolution: ${evolution.currentStage.name}`,
         content: `Level ${evolution.currentLevel}, ${evolution.totalInteractions} interactions`,
-        style: { backgroundColor: '#EF4444' }
+        style: { backgroundColor: '#EF4444' },
       };
       mindMap.root.children!.push(evolutionNode);
     }
@@ -434,7 +459,10 @@ export class ExportImportSystem {
     return mindMap;
   }
 
-  private async buildCompanionNode(companionId: string, options: ExportOptions): Promise<MindMapNode> {
+  private async buildCompanionNode(
+    companionId: string,
+    options: ExportOptions
+  ): Promise<MindMapNode> {
     const evolution = await evolutionSystem.getCompanionEvolution(companionId);
     const memories = await sharedMemorySystem.getAccessibleMemories(companionId);
 
@@ -448,9 +476,12 @@ export class ExportImportSystem {
           label: 'Stats',
           children: [
             { id: `level_${companionId}`, label: `Level: ${evolution.currentLevel}` },
-            { id: `interactions_${companionId}`, label: `Interactions: ${evolution.totalInteractions}` },
-            { id: `memories_${companionId}`, label: `Memories: ${memories.length}` }
-          ]
+            {
+              id: `interactions_${companionId}`,
+              label: `Interactions: ${evolution.totalInteractions}`,
+            },
+            { id: `memories_${companionId}`, label: `Memories: ${memories.length}` },
+          ],
         },
         {
           id: `memories_${companionId}`,
@@ -458,11 +489,11 @@ export class ExportImportSystem {
           children: memories.slice(0, 5).map(memory => ({
             id: `memory_${memory.id}`,
             label: memory.content.substring(0, 30) + '...',
-            content: memory.content
-          }))
-        }
+            content: memory.content,
+          })),
+        },
       ],
-      style: { backgroundColor: this.getEvolutionStageColor(evolution.currentLevel) }
+      style: { backgroundColor: this.getEvolutionStageColor(evolution.currentLevel) },
     };
   }
 
@@ -475,7 +506,10 @@ export class ExportImportSystem {
         const companion1 = companionIds[i];
         const companion2 = companionIds[j];
 
-        const sharedMemories = await this.getSharedMemoriesBetweenCompanions(companion1, companion2);
+        const sharedMemories = await this.getSharedMemoriesBetweenCompanions(
+          companion1,
+          companion2
+        );
 
         if (sharedMemories.length > 0) {
           connections.push({
@@ -485,9 +519,9 @@ export class ExportImportSystem {
             children: sharedMemories.slice(0, 3).map(memory => ({
               id: `shared_${memory.id}`,
               label: memory.content.substring(0, 40) + '...',
-              style: { backgroundColor: '#EC4899' }
+              style: { backgroundColor: '#EC4899' },
             })),
-            style: { backgroundColor: '#8B5CF6' }
+            style: { backgroundColor: '#8B5CF6' },
           });
         }
       }
@@ -503,7 +537,7 @@ export class ExportImportSystem {
       title: mindMapData.title,
       rootTopic: this.convertNodeToXMind(mindMapData.root),
       settings: mindMapData.settings,
-      metadata: mindMapData.metadata
+      metadata: mindMapData.metadata,
     };
 
     return JSON.stringify(xmindData, null, 2);
@@ -517,9 +551,9 @@ export class ExportImportSystem {
       style: node.style,
       children: node.children?.map(child => ({
         type: 'attached',
-        ...this.convertNodeToXMind(child)
+        ...this.convertNodeToXMind(child),
       })),
-      metadata: node.metadata
+      metadata: node.metadata,
     };
   }
 
@@ -554,19 +588,28 @@ export class ExportImportSystem {
     return [];
   }
 
-  private async getSharedMemoriesBetweenCompanions(companion1: string, companion2: string): Promise<SharedMemory[]> {
+  private async getSharedMemoriesBetweenCompanions(
+    companion1: string,
+    companion2: string
+  ): Promise<SharedMemory[]> {
     // Mock implementation - would query database
     return [];
   }
 
   private getMemoryTypeColor(type?: string): string {
     switch (type) {
-      case 'personal': return '#3B82F6';
-      case 'experience': return '#10B981';
-      case 'relationship': return '#F59E0B';
-      case 'knowledge': return '#8B5CF6';
-      case 'shared_experience': return '#EC4899';
-      default: return '#6B7280';
+      case 'personal':
+        return '#3B82F6';
+      case 'experience':
+        return '#10B981';
+      case 'relationship':
+        return '#F59E0B';
+      case 'knowledge':
+        return '#8B5CF6';
+      case 'shared_experience':
+        return '#EC4899';
+      default:
+        return '#6B7280';
     }
   }
 

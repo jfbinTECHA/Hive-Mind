@@ -17,32 +17,32 @@ const defaultCustomTheme: CustomTheme = {
     gradient: {
       colors: ['#0f0f23', '#1a1a2e', '#16213e'],
       direction: 'to bottom right',
-      opacity: 0.9
+      opacity: 0.9,
     },
     overlay: {
       color: '#ffffff',
-      opacity: 0.05
-    }
+      opacity: 0.05,
+    },
   },
   glow: {
     intensity: 0.6,
     color: '#8b5cf6',
-    blur: 20
+    blur: 20,
   },
   accent: {
     primary: '#8b5cf6',
     secondary: '#06b6d4',
-    hover: '#a855f7'
+    hover: '#a855f7',
   },
   text: {
     primary: '#ffffff',
     secondary: '#e2e8f0',
-    muted: '#94a3b8'
+    muted: '#94a3b8',
   },
   border: {
     color: '#ffffff',
-    opacity: 0.1
-  }
+    opacity: 0.1,
+  },
 };
 
 const presetThemes: Record<string, CustomTheme> = {
@@ -52,32 +52,32 @@ const presetThemes: Record<string, CustomTheme> = {
       gradient: {
         colors: ['#0c0c0c', '#1a0a1e', '#0a0a2e'],
         direction: 'to bottom right',
-        opacity: 0.95
+        opacity: 0.95,
       },
       overlay: {
         color: '#ff00ff',
-        opacity: 0.03
-      }
+        opacity: 0.03,
+      },
     },
     glow: {
       intensity: 0.8,
       color: '#ff00ff',
-      blur: 25
+      blur: 25,
     },
     accent: {
       primary: '#ff00ff',
       secondary: '#00ffff',
-      hover: '#ff0080'
+      hover: '#ff0080',
     },
     text: {
       primary: '#ffffff',
       secondary: '#e2e8f0',
-      muted: '#94a3b8'
+      muted: '#94a3b8',
     },
     border: {
       color: '#ff00ff',
-      opacity: 0.2
-    }
+      opacity: 0.2,
+    },
   },
   ocean: {
     name: 'Deep Ocean',
@@ -85,32 +85,32 @@ const presetThemes: Record<string, CustomTheme> = {
       gradient: {
         colors: ['#0f1419', '#1e3a5f', '#2d5f6f'],
         direction: 'to bottom',
-        opacity: 0.9
+        opacity: 0.9,
       },
       overlay: {
         color: '#4facfe',
-        opacity: 0.05
-      }
+        opacity: 0.05,
+      },
     },
     glow: {
       intensity: 0.5,
       color: '#4facfe',
-      blur: 15
+      blur: 15,
     },
     accent: {
       primary: '#4facfe',
       secondary: '#00f2fe',
-      hover: '#5fb3f7'
+      hover: '#5fb3f7',
     },
     text: {
       primary: '#ffffff',
       secondary: '#e2e8f0',
-      muted: '#94a3b8'
+      muted: '#94a3b8',
     },
     border: {
       color: '#4facfe',
-      opacity: 0.15
-    }
+      opacity: 0.15,
+    },
   },
   sunset: {
     name: 'Sunset Glow',
@@ -118,33 +118,33 @@ const presetThemes: Record<string, CustomTheme> = {
       gradient: {
         colors: ['#1a0b2e', '#2d1b3d', '#4a2c5a'],
         direction: 'to bottom right',
-        opacity: 0.9
+        opacity: 0.9,
       },
       overlay: {
         color: '#ff6b6b',
-        opacity: 0.04
-      }
+        opacity: 0.04,
+      },
     },
     glow: {
       intensity: 0.7,
       color: '#ff6b6b',
-      blur: 20
+      blur: 20,
     },
     accent: {
       primary: '#ff6b6b',
       secondary: '#ffd93d',
-      hover: '#ff8e53'
+      hover: '#ff8e53',
     },
     text: {
       primary: '#ffffff',
       secondary: '#e2e8f0',
-      muted: '#94a3b8'
+      muted: '#94a3b8',
     },
     border: {
       color: '#ff6b6b',
-      opacity: 0.18
-    }
-  }
+      opacity: 0.18,
+    },
+  },
 };
 
 export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
@@ -187,7 +187,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
 
   const exportTheme = () => {
     const dataStr = JSON.stringify(currentTheme, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
     const exportFileDefaultName = `ai-theme-${currentTheme.name.toLowerCase().replace(/\s+/g, '-')}.json`;
 
@@ -201,7 +201,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         try {
           const content = e.target?.result as string;
           const parsed = JSON.parse(content);
@@ -233,13 +233,18 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
   const getGradientStyle = (theme: CustomTheme) => {
     const { gradient } = theme.background;
     const colors = gradient.colors.join(', ');
-    const direction = gradient.direction === 'radial' ? 'radial-gradient(circle, ' : `linear-gradient(${gradient.direction}, `;
+    const direction =
+      gradient.direction === 'radial'
+        ? 'radial-gradient(circle, '
+        : `linear-gradient(${gradient.direction}, `;
     return `${direction}${colors})`;
   };
 
   const getGlowStyle = (theme: CustomTheme) => {
     const { intensity, color, blur } = theme.glow;
-    return `0 0 ${blur}px ${color}${Math.round(intensity * 255).toString(16).padStart(2, '0')}`;
+    return `0 0 ${blur}px ${color}${Math.round(intensity * 255)
+      .toString(16)
+      .padStart(2, '0')}`;
   };
 
   if (previewMode) {
@@ -248,7 +253,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         style={{
           background: getGradientStyle(currentTheme),
-          boxShadow: `inset ${getGlowStyle(currentTheme)}`
+          boxShadow: `inset ${getGlowStyle(currentTheme)}`,
         }}
       >
         <div className="max-w-2xl w-full backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6">
@@ -262,7 +267,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
               style={{
                 borderColor: currentTheme.border.color,
                 color: currentTheme.text.primary,
-                backgroundColor: `${currentTheme.accent.primary}20`
+                backgroundColor: `${currentTheme.accent.primary}20`,
               }}
             >
               Exit Preview
@@ -275,7 +280,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
               style={{
                 backgroundColor: `${currentTheme.accent.primary}20`,
                 borderColor: currentTheme.border.color,
-                color: currentTheme.text.primary
+                color: currentTheme.text.primary,
               }}
             >
               <h3 className="font-semibold mb-2">Sample Card</h3>
@@ -288,7 +293,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
               <Button
                 style={{
                   backgroundColor: currentTheme.accent.primary,
-                  color: currentTheme.text.primary
+                  color: currentTheme.text.primary,
                 }}
               >
                 Primary Button
@@ -297,7 +302,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                 variant="outline"
                 style={{
                   borderColor: currentTheme.border.color,
-                  color: currentTheme.text.primary
+                  color: currentTheme.text.primary,
                 }}
               >
                 Secondary Button
@@ -344,7 +349,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                 style={{
                   borderColor: theme.border.color,
                   color: theme.text.primary,
-                  backgroundColor: `${theme.accent.primary}20`
+                  backgroundColor: `${theme.accent.primary}20`,
                 }}
               >
                 <div>
@@ -388,15 +393,12 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
             <div className="space-y-3">
               <textarea
                 value={jsonText}
-                onChange={(e) => setJsonText(e.target.value)}
+                onChange={e => setJsonText(e.target.value)}
                 className="w-full h-64 bg-white/10 border border-white/20 rounded-md text-white font-mono text-sm p-3"
                 placeholder="Paste theme JSON here..."
               />
               <div className="flex space-x-2">
-                <Button
-                  onClick={loadFromJson}
-                  className="flex-1 bg-purple-500 hover:bg-purple-600"
-                >
+                <Button onClick={loadFromJson} className="flex-1 bg-purple-500 hover:bg-purple-600">
                   Load from JSON
                 </Button>
                 <Button
@@ -415,7 +417,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                 <label className="block text-sm text-gray-300 mb-1">Theme Name</label>
                 <Input
                   value={currentTheme.name}
-                  onChange={(e) => updateTheme('name', e.target.value)}
+                  onChange={e => updateTheme('name', e.target.value)}
                   className="bg-white/10 border-white/20 text-white"
                 />
               </div>
@@ -425,10 +427,17 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                 <h5 className="text-white font-medium mb-2">Background Gradient</h5>
                 <div className="space-y-2">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Colors (comma-separated)</label>
+                    <label className="block text-xs text-gray-400 mb-1">
+                      Colors (comma-separated)
+                    </label>
                     <Input
                       value={currentTheme.background.gradient.colors.join(', ')}
-                      onChange={(e) => updateTheme('background.gradient.colors', e.target.value.split(',').map(s => s.trim()))}
+                      onChange={e =>
+                        updateTheme(
+                          'background.gradient.colors',
+                          e.target.value.split(',').map(s => s.trim())
+                        )
+                      }
                       className="bg-white/10 border-white/20 text-white text-sm"
                     />
                   </div>
@@ -437,7 +446,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                       <label className="block text-xs text-gray-400 mb-1">Direction</label>
                       <select
                         value={currentTheme.background.gradient.direction}
-                        onChange={(e) => updateTheme('background.gradient.direction', e.target.value)}
+                        onChange={e => updateTheme('background.gradient.direction', e.target.value)}
                         className="w-full bg-white/10 border border-white/20 rounded-md text-white text-sm p-2"
                       >
                         <option value="to right">To Right</option>
@@ -454,7 +463,9 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                         max="1"
                         step="0.1"
                         value={currentTheme.background.gradient.opacity}
-                        onChange={(e) => updateTheme('background.gradient.opacity', parseFloat(e.target.value))}
+                        onChange={e =>
+                          updateTheme('background.gradient.opacity', parseFloat(e.target.value))
+                        }
                         className="bg-white/10 border-white/20 text-white text-sm"
                       />
                     </div>
@@ -471,7 +482,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                     <Input
                       type="color"
                       value={currentTheme.glow.color}
-                      onChange={(e) => updateTheme('glow.color', e.target.value)}
+                      onChange={e => updateTheme('glow.color', e.target.value)}
                       className="bg-white/10 border-white/20 text-white h-10"
                     />
                   </div>
@@ -484,7 +495,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                         max="1"
                         step="0.1"
                         value={currentTheme.glow.intensity}
-                        onChange={(e) => updateTheme('glow.intensity', parseFloat(e.target.value))}
+                        onChange={e => updateTheme('glow.intensity', parseFloat(e.target.value))}
                         className="bg-white/10 border-white/20 text-white text-sm"
                       />
                     </div>
@@ -495,7 +506,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                         min="0"
                         max="50"
                         value={currentTheme.glow.blur}
-                        onChange={(e) => updateTheme('glow.blur', parseInt(e.target.value))}
+                        onChange={e => updateTheme('glow.blur', parseInt(e.target.value))}
                         className="bg-white/10 border-white/20 text-white text-sm"
                       />
                     </div>
@@ -512,7 +523,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                     <Input
                       type="color"
                       value={currentTheme.accent.primary}
-                      onChange={(e) => updateTheme('accent.primary', e.target.value)}
+                      onChange={e => updateTheme('accent.primary', e.target.value)}
                       className="bg-white/10 border-white/20 text-white h-10"
                     />
                   </div>
@@ -521,7 +532,7 @@ export function ThemeCustomizer({ onClose }: ThemeCustomizerProps) {
                     <Input
                       type="color"
                       value={currentTheme.accent.secondary}
-                      onChange={(e) => updateTheme('accent.secondary', e.target.value)}
+                      onChange={e => updateTheme('accent.secondary', e.target.value)}
                       className="bg-white/10 border-white/20 text-white h-10"
                     />
                   </div>

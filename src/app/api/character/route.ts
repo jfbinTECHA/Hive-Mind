@@ -42,26 +42,25 @@ export async function POST(request: NextRequest) {
     // Clear characters cache
     await Cache.del('characters');
 
-    return NextResponse.json({
-      success: true,
-      character: {
-        id: newCharacter.id,
-        name: newCharacter.name,
-        personality: newCharacter.personality,
-        avatar: newCharacter.avatar_url,
-        description: newCharacter.system_prompt,
-        traits: newCharacter.traits,
-        familiarity: newCharacter.familiarity,
-        lastActive: newCharacter.updated_at
-      }
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        character: {
+          id: newCharacter.id,
+          name: newCharacter.name,
+          personality: newCharacter.personality,
+          avatar: newCharacter.avatar_url,
+          description: newCharacter.system_prompt,
+          traits: newCharacter.traits,
+          familiarity: newCharacter.familiarity,
+          lastActive: newCharacter.updated_at,
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Character creation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -71,7 +70,7 @@ export async function GET(request: NextRequest) {
     const cachedCharacters = await Cache.get('characters');
     if (cachedCharacters) {
       return new Response(JSON.stringify(cachedCharacters), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -87,21 +86,17 @@ export async function GET(request: NextRequest) {
         description: c.system_prompt,
         traits: c.traits,
         familiarity: c.familiarity,
-        lastActive: c.updated_at
+        lastActive: c.updated_at,
       })),
-      total: characters.length
+      total: characters.length,
     };
 
     // Cache for 5 minutes
     await Cache.set('characters', result, 300);
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error('Characters fetch error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

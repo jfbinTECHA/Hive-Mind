@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
-import { analyticsSystem, AnalyticsData, ChartDataPoint, TimeSeriesData } from '@/lib/analyticsSystem';
+import {
+  analyticsSystem,
+  AnalyticsData,
+  ChartDataPoint,
+  TimeSeriesData,
+} from '@/lib/analyticsSystem';
 import {
   BarChart3,
   PieChart,
@@ -17,7 +22,7 @@ import {
   Heart,
   Target,
   Calendar,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
@@ -29,7 +34,9 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
   const { state } = useApp();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'usage' | 'memory' | 'interactions'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'usage' | 'memory' | 'interactions'>(
+    'overview'
+  );
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
 
   useEffect(() => {
@@ -86,7 +93,7 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 B';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const formatDuration = (seconds: number): string => {
@@ -120,7 +127,7 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                     className="h-3 rounded-full transition-all duration-500"
                     style={{
                       width: `${(item.value / maxValue) * 100}%`,
-                      backgroundColor: item.color || '#3B82F6'
+                      backgroundColor: item.color || '#3B82F6',
                     }}
                   ></div>
                 </div>
@@ -223,7 +230,7 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
         <div className="flex items-center space-x-2">
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as any)}
+            onChange={e => setTimeRange(e.target.value as any)}
             className="bg-gray-800 border border-gray-600 rounded px-3 py-1 text-sm text-white"
           >
             <option value="7d">Last 7 days</option>
@@ -339,12 +346,27 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
               {/* Usage Breakdown */}
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h3 className="text-lg font-semibold text-white mb-4">Usage Breakdown</h3>
-                {renderChart([
-                  { label: 'Messages', value: analytics.usage.totalMessages, color: '#3B82F6' },
-                  { label: 'Interactions', value: analytics.usage.totalInteractions, color: '#10B981' },
-                  { label: 'Voice', value: analytics.usage.totalVoiceInteractions, color: '#F59E0B' },
-                  { label: 'Memory Ops', value: analytics.usage.totalMemoryOperations, color: '#EF4444' }
-                ], 'bar')}
+                {renderChart(
+                  [
+                    { label: 'Messages', value: analytics.usage.totalMessages, color: '#3B82F6' },
+                    {
+                      label: 'Interactions',
+                      value: analytics.usage.totalInteractions,
+                      color: '#10B981',
+                    },
+                    {
+                      label: 'Voice',
+                      value: analytics.usage.totalVoiceInteractions,
+                      color: '#F59E0B',
+                    },
+                    {
+                      label: 'Memory Ops',
+                      value: analytics.usage.totalMemoryOperations,
+                      color: '#EF4444',
+                    },
+                  ],
+                  'bar'
+                )}
               </div>
 
               {/* Memory Types */}
@@ -354,10 +376,16 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                   Object.entries(analytics.memory.memoriesByType).map(([type, count]) => ({
                     label: type.replace('_', ' '),
                     value: count,
-                    color: type === 'personal' ? '#3B82F6' :
-                           type === 'experience' ? '#10B981' :
-                           type === 'relationship' ? '#F59E0B' :
-                           type === 'knowledge' ? '#8B5CF6' : '#EC4899'
+                    color:
+                      type === 'personal'
+                        ? '#3B82F6'
+                        : type === 'experience'
+                          ? '#10B981'
+                          : type === 'relationship'
+                            ? '#F59E0B'
+                            : type === 'knowledge'
+                              ? '#8B5CF6'
+                              : '#EC4899',
                   })),
                   'pie'
                 )}
@@ -373,11 +401,15 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                     <Target className="w-5 h-5 text-blue-400" />
                     <div>
                       <p className="text-white font-medium">Most Active Companion</p>
-                      <p className="text-sm text-gray-400">Companion {analytics.interactions.mostActiveCompanion.split('-')[1]}</p>
+                      <p className="text-sm text-gray-400">
+                        Companion {analytics.interactions.mostActiveCompanion.split('-')[1]}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-white font-bold">{analytics.interactions.companionInteractions[0]?.interactionCount || 0}</p>
+                    <p className="text-white font-bold">
+                      {analytics.interactions.companionInteractions[0]?.interactionCount || 0}
+                    </p>
                     <p className="text-xs text-gray-400">interactions</p>
                   </div>
                 </div>
@@ -387,11 +419,15 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                     <Zap className="w-5 h-5 text-green-400" />
                     <div>
                       <p className="text-white font-medium">Top Topic</p>
-                      <p className="text-sm text-gray-400">{analytics.interactions.topTopics[0]?.topic}</p>
+                      <p className="text-sm text-gray-400">
+                        {analytics.interactions.topTopics[0]?.topic}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-white font-bold">{analytics.interactions.topTopics[0]?.count}</p>
+                    <p className="text-white font-bold">
+                      {analytics.interactions.topTopics[0]?.count}
+                    </p>
                     <p className="text-xs text-gray-400">discussions</p>
                   </div>
                 </div>
@@ -405,7 +441,9 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-white font-bold">+{analytics.memory.memoryGrowthRate.toFixed(1)}</p>
+                    <p className="text-white font-bold">
+                      +{analytics.memory.memoryGrowthRate.toFixed(1)}
+                    </p>
                     <p className="text-xs text-gray-400">per day</p>
                   </div>
                 </div>
@@ -417,27 +455,39 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Total Interactions</h4>
-                <div className="text-3xl font-bold text-blue-400">{formatNumber(analytics.usage.totalInteractions)}</div>
+                <div className="text-3xl font-bold text-blue-400">
+                  {formatNumber(analytics.usage.totalInteractions)}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Voice Interactions</h4>
-                <div className="text-3xl font-bold text-orange-400">{formatNumber(analytics.usage.totalVoiceInteractions)}</div>
+                <div className="text-3xl font-bold text-orange-400">
+                  {formatNumber(analytics.usage.totalVoiceInteractions)}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Evolution Events</h4>
-                <div className="text-3xl font-bold text-purple-400">{analytics.usage.totalEvolutionEvents}</div>
+                <div className="text-3xl font-bold text-purple-400">
+                  {analytics.usage.totalEvolutionEvents}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Active Companions</h4>
-                <div className="text-3xl font-bold text-green-400">{analytics.usage.activeCompanions}</div>
+                <div className="text-3xl font-bold text-green-400">
+                  {analytics.usage.activeCompanions}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Retention Rate</h4>
-                <div className="text-3xl font-bold text-cyan-400">{(analytics.usage.retentionRate * 100).toFixed(1)}%</div>
+                <div className="text-3xl font-bold text-cyan-400">
+                  {(analytics.usage.retentionRate * 100).toFixed(1)}%
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Peak Usage Hour</h4>
-                <div className="text-3xl font-bold text-pink-400">{analytics.usage.peakUsageHour}:00</div>
+                <div className="text-3xl font-bold text-pink-400">
+                  {analytics.usage.peakUsageHour}:00
+                </div>
               </div>
             </div>
           </div>
@@ -446,19 +496,27 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Total Memories</h4>
-                <div className="text-3xl font-bold text-blue-400">{formatNumber(analytics.memory.totalMemories)}</div>
+                <div className="text-3xl font-bold text-blue-400">
+                  {formatNumber(analytics.memory.totalMemories)}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Memory Size</h4>
-                <div className="text-3xl font-bold text-purple-400">{formatBytes(analytics.memory.totalMemorySize)}</div>
+                <div className="text-3xl font-bold text-purple-400">
+                  {formatBytes(analytics.memory.totalMemorySize)}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Shared Memories</h4>
-                <div className="text-3xl font-bold text-green-400">{analytics.memory.sharedMemoriesCount}</div>
+                <div className="text-3xl font-bold text-green-400">
+                  {analytics.memory.sharedMemoriesCount}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Growth Rate</h4>
-                <div className="text-3xl font-bold text-orange-400">+{analytics.memory.memoryGrowthRate.toFixed(1)}/day</div>
+                <div className="text-3xl font-bold text-orange-400">
+                  +{analytics.memory.memoryGrowthRate.toFixed(1)}/day
+                </div>
               </div>
             </div>
 
@@ -469,10 +527,16 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                   Object.entries(analytics.memory.memoriesByType).map(([type, count]) => ({
                     label: type.replace('_', ' '),
                     value: count,
-                    color: type === 'personal' ? '#3B82F6' :
-                           type === 'experience' ? '#10B981' :
-                           type === 'relationship' ? '#F59E0B' :
-                           type === 'knowledge' ? '#8B5CF6' : '#EC4899'
+                    color:
+                      type === 'personal'
+                        ? '#3B82F6'
+                        : type === 'experience'
+                          ? '#10B981'
+                          : type === 'relationship'
+                            ? '#F59E0B'
+                            : type === 'knowledge'
+                              ? '#8B5CF6'
+                              : '#EC4899',
                   })),
                   'pie'
                 )}
@@ -481,11 +545,13 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h3 className="text-lg font-semibold text-white mb-4">Memories by Companion</h3>
                 {renderChart(
-                  Object.entries(analytics.memory.memoriesByCompanion).map(([companion, count]) => ({
-                    label: `Companion ${companion.split('-')[1]}`,
-                    value: count,
-                    color: '#8B5CF6'
-                  })),
+                  Object.entries(analytics.memory.memoriesByCompanion).map(
+                    ([companion, count]) => ({
+                      label: `Companion ${companion.split('-')[1]}`,
+                      value: count,
+                      color: '#8B5CF6',
+                    })
+                  ),
                   'bar'
                 )}
               </div>
@@ -496,17 +562,25 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Avg Conversation Length</h4>
-                <div className="text-3xl font-bold text-blue-400">{analytics.interactions.conversationLengths.average.toFixed(1)}</div>
+                <div className="text-3xl font-bold text-blue-400">
+                  {analytics.interactions.conversationLengths.average.toFixed(1)}
+                </div>
                 <p className="text-xs text-gray-400">messages</p>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Avg Response Time</h4>
-                <div className="text-3xl font-bold text-green-400">{formatDuration(analytics.interactions.responseTimes.average)}</div>
+                <div className="text-3xl font-bold text-green-400">
+                  {formatDuration(analytics.interactions.responseTimes.average)}
+                </div>
               </div>
               <div className="p-4 rounded-lg border border-white/10 bg-white/5">
                 <h4 className="font-medium text-white mb-2">Top Topic</h4>
-                <div className="text-lg font-bold text-purple-400">{analytics.interactions.topTopics[0]?.topic}</div>
-                <p className="text-xs text-gray-400">{analytics.interactions.topTopics[0]?.count} discussions</p>
+                <div className="text-lg font-bold text-purple-400">
+                  {analytics.interactions.topTopics[0]?.topic}
+                </div>
+                <p className="text-xs text-gray-400">
+                  {analytics.interactions.topTopics[0]?.count} discussions
+                </p>
               </div>
             </div>
 
@@ -517,7 +591,7 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                   analytics.interactions.topTopics.slice(0, 5).map(topic => ({
                     label: topic.topic,
                     value: topic.count,
-                    color: '#06B6D4'
+                    color: '#06B6D4',
                   })),
                   'bar'
                 )}
@@ -527,16 +601,27 @@ export function AnalyticsDashboard({ onClose }: AnalyticsDashboardProps) {
                 <h3 className="text-lg font-semibold text-white mb-4">Companion Performance</h3>
                 <div className="space-y-3">
                   {analytics.interactions.companionInteractions.map((companion, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-white/5 rounded"
+                    >
                       <div>
-                        <p className="text-white font-medium">Companion {companion.companionId.split('-')[1]}</p>
-                        <p className="text-xs text-gray-400">{companion.interactionCount} interactions</p>
+                        <p className="text-white font-medium">
+                          Companion {companion.companionId.split('-')[1]}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {companion.interactionCount} interactions
+                        </p>
                       </div>
                       <div className="text-right">
-                        <p className={`text-sm font-medium ${getSentimentColor(companion.satisfactionScore)}`}>
+                        <p
+                          className={`text-sm font-medium ${getSentimentColor(companion.satisfactionScore)}`}
+                        >
                           {(companion.satisfactionScore * 100).toFixed(0)}% satisfaction
                         </p>
-                        <p className="text-xs text-gray-400">{formatDuration(companion.averageResponseTime)} avg response</p>
+                        <p className="text-xs text-gray-400">
+                          {formatDuration(companion.averageResponseTime)} avg response
+                        </p>
                       </div>
                     </div>
                   ))}

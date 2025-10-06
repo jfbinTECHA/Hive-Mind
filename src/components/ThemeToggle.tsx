@@ -26,11 +26,7 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       className="text-white hover:bg-white/10"
     >
-      {state.theme === 'dark' ? (
-        <Sun className="h-4 w-4" />
-      ) : (
-        <Moon className="h-4 w-4" />
-      )}
+      {state.theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </Button>
   );
 }

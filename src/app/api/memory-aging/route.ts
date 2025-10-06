@@ -6,20 +6,20 @@ export async function POST(request: NextRequest) {
     const { action, userId, characterId, memoryId, query, limit } = await request.json();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: 'userId is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'userId is required' }, { status: 400 });
     }
 
     switch (action) {
       case 'consolidate':
-        const consolidationResult = await memoryAgingSystem.consolidateMemories(userId, characterId);
+        const consolidationResult = await memoryAgingSystem.consolidateMemories(
+          userId,
+          characterId
+        );
         return NextResponse.json({
           success: true,
           consolidated: consolidationResult.consolidated,
           archived: consolidationResult.archived,
-          deleted: consolidationResult.deleted
+          deleted: consolidationResult.deleted,
         });
 
       case 'access':
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         const accessedMemory = await memoryAgingSystem.accessMemory(memoryId);
         return NextResponse.json({
           success: true,
-          memory: accessedMemory
+          memory: accessedMemory,
         });
 
       case 'search':
@@ -50,14 +50,14 @@ export async function POST(request: NextRequest) {
         );
         return NextResponse.json({
           success: true,
-          suggestions
+          suggestions,
         });
 
       case 'health':
         const healthStats = await memoryAgingSystem.getMemoryHealthStats(userId, characterId);
         return NextResponse.json({
           success: true,
-          stats: healthStats
+          stats: healthStats,
         });
 
       default:
@@ -66,13 +66,9 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Memory aging API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -84,10 +80,7 @@ export async function GET(request: NextRequest) {
     const characterId = searchParams.get('characterId');
 
     if (!userId) {
-      return NextResponse.json(
-        { error: 'userId parameter is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'userId parameter is required' }, { status: 400 });
     }
 
     switch (action) {
@@ -95,14 +88,17 @@ export async function GET(request: NextRequest) {
         const config = memoryAgingSystem.getConfig();
         return NextResponse.json({
           success: true,
-          config
+          config,
         });
 
       case 'health':
-        const healthStats = await memoryAgingSystem.getMemoryHealthStats(userId, characterId || undefined);
+        const healthStats = await memoryAgingSystem.getMemoryHealthStats(
+          userId,
+          characterId || undefined
+        );
         return NextResponse.json({
           success: true,
-          stats: healthStats
+          stats: healthStats,
         });
 
       default:
@@ -111,12 +107,8 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         );
     }
-
   } catch (error) {
     console.error('Memory aging GET API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

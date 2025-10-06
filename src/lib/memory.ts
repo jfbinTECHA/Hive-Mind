@@ -35,7 +35,7 @@ export class MemoryExtractor {
         fact: summary,
         type: 'experience',
         confidence: 0.8,
-        context: `Conversation between user and AI about: ${userMessage.substring(0, 50)}...`
+        context: `Conversation between user and AI about: ${userMessage.substring(0, 50)}...`,
       });
     }
 
@@ -47,103 +47,137 @@ export class MemoryExtractor {
     const lowerMessage = message.toLowerCase();
 
     // Name extraction
-    if (lowerMessage.includes("my name is") || lowerMessage.includes("i'm") || lowerMessage.includes("i am")) {
+    if (
+      lowerMessage.includes('my name is') ||
+      lowerMessage.includes("i'm") ||
+      lowerMessage.includes('i am')
+    ) {
       const nameMatch = message.match(/(?:my name is|i'm|i am)\s+([a-zA-Z\s]+)/i);
       if (nameMatch) {
         memories.push({
           fact: `User's name is ${nameMatch[1].trim()}`,
           type: 'personal',
-          confidence: 0.95
+          confidence: 0.95,
         });
       }
     }
 
     // Location extraction
-    if (lowerMessage.includes("i live") || lowerMessage.includes("i'm from") || lowerMessage.includes("in ")) {
+    if (
+      lowerMessage.includes('i live') ||
+      lowerMessage.includes("i'm from") ||
+      lowerMessage.includes('in ')
+    ) {
       const locationMatch = message.match(/(?:i live|i'm from|in)\s+([a-zA-Z\s,]+)/i);
       if (locationMatch) {
         memories.push({
           fact: `User lives in ${locationMatch[1].trim()}`,
           type: 'personal',
-          confidence: 0.9
+          confidence: 0.9,
         });
       }
     }
 
     // Interests and preferences
-    if (lowerMessage.includes("i like") || lowerMessage.includes("i love") || lowerMessage.includes("i enjoy")) {
+    if (
+      lowerMessage.includes('i like') ||
+      lowerMessage.includes('i love') ||
+      lowerMessage.includes('i enjoy')
+    ) {
       const interestMatch = message.match(/(?:i like|i love|i enjoy)\s+(.+?)(?:\.|!|\?|$)/i);
       if (interestMatch) {
         const interest = interestMatch[1].trim();
         memories.push({
           fact: `User likes ${interest}`,
           type: 'preference',
-          confidence: 0.85
+          confidence: 0.85,
         });
       }
     }
 
-    if (lowerMessage.includes("i don't like") || lowerMessage.includes("i hate") || lowerMessage.includes("i dislike")) {
+    if (
+      lowerMessage.includes("i don't like") ||
+      lowerMessage.includes('i hate') ||
+      lowerMessage.includes('i dislike')
+    ) {
       const dislikeMatch = message.match(/(?:i don't like|i hate|i dislike)\s+(.+?)(?:\.|!|\?|$)/i);
       if (dislikeMatch) {
         const dislike = dislikeMatch[1].trim();
         memories.push({
           fact: `User dislikes ${dislike}`,
           type: 'preference',
-          confidence: 0.85
+          confidence: 0.85,
         });
       }
     }
 
     // Experiences and events
-    if (lowerMessage.includes("i went") || lowerMessage.includes("i visited") || lowerMessage.includes("i did")) {
+    if (
+      lowerMessage.includes('i went') ||
+      lowerMessage.includes('i visited') ||
+      lowerMessage.includes('i did')
+    ) {
       const experienceMatch = message.match(/(?:i went|i visited|i did)\s+(.+?)(?:\.|!|\?|$)/i);
       if (experienceMatch) {
         const experience = experienceMatch[1].trim();
         memories.push({
           fact: `User experienced: ${experience}`,
           type: 'experience',
-          confidence: 0.8
+          confidence: 0.8,
         });
       }
     }
 
     // Work/occupation
-    if (lowerMessage.includes("i work") || lowerMessage.includes("i'm a") || lowerMessage.includes("my job")) {
+    if (
+      lowerMessage.includes('i work') ||
+      lowerMessage.includes("i'm a") ||
+      lowerMessage.includes('my job')
+    ) {
       const workMatch = message.match(/(?:i work as|i'm a|my job is)\s+(.+?)(?:\.|!|\?|$)/i);
       if (workMatch) {
         const job = workMatch[1].trim();
         memories.push({
           fact: `User's occupation: ${job}`,
           type: 'personal',
-          confidence: 0.9
+          confidence: 0.9,
         });
       }
     }
 
     // Family relationships
-    if (lowerMessage.includes("my ") && (lowerMessage.includes("brother") || lowerMessage.includes("sister") ||
-        lowerMessage.includes("mother") || lowerMessage.includes("father") || lowerMessage.includes("parent"))) {
+    if (
+      lowerMessage.includes('my ') &&
+      (lowerMessage.includes('brother') ||
+        lowerMessage.includes('sister') ||
+        lowerMessage.includes('mother') ||
+        lowerMessage.includes('father') ||
+        lowerMessage.includes('parent'))
+    ) {
       const familyMatch = message.match(/my\s+(.+?)(?:\s+is|\s+has|\s+and|\.|\!|\?|$)/i);
       if (familyMatch) {
         const familyInfo = familyMatch[1].trim();
         memories.push({
           fact: `User's family: ${familyInfo}`,
           type: 'relationship',
-          confidence: 0.8
+          confidence: 0.8,
         });
       }
     }
 
     // Goals and aspirations
-    if (lowerMessage.includes("i want") || lowerMessage.includes("i hope") || lowerMessage.includes("my goal")) {
+    if (
+      lowerMessage.includes('i want') ||
+      lowerMessage.includes('i hope') ||
+      lowerMessage.includes('my goal')
+    ) {
       const goalMatch = message.match(/(?:i want|i hope|my goal is)\s+(.+?)(?:\.|!|\?|$)/i);
       if (goalMatch) {
         const goal = goalMatch[1].trim();
         memories.push({
           fact: `User's goal/aspiration: ${goal}`,
           type: 'personal',
-          confidence: 0.75
+          confidence: 0.75,
         });
       }
     }
@@ -151,7 +185,10 @@ export class MemoryExtractor {
     return memories;
   }
 
-  private static async generateConversationSummary(userMessage: string, aiResponse: string): Promise<string | null> {
+  private static async generateConversationSummary(
+    userMessage: string,
+    aiResponse: string
+  ): Promise<string | null> {
     // Only generate summaries for substantial conversations
     const totalLength = userMessage.length + aiResponse.length;
     if (totalLength < 100) return null;
@@ -179,7 +216,7 @@ export class MemoryExtractor {
       health: ['health', 'doctor', 'medicine', 'exercise', 'diet'],
       travel: ['travel', 'trip', 'vacation', 'visit', 'place'],
       technology: ['computer', 'phone', 'internet', 'software', 'app'],
-      emotions: ['happy', 'sad', 'angry', 'excited', 'worried', 'stressed']
+      emotions: ['happy', 'sad', 'angry', 'excited', 'worried', 'stressed'],
     };
 
     for (const [topic, keywords] of Object.entries(topicKeywords)) {
@@ -208,13 +245,7 @@ export class MemoryEmbedder {
 
         if (embedding && embedding.length > 0) {
           // Store in database with embedding
-          await Database.createMemory(
-            userId,
-            aiId,
-            memory.fact,
-            memory.type,
-            embedding
-          );
+          await Database.createMemory(userId, aiId, memory.fact, memory.type, embedding);
         }
       } catch (error) {
         console.error('Failed to embed and store memory:', error);
@@ -322,7 +353,7 @@ export class MemoryManager {
     limit: number = 5
   ): Promise<string[]> {
     try {
-      let relevantMemories: any[] = [];
+      const relevantMemories: any[] = [];
 
       // Get memories specific to this AI
       const aiMemories = await MemoryEmbedder.retrieveRelevantMemories(
@@ -353,7 +384,6 @@ export class MemoryManager {
           const aiName = memory.ai_name ? ` (${memory.ai_name})` : '';
           return `Relevant memory${aiName}: ${memory.fact_text}`;
         });
-
     } catch (error) {
       console.error('Failed to get chat context memories:', error);
       return [];

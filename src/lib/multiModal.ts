@@ -83,7 +83,10 @@ export class MultiModalProcessor {
   /**
    * Process document input
    */
-  async processDocument(file: File, companionId?: string): Promise<{ content: string; metadata: any }> {
+  async processDocument(
+    file: File,
+    companionId?: string
+  ): Promise<{ content: string; metadata: any }> {
     try {
       // For now, return basic document info
       // In a real implementation, you'd use document parsing libraries
@@ -93,8 +96,8 @@ export class MultiModalProcessor {
           fileName: file.name,
           fileSize: file.size,
           fileType: file.type,
-          uploadedAt: new Date().toISOString()
-        }
+          uploadedAt: new Date().toISOString(),
+        },
       };
     } catch (error) {
       console.error('Document processing error:', error);
@@ -102,8 +105,8 @@ export class MultiModalProcessor {
         content: `Document uploaded: ${file.name}`,
         metadata: {
           fileName: file.name,
-          error: 'Processing failed'
-        }
+          error: 'Processing failed',
+        },
       };
     }
   }
@@ -121,8 +124,8 @@ export class MultiModalProcessor {
           url: url,
           processedAt: new Date().toISOString(),
           title: 'Web page', // Would extract actual title
-          description: 'Web content' // Would extract actual description
-        }
+          description: 'Web content', // Would extract actual description
+        },
       };
     } catch (error) {
       console.error('URL processing error:', error);
@@ -130,8 +133,8 @@ export class MultiModalProcessor {
         content: `URL shared: ${url}`,
         metadata: {
           url: url,
-          error: 'Processing failed'
-        }
+          error: 'Processing failed',
+        },
       };
     }
   }
@@ -156,7 +159,10 @@ export class MultiModalProcessor {
   /**
    * Process location data
    */
-  async processLocation(latitude: number, longitude: number): Promise<{
+  async processLocation(
+    latitude: number,
+    longitude: number
+  ): Promise<{
     placeName: string;
     categories: string[];
     weather?: any;
@@ -173,19 +179,19 @@ export class MultiModalProcessor {
         return {
           placeName: result.formatted,
           categories: result.components._category || [],
-          weather: await this.getWeatherData(latitude, longitude)
+          weather: await this.getWeatherData(latitude, longitude),
         };
       }
 
       return {
         placeName: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
-        categories: []
+        categories: [],
       };
     } catch (error) {
       console.error('Location processing error:', error);
       return {
         placeName: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
-        categories: []
+        categories: [],
       };
     }
   }
@@ -211,7 +217,7 @@ export class MultiModalProcessor {
       characterId,
       input.type,
       input.content,
-      JSON.stringify(input.metadata)
+      JSON.stringify(input.metadata),
     ]);
 
     return result.rows[0];
@@ -246,7 +252,7 @@ export class MultiModalProcessor {
     return result.rows.map((row: any) => ({
       type: row.input_type,
       content: row.content,
-      metadata: row.metadata
+      metadata: row.metadata,
     }));
   }
 
@@ -289,22 +295,27 @@ export class MultiModalProcessor {
 
   // Private helper methods
   private async analyzeWithGoogleVision(imageData: string): Promise<ImageAnalysis> {
-    const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${this.visionApiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requests: [{
-          image: { content: imageData.split(',')[1] }, // Remove data:image/jpeg;base64,
-          features: [
-            { type: 'LABEL_DETECTION', maxResults: 10 },
-            { type: 'TEXT_DETECTION' },
-            { type: 'FACE_DETECTION' },
-            { type: 'LANDMARK_DETECTION' },
-            { type: 'IMAGE_PROPERTIES' }
-          ]
-        }]
-      })
-    });
+    const response = await fetch(
+      `https://vision.googleapis.com/v1/images:annotate?key=${this.visionApiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requests: [
+            {
+              image: { content: imageData.split(',')[1] }, // Remove data:image/jpeg;base64,
+              features: [
+                { type: 'LABEL_DETECTION', maxResults: 10 },
+                { type: 'TEXT_DETECTION' },
+                { type: 'FACE_DETECTION' },
+                { type: 'LANDMARK_DETECTION' },
+                { type: 'IMAGE_PROPERTIES' },
+              ],
+            },
+          ],
+        }),
+      }
+    );
 
     const data = await response.json();
 
@@ -313,19 +324,28 @@ export class MultiModalProcessor {
       return {
         description: result.labelAnnotations?.[0]?.description || 'An image',
         objects: result.labelAnnotations?.map((label: any) => label.description) || [],
-        colors: result.imagePropertiesAnnotation?.dominantColors?.colors?.map(
-          (color: any) => `rgb(${color.color.red || 0}, ${color.color.green || 0}, ${color.color.blue || 0})`
-        ) || [],
+        colors:
+          result.imagePropertiesAnnotation?.dominantColors?.colors?.map(
+            (color: any) =>
+              `rgb(${color.color.red || 0}, ${color.color.green || 0}, ${color.color.blue || 0})`
+          ) || [],
         sentiment: 'neutral', // Would need additional analysis
         landmarks: result.landmarkAnnotations?.map((landmark: any) => landmark.description) || [],
         text: result.textAnnotations?.[0]?.description || '',
-        faces: result.faceAnnotations?.map((face: any) => ({
-          age: face.detectionConfidence > 0.8 ? Math.floor(Math.random() * 40) + 20 : 0, // Mock age detection
-          gender: face.detectionConfidence > 0.8 ? (Math.random() > 0.5 ? 'male' : 'female') : 'unknown',
-          emotion: 'neutral', // Would need emotion analysis
-          confidence: face.detectionConfidence || 0
-        })) || [],
-        categories: result.labelAnnotations?.slice(0, 5).map((label: any) => label.description) || []
+        faces:
+          result.faceAnnotations?.map((face: any) => ({
+            age: face.detectionConfidence > 0.8 ? Math.floor(Math.random() * 40) + 20 : 0, // Mock age detection
+            gender:
+              face.detectionConfidence > 0.8
+                ? Math.random() > 0.5
+                  ? 'male'
+                  : 'female'
+                : 'unknown',
+            emotion: 'neutral', // Would need emotion analysis
+            confidence: face.detectionConfidence || 0,
+          })) || [],
+        categories:
+          result.labelAnnotations?.slice(0, 5).map((label: any) => label.description) || [],
       };
     }
 
@@ -339,27 +359,30 @@ export class MultiModalProcessor {
       objects: ['image'],
       colors: ['unknown'],
       sentiment: 'neutral',
-      categories: ['image']
+      categories: ['image'],
     };
   }
 
   private async transcribeWithGoogleSpeech(audioData: string): Promise<VoiceAnalysis> {
-    const response = await fetch(`https://speech.googleapis.com/v1/speech:recognize?key=${this.speechApiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        config: {
-          encoding: 'WEBM_OPUS',
-          sampleRateHertz: 48000,
-          languageCode: 'en-US',
-          enableAutomaticPunctuation: true,
-          enableWordTimeOffsets: false,
-        },
-        audio: {
-          content: audioData.split(',')[1] // Remove data:audio/webm;base64,
-        }
-      })
-    });
+    const response = await fetch(
+      `https://speech.googleapis.com/v1/speech:recognize?key=${this.speechApiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            encoding: 'WEBM_OPUS',
+            sampleRateHertz: 48000,
+            languageCode: 'en-US',
+            enableAutomaticPunctuation: true,
+            enableWordTimeOffsets: false,
+          },
+          audio: {
+            content: audioData.split(',')[1], // Remove data:audio/webm;base64,
+          },
+        }),
+      }
+    );
 
     const data = await response.json();
 
@@ -371,7 +394,7 @@ export class MultiModalProcessor {
         language: 'en-US',
         sentiment: 0, // Would need additional analysis
         duration: 0, // Would need audio analysis
-        wordCount: transcription.split(' ').length
+        wordCount: transcription.split(' ').length,
       };
     }
 
@@ -397,7 +420,7 @@ export class MultiModalProcessor {
       locationFrequency: inputs.filter(i => i.type === 'location').length,
       commonLocations: [] as string[],
       imageThemes: [] as string[],
-      voiceSentiment: 0
+      voiceSentiment: 0,
     };
 
     // Analyze patterns
@@ -464,7 +487,7 @@ export class MultiModalProcessor {
     } else if (transcription.includes('how are you')) {
       response += "I'm doing well, thank you for asking! How are you doing?";
     } else {
-      response += "That sounds interesting! Tell me more.";
+      response += 'That sounds interesting! Tell me more.';
     }
 
     return response;
@@ -502,10 +525,13 @@ export class MultiModalProcessor {
     response: string
   ): Promise<void> {
     // Store response context for future reference
-    await pool.query(`
+    await pool.query(
+      `
       INSERT INTO multimodal_responses (user_id, character_id, input_type, response, created_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-    `, [userId, characterId, input.type, response]);
+    `,
+      [userId, characterId, input.type, response]
+    );
   }
 }
 

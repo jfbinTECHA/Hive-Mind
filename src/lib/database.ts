@@ -9,10 +9,10 @@ const pool = new Pool({
 
 // Redis connection
 const redis = createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
+  url: process.env.REDIS_URL || 'redis://localhost:6379',
 });
 
-redis.on('error', (err) => console.error('Redis Client Error', err));
+redis.on('error', err => console.error('Redis Client Error', err));
 
 // Initialize connections
 export async function initDatabase() {
@@ -94,7 +94,7 @@ export const schemas = {
       expires_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-  `
+  `,
 };
 
 // Database operations
@@ -123,13 +123,25 @@ export class Database {
   }
 
   // Characters
-  static async createCharacter(name: string, systemPrompt?: string, avatarUrl?: string, traits?: string[], personality?: string) {
+  static async createCharacter(
+    name: string,
+    systemPrompt?: string,
+    avatarUrl?: string,
+    traits?: string[],
+    personality?: string
+  ) {
     const query = `
       INSERT INTO characters (name, system_prompt, avatar_url, traits, personality)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
-    const result = await pool.query(query, [name, systemPrompt, avatarUrl, traits || [], personality || 'friendly']);
+    const result = await pool.query(query, [
+      name,
+      systemPrompt,
+      avatarUrl,
+      traits || [],
+      personality || 'friendly',
+    ]);
     return result.rows[0];
   }
 
@@ -152,13 +164,15 @@ export class Database {
   }
 
   static async updateCharacterFamiliarity(id: number, familiarity: number) {
-    const query = 'UPDATE characters SET familiarity = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *';
+    const query =
+      'UPDATE characters SET familiarity = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *';
     const result = await pool.query(query, [familiarity, id]);
     return result.rows[0];
   }
 
   static async updateCharacterEmotionalState(id: number, emotionalState: any) {
-    const query = 'UPDATE characters SET emotional_state = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *';
+    const query =
+      'UPDATE characters SET emotional_state = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *';
     const result = await pool.query(query, [JSON.stringify(emotionalState), id]);
     return result.rows[0];
   }
@@ -169,7 +183,13 @@ export class Database {
   }
 
   // Memory
-  static async createMemory(userId: number, aiId: number, factText: string, factType: string = 'general', vectorEmbedding?: number[]) {
+  static async createMemory(
+    userId: number,
+    aiId: number,
+    factText: string,
+    factType: string = 'general',
+    vectorEmbedding?: number[]
+  ) {
     const query = `
       INSERT INTO memory (user_id, ai_id, fact_text, fact_type, vector_embedding)
       VALUES ($1, $2, $3, $4, $5)
@@ -186,7 +206,8 @@ export class Database {
   }
 
   static async getMemoriesByUserAndAI(userId: number, aiId: number, limit: number = 50) {
-    const query = 'SELECT * FROM memory WHERE user_id = $1 AND ai_id = $2 ORDER BY last_used DESC LIMIT $3';
+    const query =
+      'SELECT * FROM memory WHERE user_id = $1 AND ai_id = $2 ORDER BY last_used DESC LIMIT $3';
     const result = await pool.query(query, [userId, aiId, limit]);
     return result.rows;
   }
@@ -201,7 +222,10 @@ export class Database {
     await pool.query(query, [id]);
   }
 
-  static async updateMemory(id: number, updates: { content?: string; type?: string; tags?: string[] }) {
+  static async updateMemory(
+    id: number,
+    updates: { content?: string; type?: string; tags?: string[] }
+  ) {
     const setParts = [];
     const values = [];
     let paramIndex = 1;
@@ -255,7 +279,8 @@ export class Database {
   }
 
   static async archiveMemory(id: number) {
-    const query = 'UPDATE memories SET is_archived = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1';
+    const query =
+      'UPDATE memories SET is_archived = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1';
     await pool.query(query, [id]);
   }
 
@@ -283,7 +308,12 @@ export class Database {
     await pool.query(query, [consolidationCount, id]);
   }
 
-  static async searchMemories(query: string, userId: number, characterId?: number, limit: number = 10) {
+  static async searchMemories(
+    query: string,
+    userId: number,
+    characterId?: number,
+    limit: number = 10
+  ) {
     let sqlQuery = `
       SELECT * FROM memories
       WHERE user_id = $1 AND is_archived = false
@@ -349,7 +379,14 @@ export class Database {
       VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       RETURNING *
     `;
-    const result = await pool.query(query, [userId, characterId, factText, factType, importanceScore, tags]);
+    const result = await pool.query(query, [
+      userId,
+      characterId,
+      factText,
+      factType,
+      importanceScore,
+      tags,
+    ]);
     return result.rows[0];
   }
 
@@ -384,9 +421,16 @@ export class Database {
       RETURNING *
     `;
     const result = await pool.query(query, [
-      userId, characterId, reflectionDate, summary, keyThemes,
-      JSON.stringify(emotionalPatterns), JSON.stringify(personalityAdjustments),
-      newMemories, insights, JSON.stringify(dreamState)
+      userId,
+      characterId,
+      reflectionDate,
+      summary,
+      keyThemes,
+      JSON.stringify(emotionalPatterns),
+      JSON.stringify(personalityAdjustments),
+      newMemories,
+      insights,
+      JSON.stringify(dreamState),
     ]);
     return result.rows[0];
   }
@@ -408,7 +452,13 @@ export class Database {
       RETURNING *
     `;
     const result = await pool.query(query, [
-      userId, characterId, traitName, previousValue, newValue, adjustmentReason, reflectionId
+      userId,
+      characterId,
+      traitName,
+      previousValue,
+      newValue,
+      adjustmentReason,
+      reflectionId,
     ]);
     return result.rows[0];
   }
@@ -476,7 +526,12 @@ export class Database {
   }
 
   // Vector similarity search
-  static async findSimilarMemories(userId: number, aiId: number, queryEmbedding: number[], limit: number = 5) {
+  static async findSimilarMemories(
+    userId: number,
+    aiId: number,
+    queryEmbedding: number[],
+    limit: number = 5
+  ) {
     const query = `
       SELECT *,
              1 - (vector_embedding <=> $3) as similarity
@@ -489,7 +544,11 @@ export class Database {
     return result.rows;
   }
 
-  static async findSimilarMemoriesAcrossAIs(userId: number, queryEmbedding: number[], limit: number = 5) {
+  static async findSimilarMemoriesAcrossAIs(
+    userId: number,
+    queryEmbedding: number[],
+    limit: number = 5
+  ) {
     const query = `
       SELECT m.*,
              c.name as ai_name,
@@ -505,18 +564,33 @@ export class Database {
   }
 
   // Messages
-  static async createMessage(userId: number, aiId: number, userMessage: string, aiResponse: string, conversationId?: string, emotion?: string) {
+  static async createMessage(
+    userId: number,
+    aiId: number,
+    userMessage: string,
+    aiResponse: string,
+    conversationId?: string,
+    emotion?: string
+  ) {
     const query = `
       INSERT INTO messages (user_id, ai_id, user_message, ai_response, conversation_id, emotion)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
-    const result = await pool.query(query, [userId, aiId, userMessage, aiResponse, conversationId, emotion || 'neutral']);
+    const result = await pool.query(query, [
+      userId,
+      aiId,
+      userMessage,
+      aiResponse,
+      conversationId,
+      emotion || 'neutral',
+    ]);
     return result.rows[0];
   }
 
   static async getConversationHistory(userId: number, aiId: number, limit: number = 20) {
-    const query = 'SELECT * FROM messages WHERE user_id = $1 AND ai_id = $2 ORDER BY timestamp DESC LIMIT $3';
+    const query =
+      'SELECT * FROM messages WHERE user_id = $1 AND ai_id = $2 ORDER BY timestamp DESC LIMIT $3';
     const result = await pool.query(query, [userId, aiId, limit]);
     return result.rows.reverse(); // Return in chronological order
   }
@@ -533,7 +607,8 @@ export class Database {
   }
 
   static async getSessionByToken(sessionToken: string) {
-    const query = 'SELECT * FROM sessions WHERE session_token = $1 AND expires_at > CURRENT_TIMESTAMP';
+    const query =
+      'SELECT * FROM sessions WHERE session_token = $1 AND expires_at > CURRENT_TIMESTAMP';
     const result = await pool.query(query, [sessionToken]);
     return result.rows[0];
   }

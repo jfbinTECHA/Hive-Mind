@@ -37,9 +37,7 @@ export function AuthScreen() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
             AI Hive Mind
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Connect with your AI companions
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">Connect with your AI companions</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -48,7 +46,7 @@ export function AuthScreen() {
               type="text"
               placeholder="Username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={e => setUsername(e.target.value)}
               required
               className="w-full"
             />
@@ -59,7 +57,7 @@ export function AuthScreen() {
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
               className="w-full"
             />
@@ -85,12 +83,7 @@ export function AuthScreen() {
               </Button>
             </Link>
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleGuestLogin}
-              className="w-full"
-            >
+            <Button type="button" variant="outline" onClick={handleGuestLogin} className="w-full">
               Continue as Guest
             </Button>
           </div>

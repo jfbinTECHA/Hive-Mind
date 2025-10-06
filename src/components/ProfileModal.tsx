@@ -12,7 +12,9 @@ interface ProfileModalProps {
 
 export function ProfileModal({ onClose }: ProfileModalProps) {
   const { state, dispatch } = useApp();
-  const [selectedCompanion, setSelectedCompanion] = useState(state.activeCompanion || state.companions[0]?.id);
+  const [selectedCompanion, setSelectedCompanion] = useState(
+    state.activeCompanion || state.companions[0]?.id
+  );
   const [editedCompanion, setEditedCompanion] = useState(
     state.companions.find(c => c.id === selectedCompanion) || state.companions[0]
   );
@@ -22,8 +24,8 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
       type: 'UPDATE_COMPANION',
       payload: {
         id: selectedCompanion,
-        updates: editedCompanion
-      }
+        updates: editedCompanion,
+      },
     });
     onClose();
   };
@@ -39,7 +41,7 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
   const updateField = (field: string, value: any) => {
     setEditedCompanion(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -54,7 +56,10 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
   };
 
   const removeTrait = (index: number) => {
-    updateField('traits', editedCompanion.traits.filter((_, i) => i !== index));
+    updateField(
+      'traits',
+      editedCompanion.traits.filter((_, i) => i !== index)
+    );
   };
 
   return (
@@ -77,15 +82,13 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
         <div className="p-6 space-y-6">
           {/* Companion Selector */}
           <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Select Companion
-            </label>
+            <label className="block text-sm font-medium text-white mb-2">Select Companion</label>
             <select
               value={selectedCompanion}
-              onChange={(e) => handleCompanionChange(e.target.value)}
+              onChange={e => handleCompanionChange(e.target.value)}
               className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
             >
-              {state.companions.map((companion) => (
+              {state.companions.map(companion => (
                 <option key={companion.id} value={companion.id}>
                   {companion.name}
                 </option>
@@ -96,23 +99,19 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Name
-              </label>
+              <label className="block text-sm font-medium text-white mb-2">Name</label>
               <Input
                 value={editedCompanion.name}
-                onChange={(e) => updateField('name', e.target.value)}
+                onChange={e => updateField('name', e.target.value)}
                 className="bg-white/10 border-white/20 text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Personality
-              </label>
+              <label className="block text-sm font-medium text-white mb-2">Personality</label>
               <select
                 value={editedCompanion.personality}
-                onChange={(e) => updateField('personality', e.target.value)}
+                onChange={e => updateField('personality', e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
               >
                 <option value="friendly">Friendly</option>
@@ -125,13 +124,11 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
 
           {/* Avatar */}
           <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Avatar Emoji
-            </label>
+            <label className="block text-sm font-medium text-white mb-2">Avatar Emoji</label>
             <div className="flex items-center space-x-2">
               <Input
                 value={editedCompanion.avatar}
-                onChange={(e) => updateField('avatar', e.target.value)}
+                onChange={e => updateField('avatar', e.target.value)}
                 className="bg-white/10 border-white/20 text-white"
                 maxLength={2}
               />
@@ -141,12 +138,10 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-white mb-2">Description</label>
             <textarea
               value={editedCompanion.description}
-              onChange={(e) => updateField('description', e.target.value)}
+              onChange={e => updateField('description', e.target.value)}
               className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white resize-none"
               rows={3}
             />
@@ -154,15 +149,13 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
 
           {/* Traits */}
           <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Traits
-            </label>
+            <label className="block text-sm font-medium text-white mb-2">Traits</label>
             <div className="space-y-2">
               {editedCompanion.traits.map((trait, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <Input
                     value={trait}
-                    onChange={(e) => updateTraits(index, e.target.value)}
+                    onChange={e => updateTraits(index, e.target.value)}
                     className="bg-white/10 border-white/20 text-white flex-1"
                     placeholder="Enter a trait..."
                   />
@@ -197,10 +190,7 @@ export function ProfileModal({ onClose }: ProfileModalProps) {
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            className="bg-purple-500 hover:bg-purple-600"
-          >
+          <Button onClick={handleSave} className="bg-purple-500 hover:bg-purple-600">
             <Save className="w-4 h-4 mr-2" />
             Save Changes
           </Button>

@@ -49,7 +49,7 @@ export function MemoryPanel({ onClose }: MemoryPanelProps) {
         body: JSON.stringify({
           aiId: state.activeCompanion,
           action: 'delete',
-          key: factId // This is a simplification - in reality you'd need proper key identification
+          key: factId, // This is a simplification - in reality you'd need proper key identification
         }),
       });
 
@@ -65,7 +65,11 @@ export function MemoryPanel({ onClose }: MemoryPanelProps) {
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return (
+      date.toLocaleDateString() +
+      ' ' +
+      date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    );
   };
 
   return (
@@ -86,9 +90,7 @@ export function MemoryPanel({ onClose }: MemoryPanelProps) {
       {/* Controls */}
       <div className="p-4 border-b border-white/20">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400">
-            {state.memoryFacts.length} memories stored
-          </span>
+          <span className="text-sm text-gray-400">{state.memoryFacts.length} memories stored</span>
           <Button
             variant="ghost"
             size="sm"
@@ -109,7 +111,7 @@ export function MemoryPanel({ onClose }: MemoryPanelProps) {
             <p className="text-sm mt-2">Start chatting to create memories!</p>
           </div>
         ) : (
-          visibleFacts.map((fact) => (
+          visibleFacts.map(fact => (
             <div
               key={fact.id}
               className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-3"
@@ -117,32 +119,27 @@ export function MemoryPanel({ onClose }: MemoryPanelProps) {
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-1">
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      fact.type === 'user'
-                        ? 'bg-purple-500/20 text-purple-300'
-                        : 'bg-blue-500/20 text-blue-300'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${
+                        fact.type === 'user'
+                          ? 'bg-purple-500/20 text-purple-300'
+                          : 'bg-blue-500/20 text-blue-300'
+                      }`}
+                    >
                       {fact.type}
                     </span>
-                    <span className="text-xs text-gray-400">
-                      {fact.companionId}
-                    </span>
+                    <span className="text-xs text-gray-400">{fact.companionId}</span>
                   </div>
 
-                  <p className="text-sm text-white font-medium mb-1">
-                    {fact.key}
-                  </p>
+                  <p className="text-sm text-white font-medium mb-1">{fact.key}</p>
 
                   <p className="text-sm text-gray-300 mb-2">
                     {typeof fact.value === 'object'
                       ? JSON.stringify(fact.value)
-                      : String(fact.value)
-                    }
+                      : String(fact.value)}
                   </p>
 
-                  <p className="text-xs text-gray-500">
-                    {formatDate(fact.timestamp)}
-                  </p>
+                  <p className="text-xs text-gray-500">{formatDate(fact.timestamp)}</p>
                 </div>
 
                 <Button

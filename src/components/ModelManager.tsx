@@ -14,7 +14,9 @@ export function ModelManager({ onClose }: ModelManagerProps) {
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [pullingModel, setPullingModel] = useState<string | null>(null);
-  const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'connected' | 'disconnected'>(
+    'checking'
+  );
 
   useEffect(() => {
     checkOllamaStatus();
@@ -123,15 +125,23 @@ export function ModelManager({ onClose }: ModelManagerProps) {
               <AlertCircle className="w-4 h-4 text-red-500 mr-2" />
             )}
             <span className="text-white">
-              Ollama Status: {ollamaStatus === 'connected' ? 'Connected' :
-                              ollamaStatus === 'disconnected' ? 'Disconnected' : 'Checking...'}
+              Ollama Status:{' '}
+              {ollamaStatus === 'connected'
+                ? 'Connected'
+                : ollamaStatus === 'disconnected'
+                  ? 'Disconnected'
+                  : 'Checking...'}
             </span>
           </div>
           {ollamaStatus === 'disconnected' && (
             <p className="text-gray-400 text-sm mt-2">
               Make sure Ollama is running locally. Visit{' '}
-              <a href="https://ollama.ai" target="_blank" rel="noopener noreferrer"
-                 className="text-purple-400 hover:text-purple-300">
+              <a
+                href="https://ollama.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-400 hover:text-purple-300"
+              >
                 ollama.ai
               </a>{' '}
               for installation instructions.
@@ -143,12 +153,16 @@ export function ModelManager({ onClose }: ModelManagerProps) {
         <div className="mb-6">
           <h3 className="text-lg font-medium text-white mb-3">Installed Models</h3>
           <div className="space-y-2">
-            {models.map((model) => (
-              <div key={model.name} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+            {models.map(model => (
+              <div
+                key={model.name}
+                className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
+              >
                 <div>
                   <div className="text-white font-medium">{model.name}</div>
                   <div className="text-gray-400 text-sm">
-                    Size: {model.size} • Modified: {new Date(model.modified_at).toLocaleDateString()}
+                    Size: {model.size} • Modified:{' '}
+                    {new Date(model.modified_at).toLocaleDateString()}
                   </div>
                 </div>
                 <Button
@@ -173,8 +187,11 @@ export function ModelManager({ onClose }: ModelManagerProps) {
         <div>
           <h3 className="text-lg font-medium text-white mb-3">Available Models</h3>
           <div className="space-y-2">
-            {availableModels.map((modelName) => (
-              <div key={modelName} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+            {availableModels.map(modelName => (
+              <div
+                key={modelName}
+                className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
+              >
                 <div className="text-white font-medium">{modelName}</div>
                 <Button
                   onClick={() => pullModel(modelName)}
@@ -199,9 +216,25 @@ export function ModelManager({ onClose }: ModelManagerProps) {
         <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/20 rounded-lg">
           <h4 className="text-blue-400 font-medium mb-2">Getting Started</h4>
           <ul className="text-gray-300 text-sm space-y-1">
-            <li>• Install Ollama from <a href="https://ollama.ai" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">ollama.ai</a></li>
-            <li>• Start Ollama server with <code className="bg-gray-800 px-1 rounded">ollama serve</code></li>
-            <li>• Pull a model like <code className="bg-gray-800 px-1 rounded">llama3:8b</code> for best results</li>
+            <li>
+              • Install Ollama from{' '}
+              <a
+                href="https://ollama.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300"
+              >
+                ollama.ai
+              </a>
+            </li>
+            <li>
+              • Start Ollama server with{' '}
+              <code className="bg-gray-800 px-1 rounded">ollama serve</code>
+            </li>
+            <li>
+              • Pull a model like <code className="bg-gray-800 px-1 rounded">llama3:8b</code> for
+              best results
+            </li>
             <li>• Set the model as active to start chatting</li>
           </ul>
         </div>

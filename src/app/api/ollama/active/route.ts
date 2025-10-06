@@ -7,10 +7,7 @@ export async function POST(request: NextRequest) {
     const { model } = await request.json();
 
     if (!model) {
-      return NextResponse.json(
-        { error: 'Model name is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Model name is required' }, { status: 400 });
     }
 
     // Set the active model in the local AI service
@@ -21,14 +18,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      activeModel: model
+      activeModel: model,
     });
   } catch (error) {
     console.error('Set active model error:', error);
-    return NextResponse.json(
-      { error: 'Failed to set active model' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to set active model' }, { status: 500 });
   }
 }
 
@@ -37,13 +31,10 @@ export async function GET() {
     const activeModel = localAIService.getCurrentModel();
 
     return NextResponse.json({
-      activeModel
+      activeModel,
     });
   } catch (error) {
     console.error('Get active model error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get active model' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get active model' }, { status: 500 });
   }
 }

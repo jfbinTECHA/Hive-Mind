@@ -107,7 +107,7 @@ export class PluginSystem {
         enabled: true,
         settings: this.initializeSettings(manifest.settings || []),
         installedAt: new Date(),
-        lastUsed: new Date()
+        lastUsed: new Date(),
       };
 
       // Register hooks
@@ -126,7 +126,7 @@ export class PluginSystem {
     } catch (error) {
       return {
         success: false,
-        error: `Failed to install plugin: ${error instanceof Error ? error.message : 'Unknown error'}`
+        error: `Failed to install plugin: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -162,7 +162,7 @@ export class PluginSystem {
     } catch (error) {
       return {
         success: false,
-        error: `Failed to uninstall plugin: ${error instanceof Error ? error.message : 'Unknown error'}`
+        error: `Failed to uninstall plugin: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -170,7 +170,11 @@ export class PluginSystem {
   /**
    * Execute plugin hook
    */
-  async executeHook(event: PluginEvent, context: PluginContext, data?: any): Promise<PluginResult[]> {
+  async executeHook(
+    event: PluginEvent,
+    context: PluginContext,
+    data?: any
+  ): Promise<PluginResult[]> {
     const hooks = this.eventListeners.get(event) || [];
     const results: PluginResult[] = [];
 
@@ -179,13 +183,17 @@ export class PluginSystem {
       if (!plugin || !plugin.enabled) continue;
 
       try {
-        const result = await this.executePluginFunction(plugin, hook.handler, { context, data, event });
+        const result = await this.executePluginFunction(plugin, hook.handler, {
+          context,
+          data,
+          event,
+        });
         results.push(result);
       } catch (error) {
         console.error(`Plugin ${hook.pluginId} hook ${hook.handler} failed:`, error);
         results.push({
           success: false,
-          error: `Hook execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          error: `Hook execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         });
       }
     }
@@ -204,7 +212,7 @@ export class PluginSystem {
         return {
           status: 401,
           headers: { 'Content-Type': 'application/json' },
-          body: { error: 'Invalid or disabled API key' }
+          body: { error: 'Invalid or disabled API key' },
         };
       }
 
@@ -213,20 +221,20 @@ export class PluginSystem {
         return {
           status: 403,
           headers: { 'Content-Type': 'application/json' },
-          body: { error: 'Plugin not available' }
+          body: { error: 'Plugin not available' },
         };
       }
 
       // Find matching endpoint
-      const endpoint = plugin.manifest.apiEndpoints?.find(ep =>
-        ep.path === request.endpoint && ep.method === request.method
+      const endpoint = plugin.manifest.apiEndpoints?.find(
+        ep => ep.path === request.endpoint && ep.method === request.method
       );
 
       if (!endpoint) {
         return {
           status: 404,
           headers: { 'Content-Type': 'application/json' },
-          body: { error: 'Endpoint not found' }
+          body: { error: 'Endpoint not found' },
         };
       }
 
@@ -235,34 +243,36 @@ export class PluginSystem {
         return {
           status: 401,
           headers: { 'Content-Type': 'application/json' },
-          body: { error: 'Authentication required' }
+          body: { error: 'Authentication required' },
         };
       }
 
       // Execute plugin function
       const result = await this.executePluginFunction(plugin, endpoint.handler, {
         request,
-        context: { pluginId: apiKey.pluginId }
+        context: { pluginId: apiKey.pluginId },
       });
 
       if (!result.success) {
         return {
           status: 500,
           headers: { 'Content-Type': 'application/json' },
-          body: { error: result.error || 'Plugin execution failed' }
+          body: { error: result.error || 'Plugin execution failed' },
         };
       }
 
       return {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: result.data
+        body: result.data,
       };
     } catch (error) {
       return {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
-        body: { error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}` }
+        body: {
+          error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        },
       };
     }
   }
@@ -280,7 +290,7 @@ export class PluginSystem {
       permissions,
       enabled: true,
       createdAt: new Date(),
-      lastUsed: new Date()
+      lastUsed: new Date(),
     });
 
     return apiKey;
@@ -303,7 +313,10 @@ export class PluginSystem {
   /**
    * Update plugin settings
    */
-  async updatePluginSettings(pluginId: string, settings: Record<string, any>): Promise<PluginResult> {
+  async updatePluginSettings(
+    pluginId: string,
+    settings: Record<string, any>
+  ): Promise<PluginResult> {
     const plugin = this.plugins.get(pluginId);
     if (!plugin) {
       return { success: false, error: 'Plugin not found' };
@@ -354,7 +367,7 @@ export class PluginSystem {
       }
       this.eventListeners.get(hook.event)!.push({
         ...hook,
-        pluginId
+        pluginId,
       });
     }
   }
@@ -380,7 +393,7 @@ export class PluginSystem {
         // Provide access to system APIs based on permissions
         apis: this.createPluginAPIContext(plugin.manifest.permissions),
         settings: plugin.settings,
-        ...params
+        ...params,
       };
 
       // Execute plugin function (in a real implementation, this would be sandboxed)
@@ -392,7 +405,7 @@ export class PluginSystem {
     } catch (error) {
       return {
         success: false,
-        error: `Plugin execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        error: `Plugin execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -407,26 +420,30 @@ export class PluginSystem {
           if (permission.type === 'read') {
             context.chat = {
               getRecentMessages: (limit: number) => this.getRecentMessages(limit),
-              getConversation: (conversationId: string) => this.getConversation(conversationId)
+              getConversation: (conversationId: string) => this.getConversation(conversationId),
             };
           }
           break;
         case 'memory':
           if (permission.type === 'read') {
             context.memory = {
-              getMemories: (companionId: string) => sharedMemorySystem.getAccessibleMemories(companionId)
+              getMemories: (companionId: string) =>
+                sharedMemorySystem.getAccessibleMemories(companionId),
             };
           }
           if (permission.type === 'write') {
-            context.memory.shareMemory = (memoryId: string, fromCompanionId: string, toCompanions: string[]) =>
-              sharedMemorySystem.shareMemory(memoryId, fromCompanionId, toCompanions);
+            context.memory.shareMemory = (
+              memoryId: string,
+              fromCompanionId: string,
+              toCompanions: string[]
+            ) => sharedMemorySystem.shareMemory(memoryId, fromCompanionId, toCompanions);
           }
           break;
         case 'companions':
           if (permission.type === 'read') {
             context.companions = {
               getCompanions: () => this.getCompanions(),
-              getCompanion: (id: string) => this.getCompanion(id)
+              getCompanion: (id: string) => this.getCompanion(id),
             };
           }
           break;
@@ -434,7 +451,7 @@ export class PluginSystem {
           if (permission.type === 'read') {
             context.analytics = {
               getUsageStats: () => analyticsSystem.getUsageStats(),
-              getMemoryStats: () => analyticsSystem.getMemoryStats()
+              getMemoryStats: () => analyticsSystem.getMemoryStats(),
             };
           }
           break;
@@ -471,7 +488,10 @@ export class PluginSystem {
         return { success: false, error: 'Insufficient permissions' };
 
       default:
-        return { success: true, data: { message: `Plugin ${plugin.manifest.id} executed ${functionName}` } };
+        return {
+          success: true,
+          data: { message: `Plugin ${plugin.manifest.id} executed ${functionName}` },
+        };
     }
   }
 

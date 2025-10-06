@@ -11,7 +11,21 @@ import { EvolutionPanel } from '@/components/EvolutionPanel';
 import { SharedMemoryPanel } from '@/components/SharedMemoryPanel';
 import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
 import { PluginManager } from '@/components/PluginManager';
-import { Users, Plus, Brain, Settings, MessageSquare, Cpu, Database, Palette, Sparkles, Star, Share2, BarChart3, Puzzle } from 'lucide-react';
+import {
+  Users,
+  Plus,
+  Brain,
+  Settings,
+  MessageSquare,
+  Cpu,
+  Database,
+  Palette,
+  Sparkles,
+  Star,
+  Share2,
+  BarChart3,
+  Puzzle,
+} from 'lucide-react';
 import Link from 'next/link';
 
 interface SidebarProps {
@@ -31,7 +45,10 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
 
   const addCompanion = async () => {
     const name = prompt('Enter companion name:');
-    const personality = prompt('Choose personality (friendly, professional, humorous, serious):', 'friendly');
+    const personality = prompt(
+      'Choose personality (friendly, professional, humorous, serious):',
+      'friendly'
+    );
 
     if (name && personality) {
       try {
@@ -45,7 +62,7 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
             personality,
             avatar: '🤖',
             description: `A ${personality} AI companion`,
-            traits: [personality]
+            traits: [personality],
           }),
         });
 
@@ -69,8 +86,8 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
           memory: {
             facts: {},
             conversations: [],
-            familiarity: 0
-          }
+            familiarity: 0,
+          },
         };
         dispatch({ type: 'ADD_COMPANION', payload: newCompanion });
       }
@@ -96,7 +113,7 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
 
       {/* Companion List */}
       <div className="flex-1 p-4 space-y-2">
-        {state.companions.map((companion) => (
+        {state.companions.map(companion => (
           <div
             key={companion.id}
             onClick={() => dispatch({ type: 'SET_ACTIVE_COMPANION', payload: companion.id })}
@@ -109,12 +126,8 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
             <div className="flex items-center space-x-3">
               <span className="text-2xl">{companion.avatar}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
-                  {companion.name}
-                </p>
-                <p className="text-xs text-gray-400 capitalize">
-                  {companion.personality}
-                </p>
+                <p className="text-sm font-medium text-white truncate">{companion.name}</p>
+                <p className="text-xs text-gray-400 capitalize">{companion.personality}</p>
               </div>
             </div>
           </div>
@@ -229,14 +242,10 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
       </div>
 
       {/* Model Manager Modal */}
-      {showModelManager && (
-        <ModelManager onClose={() => setShowModelManager(false)} />
-      )}
+      {showModelManager && <ModelManager onClose={() => setShowModelManager(false)} />}
 
       {/* Theme Customizer Panel */}
-      {showThemeCustomizer && (
-        <ThemeCustomizer onClose={() => setShowThemeCustomizer(false)} />
-      )}
+      {showThemeCustomizer && <ThemeCustomizer onClose={() => setShowThemeCustomizer(false)} />}
 
       {/* Reflections Panel */}
       {showReflectionsPanel && (
@@ -278,9 +287,7 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
       {showAnalyticsDashboard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-6xl h-5/6">
-            <AnalyticsDashboard
-              onClose={() => setShowAnalyticsDashboard(false)}
-            />
+            <AnalyticsDashboard onClose={() => setShowAnalyticsDashboard(false)} />
           </div>
         </div>
       )}
@@ -289,9 +296,7 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
       {showPluginManager && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-7xl h-5/6">
-            <PluginManager
-              onClose={() => setShowPluginManager(false)}
-            />
+            <PluginManager onClose={() => setShowPluginManager(false)} />
           </div>
         </div>
       )}

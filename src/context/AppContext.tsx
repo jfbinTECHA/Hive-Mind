@@ -49,16 +49,16 @@ const initialState: AppState = {
       memory: {
         facts: {},
         conversations: [],
-        familiarity: 0
-      }
-    }
+        familiarity: 0,
+      },
+    },
   ],
   activeCompanion: 'ai-hive-mind',
   messages: [],
   memoryFacts: [],
   theme: loadInitialTheme(),
   isAuthenticated: false,
-  groupChatMode: false
+  groupChatMode: false,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -68,7 +68,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'ADD_COMPANION':
       return {
         ...state,
-        companions: [...state.companions, action.payload]
+        companions: [...state.companions, action.payload],
       };
     case 'UPDATE_COMPANION':
       return {
@@ -77,7 +77,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
           companion.id === action.payload.id
             ? { ...companion, ...action.payload.updates }
             : companion
-        )
+        ),
       };
     case 'SET_ACTIVE_COMPANION':
       return { ...state, activeCompanion: action.payload };
@@ -88,7 +88,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'REMOVE_MEMORY_FACT':
       return {
         ...state,
-        memoryFacts: state.memoryFacts.filter(fact => fact.id !== action.payload)
+        memoryFacts: state.memoryFacts.filter(fact => fact.id !== action.payload),
       };
     case 'SET_THEME':
       return { ...state, theme: action.payload };
@@ -131,14 +131,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Background gradient
         const gradientColors = theme.background.gradient.colors.join(', ');
         const gradientDirection = theme.background.gradient.direction;
-        const gradient = gradientDirection === 'radial'
-          ? `radial-gradient(circle, ${gradientColors})`
-          : `linear-gradient(${gradientDirection}, ${gradientColors})`;
+        const gradient =
+          gradientDirection === 'radial'
+            ? `radial-gradient(circle, ${gradientColors})`
+            : `linear-gradient(${gradientDirection}, ${gradientColors})`;
         root.setProperty('--theme-gradient', gradient);
         root.setProperty('--theme-gradient-opacity', theme.background.gradient.opacity.toString());
 
         // Glow effect
-        const glow = `0 0 ${theme.glow.blur}px ${theme.glow.color}${Math.round(theme.glow.intensity * 255).toString(16).padStart(2, '0')}`;
+        const glow = `0 0 ${theme.glow.blur}px ${theme.glow.color}${Math.round(
+          theme.glow.intensity * 255
+        )
+          .toString(16)
+          .padStart(2, '0')}`;
         root.setProperty('--theme-glow', glow);
 
         // Accent colors
@@ -152,7 +157,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         root.setProperty('--theme-text-muted', theme.text.muted);
 
         // Border colors
-        const borderColor = `${theme.border.color}${Math.round(theme.border.opacity * 255).toString(16).padStart(2, '0')}`;
+        const borderColor = `${theme.border.color}${Math.round(theme.border.opacity * 255)
+          .toString(16)
+          .padStart(2, '0')}`;
         root.setProperty('--theme-border-color', borderColor);
       }
     };
@@ -160,11 +167,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     applyTheme(state.theme);
   }, [state.theme]);
 
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;
 }
 
 export function useApp() {

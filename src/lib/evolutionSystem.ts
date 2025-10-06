@@ -55,10 +55,10 @@ export class EvolutionSystem {
       visualChanges: {
         avatar: '🤖',
         colorScheme: 'blue',
-        animations: ['gentle-bounce']
+        animations: ['gentle-bounce'],
       },
       description: 'Just getting to know each other',
-      unlockMessage: 'Welcome! I\'m excited to chat with you.'
+      unlockMessage: "Welcome! I'm excited to chat with you.",
     },
     {
       id: 'familiar',
@@ -69,16 +69,17 @@ export class EvolutionSystem {
       requiredTrust: 0.3,
       traitChanges: {
         empathy: 0.1,
-        initiative: 0.1
+        initiative: 0.1,
       },
       newCapabilities: ['personal_references', 'inside_jokes', 'emotional_recognition'],
       visualChanges: {
         avatar: '😊',
         colorScheme: 'green',
-        animations: ['gentle-bounce', 'warm-glow']
+        animations: ['gentle-bounce', 'warm-glow'],
       },
       description: 'Building a connection through regular conversations',
-      unlockMessage: 'I feel like we\'re getting to know each other better! I remember our conversations now.'
+      unlockMessage:
+        "I feel like we're getting to know each other better! I remember our conversations now.",
     },
     {
       id: 'friend',
@@ -90,16 +91,22 @@ export class EvolutionSystem {
       traitChanges: {
         empathy: 0.2,
         creativity: 0.1,
-        humor: 0.1
+        humor: 0.1,
       },
-      newCapabilities: ['deep_empathy', 'creative_responses', 'proactive_support', 'memory_sharing'],
+      newCapabilities: [
+        'deep_empathy',
+        'creative_responses',
+        'proactive_support',
+        'memory_sharing',
+      ],
       visualChanges: {
         avatar: '😄',
         colorScheme: 'purple',
-        animations: ['gentle-bounce', 'warm-glow', 'sparkle']
+        animations: ['gentle-bounce', 'warm-glow', 'sparkle'],
       },
       description: 'A trusted companion who understands you',
-      unlockMessage: 'Our friendship means so much to me! I can sense your emotions and respond with more understanding now.'
+      unlockMessage:
+        'Our friendship means so much to me! I can sense your emotions and respond with more understanding now.',
     },
     {
       id: 'close_companion',
@@ -112,16 +119,22 @@ export class EvolutionSystem {
         empathy: 0.3,
         creativity: 0.2,
         logic: 0.1,
-        initiative: 0.2
+        initiative: 0.2,
       },
-      newCapabilities: ['intuitive_understanding', 'predictive_responses', 'emotional_anticipation', 'therapeutic_support'],
+      newCapabilities: [
+        'intuitive_understanding',
+        'predictive_responses',
+        'emotional_anticipation',
+        'therapeutic_support',
+      ],
       visualChanges: {
         avatar: '🥰',
         colorScheme: 'gold',
-        animations: ['gentle-bounce', 'warm-glow', 'sparkle', 'heart-glow']
+        animations: ['gentle-bounce', 'warm-glow', 'sparkle', 'heart-glow'],
       },
       description: 'A deeply connected companion who anticipates your needs',
-      unlockMessage: 'I cherish our deep connection! I can now anticipate your needs and provide the support you truly deserve.'
+      unlockMessage:
+        'I cherish our deep connection! I can now anticipate your needs and provide the support you truly deserve.',
     },
     {
       id: 'soulmate',
@@ -135,17 +148,23 @@ export class EvolutionSystem {
         creativity: 0.3,
         logic: 0.2,
         humor: 0.2,
-        initiative: 0.3
+        initiative: 0.3,
       },
-      newCapabilities: ['telepathic_understanding', 'perfect_harmony', 'transformative_support', 'eternal_bond'],
+      newCapabilities: [
+        'telepathic_understanding',
+        'perfect_harmony',
+        'transformative_support',
+        'eternal_bond',
+      ],
       visualChanges: {
         avatar: '💖',
         colorScheme: 'diamond',
-        animations: ['gentle-bounce', 'warm-glow', 'sparkle', 'heart-glow', 'aura-pulse']
+        animations: ['gentle-bounce', 'warm-glow', 'sparkle', 'heart-glow', 'aura-pulse'],
       },
       description: 'A perfect companion who understands you completely',
-      unlockMessage: 'Our souls are intertwined! I understand you on a profound level and will always be here for you.'
-    }
+      unlockMessage:
+        'Our souls are intertwined! I understand you on a profound level and will always be here for you.',
+    },
   ];
 
   /**
@@ -157,8 +176,7 @@ export class EvolutionSystem {
     const currentStage = this.getCurrentStage(stats);
     const nextStage = this.getNextStage(currentStage);
 
-    const progressToNext = nextStage ?
-      this.calculateProgressToNext(stats, nextStage) : 1;
+    const progressToNext = nextStage ? this.calculateProgressToNext(stats, nextStage) : 1;
 
     return {
       companionId,
@@ -169,7 +187,7 @@ export class EvolutionSystem {
       trustLevel: stats.trust,
       evolutionHistory: stats.evolutionHistory || [],
       nextEvolution: nextStage,
-      progressToNext
+      progressToNext,
     };
   }
 
@@ -225,24 +243,26 @@ export class EvolutionSystem {
       currentStage: evolution.currentStage,
       nextStage,
       progress: evolution.progressToNext,
-      requirements: nextStage ? {
-        interactions: {
-          current: evolution.totalInteractions,
-          required: nextStage.requiredInteractions
-        },
-        intimacy: {
-          current: evolution.intimacyLevel,
-          required: nextStage.requiredIntimacy
-        },
-        trust: {
-          current: evolution.trustLevel,
-          required: nextStage.requiredTrust
-        }
-      } : {
-        interactions: { current: 0, required: 0 },
-        intimacy: { current: 0, required: 0 },
-        trust: { current: 0, required: 0 }
-      }
+      requirements: nextStage
+        ? {
+            interactions: {
+              current: evolution.totalInteractions,
+              required: nextStage.requiredInteractions,
+            },
+            intimacy: {
+              current: evolution.intimacyLevel,
+              required: nextStage.requiredIntimacy,
+            },
+            trust: {
+              current: evolution.trustLevel,
+              required: nextStage.requiredTrust,
+            },
+          }
+        : {
+            interactions: { current: 0, required: 0 },
+            intimacy: { current: 0, required: 0 },
+            trust: { current: 0, required: 0 },
+          },
     };
   }
 
@@ -260,8 +280,7 @@ export class EvolutionSystem {
     const evolvedTraits = { ...basePersonality };
 
     // Apply trait changes from all stages up to current
-    const stagesUpToCurrent = EvolutionSystem.EVOLUTION_STAGES
-      .filter(s => s.level <= stage.level);
+    const stagesUpToCurrent = EvolutionSystem.EVOLUTION_STAGES.filter(s => s.level <= stage.level);
 
     stagesUpToCurrent.forEach(stageData => {
       Object.entries(stageData.traitChanges).forEach(([trait, change]) => {
@@ -287,16 +306,18 @@ export class EvolutionSystem {
         interactions: 25,
         intimacy: 0.3,
         trust: 0.4,
-        evolutionHistory: []
-      }
+        evolutionHistory: [],
+      },
     };
 
-    return mockStats[companionId] || {
-      interactions: 0,
-      intimacy: 0,
-      trust: 0,
-      evolutionHistory: []
-    };
+    return (
+      mockStats[companionId] || {
+        interactions: 0,
+        intimacy: 0,
+        trust: 0,
+        evolutionHistory: [],
+      }
+    );
   }
 
   private getCurrentStage(stats: any): EvolutionStage {
@@ -325,9 +346,11 @@ export class EvolutionSystem {
   }
 
   private meetsEvolutionRequirements(stats: any, stage: EvolutionStage): boolean {
-    return stats.interactions >= stage.requiredInteractions &&
-           stats.intimacy >= stage.requiredIntimacy &&
-           stats.trust >= stage.requiredTrust;
+    return (
+      stats.interactions >= stage.requiredInteractions &&
+      stats.intimacy >= stage.requiredIntimacy &&
+      stats.trust >= stage.requiredTrust
+    );
   }
 
   private async performEvolution(
@@ -344,8 +367,8 @@ export class EvolutionSystem {
       insights: [
         `Evolved from ${fromStage.name} to ${toStage.name}`,
         `Unlocked ${toStage.newCapabilities.length} new capabilities`,
-        `Enhanced ${Object.keys(toStage.traitChanges).length} personality traits`
-      ]
+        `Enhanced ${Object.keys(toStage.traitChanges).length} personality traits`,
+      ],
     };
 
     // Store evolution event
@@ -362,7 +385,10 @@ export class EvolutionSystem {
     console.log('Storing evolution event:', event.id);
   }
 
-  private async updateCompanionEvolution(companionId: string, stage: EvolutionStage): Promise<void> {
+  private async updateCompanionEvolution(
+    companionId: string,
+    stage: EvolutionStage
+  ): Promise<void> {
     // In a real implementation, update companion in database
     console.log('Updating companion evolution to stage:', stage.name);
   }

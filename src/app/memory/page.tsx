@@ -4,7 +4,18 @@ import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { ArrowLeft, Search, Trash2, Download, RefreshCw, Edit3, Save, X, Eye, EyeOff } from 'lucide-react';
+import {
+  ArrowLeft,
+  Search,
+  Trash2,
+  Download,
+  RefreshCw,
+  Edit3,
+  Save,
+  X,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 import Link from 'next/link';
 
 interface MemoryItem {
@@ -69,7 +80,7 @@ export default function MemoryPage() {
             const companionMemories = (data.memories || []).map((memory: MemoryItem) => ({
               ...memory,
               companionId: companion.id,
-              companionName: companion.name
+              companionName: companion.name,
             }));
             allMemories.push(...companionMemories);
           }
@@ -94,7 +105,7 @@ export default function MemoryPage() {
       byCompanion: {},
       averageConfidence: 0,
       oldestMemory: '',
-      newestMemory: ''
+      newestMemory: '',
     };
 
     if (memoryList.length === 0) {
@@ -135,9 +146,10 @@ export default function MemoryPage() {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(memory =>
-        memory.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        memory.metadata.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(
+        memory =>
+          memory.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          memory.metadata.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -157,7 +169,7 @@ export default function MemoryPage() {
   const deleteMemory = async (memoryId: string, companionId: string) => {
     try {
       await fetch(`/api/memory/${companionId}/${memoryId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       setMemories(memories.filter(m => m.id !== memoryId));
@@ -185,27 +197,29 @@ export default function MemoryPage() {
       const response = await fetch(`/api/memory/${companionId}/${memoryId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           content: editContent,
           type: editType,
-          tags: editTags
-        })
+          tags: editTags,
+        }),
       });
 
       if (response.ok) {
         // Update local state
-        setMemories(memories.map(m =>
-          m.id === memoryId
-            ? {
-                ...m,
-                content: editContent,
-                type: editType,
-                metadata: { ...m.metadata, tags: editTags }
-              }
-            : m
-        ));
+        setMemories(
+          memories.map(m =>
+            m.id === memoryId
+              ? {
+                  ...m,
+                  content: editContent,
+                  type: editType,
+                  metadata: { ...m.metadata, tags: editTags },
+                }
+              : m
+          )
+        );
         cancelEditing();
       } else {
         console.error('Failed to update memory');
@@ -231,7 +245,7 @@ export default function MemoryPage() {
 
   const exportMemories = () => {
     const dataStr = JSON.stringify(filteredMemories, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
     const exportFileDefaultName = `ai-memories-${new Date().toISOString().split('T')[0]}.json`;
 
@@ -251,7 +265,7 @@ export default function MemoryPage() {
       preference: 'bg-green-500/20 text-green-300',
       experience: 'bg-purple-500/20 text-purple-300',
       relationship: 'bg-pink-500/20 text-pink-300',
-      knowledge: 'bg-yellow-500/20 text-yellow-300'
+      knowledge: 'bg-yellow-500/20 text-yellow-300',
     };
     return colors[type as keyof typeof colors] || 'bg-gray-500/20 text-gray-300';
   };
@@ -334,12 +348,16 @@ export default function MemoryPage() {
             </div>
 
             <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-4">
-              <div className="text-2xl font-bold text-white">{Object.keys(stats.byType).length}</div>
+              <div className="text-2xl font-bold text-white">
+                {Object.keys(stats.byType).length}
+              </div>
               <div className="text-sm text-gray-400">Memory Types</div>
             </div>
 
             <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-4">
-              <div className="text-2xl font-bold text-white">{Object.keys(stats.byCompanion).length}</div>
+              <div className="text-2xl font-bold text-white">
+                {Object.keys(stats.byCompanion).length}
+              </div>
               <div className="text-sm text-gray-400">Active Companions</div>
             </div>
           </div>
@@ -354,7 +372,7 @@ export default function MemoryPage() {
                 <Input
                   placeholder="Search memories..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10 bg-white/10 border-white/20 text-white placeholder-gray-400"
                 />
               </div>
@@ -362,7 +380,7 @@ export default function MemoryPage() {
 
             <select
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              onChange={e => setSelectedType(e.target.value)}
               className="px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
             >
               <option value="all">All Types</option>
@@ -375,7 +393,7 @@ export default function MemoryPage() {
 
             <select
               value={selectedCompanion}
-              onChange={(e) => setSelectedCompanion(e.target.value)}
+              onChange={e => setSelectedCompanion(e.target.value)}
               className="px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"
             >
               <option value="all">All Companions</option>
@@ -396,12 +414,11 @@ export default function MemoryPage() {
               <div className="text-gray-500 text-sm mt-2">
                 {searchTerm || selectedType !== 'all' || selectedCompanion !== 'all'
                   ? 'Try adjusting your filters'
-                  : 'Start chatting to create memories'
-                }
+                  : 'Start chatting to create memories'}
               </div>
             </div>
           ) : (
-            filteredMemories.map((memory) => (
+            filteredMemories.map(memory => (
               <div
                 key={memory.id}
                 className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-lg p-4"
@@ -414,23 +431,28 @@ export default function MemoryPage() {
                         <span className={`text-xs px-2 py-1 rounded ${getTypeColor(memory.type)}`}>
                           {memory.type}
                         </span>
-                        <span className="text-xs text-gray-400">
-                          {memory.companionName}
-                        </span>
+                        <span className="text-xs text-gray-400">{memory.companionName}</span>
                       </div>
 
                       {/* Enhanced Confidence Display */}
                       <div className="flex items-center space-x-2">
                         <div className="text-right">
-                          <div className={`text-xs px-2 py-1 rounded ${getConfidenceColor(memory.confidence)}`}>
-                            {getConfidenceLabel(memory.confidence)} ({Math.round(memory.confidence * 100)}%)
+                          <div
+                            className={`text-xs px-2 py-1 rounded ${getConfidenceColor(memory.confidence)}`}
+                          >
+                            {getConfidenceLabel(memory.confidence)} (
+                            {Math.round(memory.confidence * 100)}%)
                           </div>
                           <div className="w-20 bg-gray-700 rounded-full h-1 mt-1">
                             <div
                               className={`h-1 rounded-full transition-all duration-300 ${
-                                memory.confidence >= 0.8 ? 'bg-green-500' :
-                                memory.confidence >= 0.6 ? 'bg-yellow-500' :
-                                memory.confidence >= 0.4 ? 'bg-orange-500' : 'bg-red-500'
+                                memory.confidence >= 0.8
+                                  ? 'bg-green-500'
+                                  : memory.confidence >= 0.6
+                                    ? 'bg-yellow-500'
+                                    : memory.confidence >= 0.4
+                                      ? 'bg-orange-500'
+                                      : 'bg-red-500'
                               }`}
                               style={{ width: `${memory.confidence * 100}%` }}
                             ></div>
@@ -444,7 +466,7 @@ export default function MemoryPage() {
                       <div className="space-y-3 mb-3">
                         <textarea
                           value={editContent}
-                          onChange={(e) => setEditContent(e.target.value)}
+                          onChange={e => setEditContent(e.target.value)}
                           className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-400 resize-none"
                           rows={3}
                           placeholder="Memory content..."
@@ -453,7 +475,7 @@ export default function MemoryPage() {
                         <div className="flex items-center space-x-2">
                           <select
                             value={editType}
-                            onChange={(e) => setEditType(e.target.value)}
+                            onChange={e => setEditType(e.target.value)}
                             className="px-3 py-1 bg-white/10 border border-white/20 rounded-md text-white text-sm"
                           >
                             <option value="personal">Personal</option>
@@ -472,7 +494,7 @@ export default function MemoryPage() {
                               <div key={index} className="flex items-center space-x-1">
                                 <Input
                                   value={tag}
-                                  onChange={(e) => updateTag(index, e.target.value)}
+                                  onChange={e => updateTag(index, e.target.value)}
                                   className="w-20 px-2 py-1 bg-white/10 border border-white/20 text-white text-xs"
                                   placeholder="tag"
                                 />
@@ -517,9 +539,8 @@ export default function MemoryPage() {
 
                     {/* Metadata */}
                     <div className="text-xs text-gray-500">
-                      Created: {formatDate(memory.createdAt)} |
-                      Last Used: {formatDate(memory.lastUsed)} |
-                      Source: {memory.metadata.source}
+                      Created: {formatDate(memory.createdAt)} | Last Used:{' '}
+                      {formatDate(memory.lastUsed)} | Source: {memory.metadata.source}
                     </div>
                   </div>
 

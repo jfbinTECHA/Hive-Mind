@@ -52,16 +52,12 @@ export function ChatLayout() {
           </div>
 
           {/* Memory Panel (overlay) */}
-          {showMemoryPanel && (
-            <MemoryPanel onClose={() => setShowMemoryPanel(false)} />
-          )}
+          {showMemoryPanel && <MemoryPanel onClose={() => setShowMemoryPanel(false)} />}
         </div>
       </div>
 
       {/* Profile Modal */}
-      {showProfileModal && (
-        <ProfileModal onClose={() => setShowProfileModal(false)} />
-      )}
+      {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
     </div>
   );
 }

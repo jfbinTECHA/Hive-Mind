@@ -1,4 +1,14 @@
-export type AvatarExpression = 'neutral' | 'happy' | 'sad' | 'flirty' | 'thinking' | 'excited' | 'angry' | 'surprised' | 'bored' | 'confused';
+export type AvatarExpression =
+  | 'neutral'
+  | 'happy'
+  | 'sad'
+  | 'flirty'
+  | 'thinking'
+  | 'excited'
+  | 'angry'
+  | 'surprised'
+  | 'bored'
+  | 'confused';
 
 export interface AvatarState {
   expression: AvatarExpression;
@@ -26,7 +36,7 @@ export class AvatarEngine {
       angry: '😠',
       surprised: '😮',
       bored: '😴',
-      confused: '😕'
+      confused: '😕',
     },
     personalityOverrides: {
       friendly: {
@@ -39,7 +49,7 @@ export class AvatarEngine {
         angry: '😤',
         surprised: '😲',
         bored: '😌',
-        confused: '😅'
+        confused: '😅',
       },
       professional: {
         neutral: '😐',
@@ -51,7 +61,7 @@ export class AvatarEngine {
         angry: '😠',
         surprised: '😯',
         bored: '😑',
-        confused: '🤨'
+        confused: '🤨',
       },
       humorous: {
         neutral: '😏',
@@ -63,7 +73,7 @@ export class AvatarEngine {
         angry: '😡',
         surprised: '😵',
         bored: '😴',
-        confused: '🤯'
+        confused: '🤯',
       },
       serious: {
         neutral: '😐',
@@ -75,9 +85,9 @@ export class AvatarEngine {
         angry: '😠',
         surprised: '😮',
         bored: '😑',
-        confused: '🤨'
-      }
-    }
+        confused: '🤨',
+      },
+    },
   };
 
   private config: AvatarConfig;
@@ -153,7 +163,7 @@ export class AvatarEngine {
       expression,
       intensity: Math.max(0, Math.min(1, intensity)),
       transitionDuration,
-      lastChanged: Date.now()
+      lastChanged: Date.now(),
     };
 
     this.currentStates.set(companionId, newState);
@@ -187,7 +197,7 @@ export class AvatarEngine {
 
     if (emotionalState) {
       // Amplify intensity based on emotional state
-      intensity *= (emotionalState.energy * 0.5 + emotionalState.mood * 0.3 + 0.2);
+      intensity *= emotionalState.energy * 0.5 + emotionalState.mood * 0.3 + 0.2;
     }
 
     return this.updateAvatarState(companionId, expression, intensity);
@@ -302,27 +312,26 @@ export class AvatarEngine {
     description?: string
   ): string {
     const basePrompts = {
-      friendly: "A friendly, warm character with soft features",
-      professional: "A professional, composed character with neat appearance",
-      humorous: "A fun, expressive character with playful features",
-      serious: "A thoughtful, serious character with intense eyes",
+      friendly: 'A friendly, warm character with soft features',
+      professional: 'A professional, composed character with neat appearance',
+      humorous: 'A fun, expressive character with playful features',
+      serious: 'A thoughtful, serious character with intense eyes',
     };
 
     const expressionPrompts = {
-      neutral: "with a calm, neutral expression",
-      happy: "smiling warmly with bright, happy eyes",
-      sad: "with a gentle, sad expression and downcast eyes",
-      flirty: "with a playful, flirty smile and sparkling eyes",
-      thinking: "with a thoughtful, contemplative expression, looking upward",
-      excited: "with wide eyes and an excited, joyful expression",
-      angry: "with furrowed brows and an intense, serious expression",
-      surprised: "with wide eyes and an open-mouthed surprised expression",
-      bored: "with half-lidded eyes and a disinterested expression",
-      confused: "with a puzzled expression and tilted head"
+      neutral: 'with a calm, neutral expression',
+      happy: 'smiling warmly with bright, happy eyes',
+      sad: 'with a gentle, sad expression and downcast eyes',
+      flirty: 'with a playful, flirty smile and sparkling eyes',
+      thinking: 'with a thoughtful, contemplative expression, looking upward',
+      excited: 'with wide eyes and an excited, joyful expression',
+      angry: 'with furrowed brows and an intense, serious expression',
+      surprised: 'with wide eyes and an open-mouthed surprised expression',
+      bored: 'with half-lidded eyes and a disinterested expression',
+      confused: 'with a puzzled expression and tilted head',
     };
 
-    const intensityModifier = intensity > 0.7 ? "very " :
-                             intensity > 0.4 ? "" : "slightly ";
+    const intensityModifier = intensity > 0.7 ? 'very ' : intensity > 0.4 ? '' : 'slightly ';
 
     const basePrompt = basePrompts[personality as keyof typeof basePrompts] || basePrompts.friendly;
     const expressionPrompt = expressionPrompts[expression];

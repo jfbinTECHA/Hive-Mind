@@ -94,9 +94,12 @@ export class SharedMemorySystem {
     const network = await this.getCompanionNetwork(fromCompanionId);
     const allowedCompanions = toCompanionIds.filter(companionId => {
       const connection = network.connectedCompanions[companionId];
-      return connection &&
-             connection.relationshipStrength >= SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.relationshipStrength &&
-             connection.trustLevel >= SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.trustLevel;
+      return (
+        connection &&
+        connection.relationshipStrength >=
+          SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.relationshipStrength &&
+        connection.trustLevel >= SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.trustLevel
+      );
     });
 
     if (allowedCompanions.length === 0) {
@@ -116,7 +119,7 @@ export class SharedMemorySystem {
         conversationId: originalMemory.conversationId,
         timestamp: new Date(),
         location: originalMemory.location,
-        emotionalContext: originalMemory.emotionalContext
+        emotionalContext: originalMemory.emotionalContext,
       },
       metadata: {
         importance: originalMemory.importance,
@@ -124,12 +127,12 @@ export class SharedMemorySystem {
         recurrence: originalMemory.recurrence,
         lastReferenced: new Date(),
         tags: [...originalMemory.tags, 'shared'],
-        connections: []
+        connections: [],
       },
       accessPermissions: {
         [fromCompanionId]: 'admin',
-        ...allowedCompanions.reduce((acc, id) => ({ ...acc, [id]: permissionLevel }), {})
-      }
+        ...allowedCompanions.reduce((acc, id) => ({ ...acc, [id]: permissionLevel }), {}),
+      },
     };
 
     // Store shared memory
@@ -155,12 +158,14 @@ export class SharedMemorySystem {
 
     // Combine and deduplicate
     const allMemories = [...ownMemories, ...sharedMemories];
-    const uniqueMemories = allMemories.filter((memory, index, self) =>
-      index === self.findIndex(m => m.id === memory.id)
+    const uniqueMemories = allMemories.filter(
+      (memory, index, self) => index === self.findIndex(m => m.id === memory.id)
     );
 
-    return uniqueMemories.sort((a, b) =>
-      new Date(b.metadata.lastReferenced).getTime() - new Date(a.metadata.lastReferenced).getTime()
+    return uniqueMemories.sort(
+      (a, b) =>
+        new Date(b.metadata.lastReferenced).getTime() -
+        new Date(a.metadata.lastReferenced).getTime()
     );
   }
 
@@ -179,7 +184,7 @@ export class SharedMemorySystem {
       targetMemoryId: memoryId2,
       strength: 0.5, // Default strength
       description,
-      createdBy: fromCompanionId
+      createdBy: fromCompanionId,
     };
 
     // Add connection to memory
@@ -221,7 +226,7 @@ export class SharedMemorySystem {
         confidence: 0.9,
         relatedCompanions: strongConnections,
         relatedMemories: [],
-        generatedAt: new Date()
+        generatedAt: new Date(),
       });
     }
 
@@ -236,7 +241,7 @@ export class SharedMemorySystem {
         confidence: 0.8,
         relatedCompanions: dominantTheme.participants,
         relatedMemories: dominantTheme.memories,
-        generatedAt: new Date()
+        generatedAt: new Date(),
       });
     }
 
@@ -249,7 +254,7 @@ export class SharedMemorySystem {
         confidence: emotionalTrend.confidence,
         relatedCompanions: emotionalTrend.companions,
         relatedMemories: emotionalTrend.memories,
-        generatedAt: new Date()
+        generatedAt: new Date(),
       });
     }
 
@@ -269,7 +274,7 @@ export class SharedMemorySystem {
       companionId,
       connectedCompanions: {},
       memoryClusters: [],
-      networkInsights: []
+      networkInsights: [],
     };
   }
 
@@ -280,9 +285,11 @@ export class SharedMemorySystem {
     const memories = await this.getCompanionMemories(companionId);
     const network = await this.getCompanionNetwork(companionId);
 
-    const importantMemories = memories.filter(memory =>
-      memory.metadata.importance > 0.8 ||
-      Math.abs(memory.metadata.emotionalImpact) > SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.emotionalImpact
+    const importantMemories = memories.filter(
+      memory =>
+        memory.metadata.importance > 0.8 ||
+        Math.abs(memory.metadata.emotionalImpact) >
+          SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.emotionalImpact
     );
 
     const sharedMemories: SharedMemory[] = [];
@@ -291,7 +298,10 @@ export class SharedMemorySystem {
       // Find suitable companions to share with
       const suitableCompanions = Object.keys(network.connectedCompanions).filter(id => {
         const connection = network.connectedCompanions[id];
-        return connection.relationshipStrength > SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.relationshipStrength;
+        return (
+          connection.relationshipStrength >
+          SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.relationshipStrength
+        );
       });
 
       if (suitableCompanions.length > 0) {
@@ -337,22 +347,34 @@ export class SharedMemorySystem {
     console.log('Storing shared memory:', memory.id);
   }
 
-  private async updateCompanionNetwork(companionId1: string, companionId2: string, eventType: string): Promise<void> {
+  private async updateCompanionNetwork(
+    companionId1: string,
+    companionId2: string,
+    eventType: string
+  ): Promise<void> {
     // Mock implementation - would update database
     console.log('Updating network:', companionId1, companionId2, eventType);
   }
 
-  private async addConnectionToMemory(memoryId: string, connection: MemoryConnection): Promise<void> {
+  private async addConnectionToMemory(
+    memoryId: string,
+    connection: MemoryConnection
+  ): Promise<void> {
     // Mock implementation - would update database
     console.log('Adding connection to memory:', memoryId, connection);
   }
 
-  private async storeNetworkInsights(companionId: string, insights: NetworkInsight[]): Promise<void> {
+  private async storeNetworkInsights(
+    companionId: string,
+    insights: NetworkInsight[]
+  ): Promise<void> {
     // Mock implementation - would store in database
     console.log('Storing insights for:', companionId, insights.length);
   }
 
-  private extractMemoryThemes(memories: SharedMemory[]): Array<{ theme: string; memories: string[]; participants: string[] }> {
+  private extractMemoryThemes(
+    memories: SharedMemory[]
+  ): Array<{ theme: string; memories: string[]; participants: string[] }> {
     const themes: { [key: string]: { memories: string[]; participants: Set<string> } } = {};
 
     memories.forEach(memory => {
@@ -362,11 +384,23 @@ export class SharedMemorySystem {
 
       if (content.includes('happy') || content.includes('joy') || content.includes('fun')) {
         theme = 'joy';
-      } else if (content.includes('sad') || content.includes('difficult') || content.includes('challenge')) {
+      } else if (
+        content.includes('sad') ||
+        content.includes('difficult') ||
+        content.includes('challenge')
+      ) {
         theme = 'difficulty';
-      } else if (content.includes('learn') || content.includes('study') || content.includes('knowledge')) {
+      } else if (
+        content.includes('learn') ||
+        content.includes('study') ||
+        content.includes('knowledge')
+      ) {
         theme = 'learning';
-      } else if (content.includes('relationship') || content.includes('friend') || content.includes('family')) {
+      } else if (
+        content.includes('relationship') ||
+        content.includes('friend') ||
+        content.includes('family')
+      ) {
         theme = 'relationships';
       }
 
@@ -381,7 +415,7 @@ export class SharedMemorySystem {
     return Object.entries(themes).map(([theme, data]) => ({
       theme,
       memories: data.memories,
-      participants: Array.from(data.participants)
+      participants: Array.from(data.participants),
     }));
   }
 
@@ -391,11 +425,15 @@ export class SharedMemorySystem {
     companions: string[];
     memories: string[];
   } {
-    const recentMemories = memories.filter(memory =>
-      Date.now() - memory.context.timestamp.getTime() < SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.timeDecay
+    const recentMemories = memories.filter(
+      memory =>
+        Date.now() - memory.context.timestamp.getTime() <
+        SharedMemorySystem.MEMORY_SHARING_THRESHOLDS.timeDecay
     );
 
-    const avgEmotionalImpact = recentMemories.reduce((sum, m) => sum + m.metadata.emotionalImpact, 0) / recentMemories.length;
+    const avgEmotionalImpact =
+      recentMemories.reduce((sum, m) => sum + m.metadata.emotionalImpact, 0) /
+      recentMemories.length;
 
     let description = '';
     let confidence = 0.5;
@@ -418,21 +456,23 @@ export class SharedMemorySystem {
       description,
       confidence,
       companions: Array.from(allCompanions),
-      memories: memoryIds
+      memories: memoryIds,
     };
   }
 
   private clusterMemoriesByTheme(memories: SharedMemory[]): MemoryCluster[] {
     const themes = this.extractMemoryThemes(memories);
 
-    return themes.map((theme, index) => ({
-      id: `cluster_${index}`,
-      theme: theme.theme,
-      memories: theme.memories,
-      participants: theme.participants,
-      createdAt: new Date(),
-      significance: theme.memories.length / memories.length
-    })).filter(cluster => cluster.significance > 0.1);
+    return themes
+      .map((theme, index) => ({
+        id: `cluster_${index}`,
+        theme: theme.theme,
+        memories: theme.memories,
+        participants: theme.participants,
+        createdAt: new Date(),
+        significance: theme.memories.length / memories.length,
+      }))
+      .filter(cluster => cluster.significance > 0.1);
   }
 }
 

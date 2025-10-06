@@ -29,10 +29,7 @@ export function CompanionMap() {
     svg.selectAll('*').remove();
 
     // Set up the SVG
-    svg
-      .attr('width', width)
-      .attr('height', height)
-      .attr('viewBox', `0 0 ${width} ${height}`);
+    svg.attr('width', width).attr('height', height).attr('viewBox', `0 0 ${width} ${height}`);
 
     // Create radial layout
     const companions = state.companions.slice(0, 8); // Limit to 8 for mini-map
@@ -42,7 +39,7 @@ export function CompanionMap() {
       ...companion,
       x: centerX + radius * Math.cos(i * angleStep - Math.PI / 2),
       y: centerY + radius * Math.sin(i * angleStep - Math.PI / 2),
-      r: companion.id === state.activeCompanion ? 12 : 8
+      r: companion.id === state.activeCompanion ? 12 : 8,
     }));
 
     // Personality color mapping
@@ -50,17 +47,18 @@ export function CompanionMap() {
       friendly: '#4CAF50',
       professional: '#2196F3',
       humorous: '#FF9800',
-      serious: '#9C27B0'
+      serious: '#9C27B0',
     };
 
     // Create links from center to nodes (optional visual connections)
     const links = nodes.map(node => ({
       source: { x: centerX, y: centerY },
-      target: node
+      target: node,
     }));
 
     // Draw connection lines
-    svg.selectAll('.link')
+    svg
+      .selectAll('.link')
       .data(links)
       .enter()
       .append('line')
@@ -72,10 +70,11 @@ export function CompanionMap() {
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 1)
       .attr('stroke-opacity', 0.3)
-      .attr('stroke-dasharray', d => d.target.id === state.activeCompanion ? 'none' : '2,2');
+      .attr('stroke-dasharray', d => (d.target.id === state.activeCompanion ? 'none' : '2,2'));
 
     // Draw companion nodes
-    const nodeGroups = svg.selectAll('.node')
+    const nodeGroups = svg
+      .selectAll('.node')
       .data(nodes)
       .enter()
       .append('g')
@@ -87,18 +86,18 @@ export function CompanionMap() {
       .append('circle')
       .attr('r', d => d.r)
       .attr('fill', d => personalityColors[d.personality])
-      .attr('stroke', d => d.id === state.activeCompanion ? '#ffffff' : 'none')
-      .attr('stroke-width', d => d.id === state.activeCompanion ? 2 : 0)
+      .attr('stroke', d => (d.id === state.activeCompanion ? '#ffffff' : 'none'))
+      .attr('stroke-width', d => (d.id === state.activeCompanion ? 2 : 0))
       .attr('opacity', 0.8)
       .style('cursor', 'pointer')
-      .on('mouseover', function() {
+      .on('mouseover', function () {
         d3.select(this)
           .transition()
           .duration(200)
           .attr('opacity', 1)
           .attr('r', d => (d as CompanionNode).r * 1.2);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this)
           .transition()
           .duration(200)
@@ -111,18 +110,17 @@ export function CompanionMap() {
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '0.35em')
-      .attr('font-size', d => d.id === state.activeCompanion ? '14px' : '10px')
+      .attr('font-size', d => (d.id === state.activeCompanion ? '14px' : '10px'))
       .attr('fill', '#ffffff')
       .style('pointer-events', 'none')
       .text(d => d.avatar);
 
     // Add tooltips
-    nodeGroups
-      .append('title')
-      .text(d => `${d.name} (${d.personality})`);
+    nodeGroups.append('title').text(d => `${d.name} (${d.personality})`);
 
     // Add center indicator
-    svg.append('circle')
+    svg
+      .append('circle')
       .attr('cx', centerX)
       .attr('cy', centerY)
       .attr('r', 4)
@@ -130,7 +128,8 @@ export function CompanionMap() {
       .attr('opacity', 0.6);
 
     // Add center label
-    svg.append('text')
+    svg
+      .append('text')
       .attr('x', centerX)
       .attr('y', centerY + 1)
       .attr('text-anchor', 'middle')
@@ -138,7 +137,6 @@ export function CompanionMap() {
       .attr('fill', '#ffffff')
       .attr('opacity', 0.8)
       .text('AI');
-
   }, [state.companions, state.activeCompanion]);
 
   return (

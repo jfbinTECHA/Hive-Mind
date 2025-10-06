@@ -10,36 +10,36 @@ const pluginManifest = {
   permissions: [
     {
       type: 'read',
-      resource: 'chat'
+      resource: 'chat',
     },
     {
       type: 'read',
-      resource: 'memory'
-    }
+      resource: 'memory',
+    },
   ],
   hooks: [
     {
       event: 'message_received',
-      handler: 'onMessageReceived'
+      handler: 'onMessageReceived',
     },
     {
       event: 'companion_created',
-      handler: 'onCompanionCreated'
-    }
+      handler: 'onCompanionCreated',
+    },
   ],
   apiEndpoints: [
     {
       path: '/notifications',
       method: 'GET',
       handler: 'getNotifications',
-      authRequired: true
+      authRequired: true,
     },
     {
       path: '/notifications/settings',
       method: 'POST',
       handler: 'updateSettings',
-      authRequired: true
-    }
+      authRequired: true,
+    },
   ],
   settings: [
     {
@@ -47,7 +47,7 @@ const pluginManifest = {
       type: 'boolean',
       label: 'Enable Desktop Notifications',
       defaultValue: true,
-      required: false
+      required: false,
     },
     {
       key: 'notificationSound',
@@ -55,16 +55,16 @@ const pluginManifest = {
       label: 'Notification Sound',
       defaultValue: 'bell',
       options: ['bell', 'chime', 'ping', 'silent'],
-      required: false
+      required: false,
     },
     {
       key: 'maxNotifications',
       type: 'number',
       label: 'Maximum Notifications to Keep',
       defaultValue: 100,
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 };
 
 // Plugin state
@@ -83,7 +83,7 @@ function onMessageReceived(context, data) {
         message: data.message.substring(0, 100) + (data.message.length > 100 ? '...' : ''),
         timestamp: new Date(),
         companionId: context.companionId,
-        priority: 'normal'
+        priority: 'normal',
       };
 
       notifications.unshift(notification);
@@ -116,7 +116,7 @@ function onCompanionCreated(context, data) {
       title: 'New Companion Created',
       message: `A new AI companion has been created: ${data?.name || 'Unknown'}`,
       timestamp: new Date(),
-      priority: 'high'
+      priority: 'high',
     };
 
     notifications.unshift(notification);
@@ -144,8 +144,8 @@ function getNotifications(context, data) {
         notifications: notifications.slice(offset, offset + limit),
         total: notifications.length,
         limit,
-        offset
-      }
+        offset,
+      },
     };
   } catch (error) {
     return { success: false, error: error.message };
@@ -172,7 +172,7 @@ function showDesktopNotification(notification) {
   console.log('🔔 Desktop Notification:', {
     title: notification.title,
     body: notification.message,
-    icon: '/notification-icon.png'
+    icon: '/notification-icon.png',
   });
 
   // Play sound if enabled
@@ -198,7 +198,7 @@ module.exports = {
   onMessageReceived,
   onCompanionCreated,
   getNotifications,
-  updateSettings
+  updateSettings,
 };
 
 // Example usage in external application:

@@ -22,7 +22,7 @@ export async function PUT(
     await Database.updateMemory(memoryId, {
       content,
       type,
-      tags: tags || []
+      tags: tags || [],
     });
 
     // Clear cache
@@ -30,13 +30,9 @@ export async function PUT(
     await Cache.del(cacheKey);
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
     console.error('Memory update error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -63,12 +59,8 @@ export async function DELETE(
     await Cache.del(cacheKey);
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
     console.error('Memory delete error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

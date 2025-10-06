@@ -8,7 +8,7 @@ export async function GET() {
 
     return NextResponse.json({
       connected: isConnected,
-      url: process.env.OLLAMA_URL || 'http://localhost:11434'
+      url: process.env.OLLAMA_URL || 'http://localhost:11434',
     });
   } catch (error) {
     console.error('Ollama status check error:', error);

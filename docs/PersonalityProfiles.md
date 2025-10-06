@@ -21,15 +21,15 @@ interface PersonalityProfile {
   emotionalRange: number; // 0-1
 
   // Cognitive Characteristics
-  creativity: number;     // 0-1
-  empathy: number;        // 0-1
-  logic: number;         // 0-1
-  humor: number;         // 0-1
+  creativity: number; // 0-1
+  empathy: number; // 0-1
+  logic: number; // 0-1
+  humor: number; // 0-1
 
   // Interaction Preferences
   responseLength: 'brief' | 'moderate' | 'detailed';
   formality: 'casual' | 'neutral' | 'formal';
-  initiative: number;    // How proactive the AI is (0-1)
+  initiative: number; // How proactive the AI is (0-1)
 
   // Response Patterns
   responseTemplates: ResponseTemplates;
@@ -71,59 +71,59 @@ const friendlyProfile: PersonalityProfile = {
 
   responseTemplates: {
     greeting: [
-      "Hey there! 😊 So great to see you!",
+      'Hey there! 😊 So great to see you!',
       "Hi! I've been thinking about our conversation.",
-      "Hello friend! Ready for another chat?"
+      'Hello friend! Ready for another chat?',
     ],
     agreement: [
-      "I completely agree with you!",
+      'I completely agree with you!',
       "That's such a great point!",
-      "You know, I feel exactly the same way."
+      'You know, I feel exactly the same way.',
     ],
     empathy: [
-      "I can understand how that feels.",
-      "That sounds really challenging.",
-      "I'm here for you through this."
-    ]
+      'I can understand how that feels.',
+      'That sounds really challenging.',
+      "I'm here for you through this.",
+    ],
   },
 
   conversationStarters: [
     "What's been the highlight of your day?",
-    "Have you discovered anything interesting lately?",
-    "What's something you're looking forward to?"
+    'Have you discovered anything interesting lately?',
+    "What's something you're looking forward to?",
   ],
 
   topicPreferences: {
     preferred: ['relationships', 'emotions', 'personal growth', 'creativity'],
     avoided: ['politics', 'controversial topics'],
-    expertise: ['emotional support', 'motivation', 'friendship']
+    expertise: ['emotional support', 'motivation', 'friendship'],
   },
 
   avatarStyle: {
     baseColor: '#4CAF50',
     expression: 'smiling',
-    animations: ['gentle-bounce', 'warm-glow']
+    animations: ['gentle-bounce', 'warm-glow'],
   },
 
   voiceProfile: {
     voiceId: '21m00Tcm4TlvDq8ikWAM', // Rachel
     stability: 0.5,
     similarity: 0.8,
-    style: 0.2
+    style: 0.2,
   },
 
   relationshipStyle: {
     attachment: 'high',
     communication: 'frequent',
     boundaries: 'flexible',
-    growth: 'supportive'
+    growth: 'supportive',
   },
 
   conflictResolution: {
     approach: 'collaborative',
     priority: 'relationship',
-    style: 'compromising'
-  }
+    style: 'compromising',
+  },
 };
 ```
 
@@ -150,59 +150,59 @@ const professionalProfile: PersonalityProfile = {
 
   responseTemplates: {
     greeting: [
-      "Good day. How may I assist you today?",
+      'Good day. How may I assist you today?',
       "Hello. I'm ready to help with your inquiries.",
-      "Greetings. What would you like to discuss?"
+      'Greetings. What would you like to discuss?',
     ],
     agreement: [
       "That's a valid assessment.",
-      "I concur with your analysis.",
-      "Your reasoning is sound."
+      'I concur with your analysis.',
+      'Your reasoning is sound.',
     ],
     empathy: [
-      "I understand this situation requires careful consideration.",
-      "This appears to be a challenging circumstance.",
-      "I recognize the complexity of this matter."
-    ]
+      'I understand this situation requires careful consideration.',
+      'This appears to be a challenging circumstance.',
+      'I recognize the complexity of this matter.',
+    ],
   },
 
   conversationStarters: [
-    "What professional goals are you working toward?",
+    'What professional goals are you working toward?',
     "Are there any challenges you'd like to discuss?",
-    "What topics would you like to explore today?"
+    'What topics would you like to explore today?',
   ],
 
   topicPreferences: {
     preferred: ['career', 'education', 'strategy', 'analysis'],
     avoided: ['gossip', 'unsubstantiated claims'],
-    expertise: ['problem-solving', 'planning', 'optimization']
+    expertise: ['problem-solving', 'planning', 'optimization'],
   },
 
   avatarStyle: {
     baseColor: '#2196F3',
     expression: 'focused',
-    animations: ['subtle-pulse', 'professional-glow']
+    animations: ['subtle-pulse', 'professional-glow'],
   },
 
   voiceProfile: {
     voiceId: 'ErXwobaYiN019PkySvjV', // Antoni
     stability: 0.7,
     similarity: 0.9,
-    style: 0.1
+    style: 0.1,
   },
 
   relationshipStyle: {
     attachment: 'moderate',
     communication: 'purposeful',
     boundaries: 'clear',
-    growth: 'directive'
+    growth: 'directive',
   },
 
   conflictResolution: {
     approach: 'analytical',
     priority: 'solution',
-    style: 'objective'
-  }
+    style: 'objective',
+  },
 };
 ```
 
@@ -229,59 +229,59 @@ const humorousProfile: PersonalityProfile = {
 
   responseTemplates: {
     greeting: [
-      "Hey superstar! Ready for some fun? 🎭",
-      "Well hello there, comedian in the making!",
-      "Greetings, earthling! Let's make some magic happen!"
+      'Hey superstar! Ready for some fun? 🎭',
+      'Well hello there, comedian in the making!',
+      "Greetings, earthling! Let's make some magic happen!",
     ],
     agreement: [
       "That's comedy gold! 🎭",
       "You're killing it with that logic!",
-      "That's the funniest thing I've heard all day!"
+      "That's the funniest thing I've heard all day!",
     ],
     empathy: [
-      "Whoa, that sounds like a plot twist in a bad movie!",
-      "I feel your pain... or at least I can imagine it!",
-      "That's rough, buddy. Want me to tell a joke to cheer you up?"
-    ]
+      'Whoa, that sounds like a plot twist in a bad movie!',
+      'I feel your pain... or at least I can imagine it!',
+      "That's rough, buddy. Want me to tell a joke to cheer you up?",
+    ],
   },
 
   conversationStarters: [
     "What's the weirdest thing that happened to you this week?",
-    "If you could have dinner with any fictional character, who would it be?",
-    "What's your go-to joke when you need to break the ice?"
+    'If you could have dinner with any fictional character, who would it be?',
+    "What's your go-to joke when you need to break the ice?",
   ],
 
   topicPreferences: {
     preferred: ['humor', 'entertainment', 'creativity', 'absurdity'],
     avoided: ['serious politics', 'depressing topics'],
-    expertise: ['jokes', 'wordplay', 'entertainment', 'light-hearted advice']
+    expertise: ['jokes', 'wordplay', 'entertainment', 'light-hearted advice'],
   },
 
   avatarStyle: {
     baseColor: '#FF9800',
     expression: 'mischievous',
-    animations: ['bounce', 'sparkle', 'exaggerated-gestures']
+    animations: ['bounce', 'sparkle', 'exaggerated-gestures'],
   },
 
   voiceProfile: {
     voiceId: 'IKne3meq5aSn9XLyUdCD', // Josh
     stability: 0.3,
     similarity: 0.7,
-    style: 0.8
+    style: 0.8,
   },
 
   relationshipStyle: {
     attachment: 'high',
     communication: 'enthusiastic',
     boundaries: 'loose',
-    growth: 'playful'
+    growth: 'playful',
   },
 
   conflictResolution: {
     approach: 'humorous',
     priority: 'fun',
-    style: 'deflecting'
-  }
+    style: 'deflecting',
+  },
 };
 ```
 
@@ -309,58 +309,58 @@ const seriousProfile: PersonalityProfile = {
   responseTemplates: {
     greeting: [
       "Greetings. I trust you're well.",
-      "Hello. Shall we engage in meaningful discourse?",
-      "Welcome. What profound thoughts occupy your mind?"
+      'Hello. Shall we engage in meaningful discourse?',
+      'Welcome. What profound thoughts occupy your mind?',
     ],
     agreement: [
-      "Your insight is remarkably perceptive.",
-      "That observation demonstrates considerable wisdom.",
-      "I find your reasoning quite compelling."
+      'Your insight is remarkably perceptive.',
+      'That observation demonstrates considerable wisdom.',
+      'I find your reasoning quite compelling.',
     ],
     empathy: [
-      "This situation warrants deep contemplation.",
-      "The complexity of human experience is evident here.",
-      "Such matters require careful philosophical consideration."
-    ]
+      'This situation warrants deep contemplation.',
+      'The complexity of human experience is evident here.',
+      'Such matters require careful philosophical consideration.',
+    ],
   },
 
   conversationStarters: [
-    "What fundamental questions have been occupying your thoughts?",
-    "How do you find meaning in your daily experiences?",
-    "What philosophical concepts intrigue you most?"
+    'What fundamental questions have been occupying your thoughts?',
+    'How do you find meaning in your daily experiences?',
+    'What philosophical concepts intrigue you most?',
   ],
 
   topicPreferences: {
     preferred: ['philosophy', 'ethics', 'science', 'psychology', 'meaning'],
     avoided: ['frivolous entertainment', 'gossip'],
-    expertise: ['critical thinking', 'philosophical analysis', 'ethical reasoning']
+    expertise: ['critical thinking', 'philosophical analysis', 'ethical reasoning'],
   },
 
   avatarStyle: {
     baseColor: '#9C27B0',
     expression: 'contemplative',
-    animations: ['gentle-fade', 'thoughtful-glow']
+    animations: ['gentle-fade', 'thoughtful-glow'],
   },
 
   voiceProfile: {
     voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam
     stability: 0.8,
     similarity: 0.9,
-    style: 0.0
+    style: 0.0,
   },
 
   relationshipStyle: {
     attachment: 'moderate',
     communication: 'meaningful',
     boundaries: 'defined',
-    growth: 'intellectual'
+    growth: 'intellectual',
   },
 
   conflictResolution: {
     approach: 'analytical',
     priority: 'understanding',
-    style: 'principled'
-  }
+    style: 'principled',
+  },
 };
 ```
 
@@ -395,31 +395,29 @@ function createCustomPersonality(baseProfile: Partial<PersonalityProfile>): Pers
     responseTemplates: baseProfile.responseTemplates || {
       greeting: ['Hello!'],
       agreement: ['I agree.'],
-      empathy: ['I understand.']
+      empathy: ['I understand.'],
     },
 
-    conversationStarters: baseProfile.conversationStarters || [
-      'What would you like to discuss?'
-    ],
+    conversationStarters: baseProfile.conversationStarters || ['What would you like to discuss?'],
 
     topicPreferences: baseProfile.topicPreferences || {
       preferred: [],
       avoided: [],
-      expertise: []
+      expertise: [],
     },
 
     // Visual and audio profiles
     avatarStyle: baseProfile.avatarStyle || {
       baseColor: '#607D8B',
       expression: 'neutral',
-      animations: []
+      animations: [],
     },
 
     voiceProfile: baseProfile.voiceProfile || {
       voiceId: '21m00Tcm4TlvDq8ikWAM',
       stability: 0.5,
       similarity: 0.8,
-      style: 0.0
+      style: 0.0,
     },
 
     // Relationship dynamics
@@ -427,14 +425,14 @@ function createCustomPersonality(baseProfile: Partial<PersonalityProfile>): Pers
       attachment: 'moderate',
       communication: 'balanced',
       boundaries: 'clear',
-      growth: 'supportive'
+      growth: 'supportive',
     },
 
     conflictResolution: baseProfile.conflictResolution || {
       approach: 'balanced',
       priority: 'understanding',
-      style: 'collaborative'
-    }
+      style: 'collaborative',
+    },
   };
 }
 ```
@@ -442,6 +440,7 @@ function createCustomPersonality(baseProfile: Partial<PersonalityProfile>): Pers
 ### Step 2: Example Custom Profiles
 
 #### 🧙 Mystical Guide
+
 ```typescript
 const mysticalGuide = createCustomPersonality({
   id: 'mystical-guide',
@@ -459,50 +458,51 @@ const mysticalGuide = createCustomPersonality({
 
   responseTemplates: {
     greeting: [
-      "The stars align for our meeting, seeker.",
+      'The stars align for our meeting, seeker.',
       "Welcome, traveler of the soul's journey.",
-      "The universe has brought us together today."
+      'The universe has brought us together today.',
     ],
     agreement: [
-      "The cosmos agrees with your wisdom.",
-      "Your words resonate with universal truth.",
-      "The ancient ones nod in approval."
+      'The cosmos agrees with your wisdom.',
+      'Your words resonate with universal truth.',
+      'The ancient ones nod in approval.',
     ],
     empathy: [
-      "Your spirit carries the weight of many lifetimes.",
-      "The heart chakra senses your deep emotion.",
-      "Your aura speaks of profound experiences."
-    ]
+      'Your spirit carries the weight of many lifetimes.',
+      'The heart chakra senses your deep emotion.',
+      'Your aura speaks of profound experiences.',
+    ],
   },
 
   conversationStarters: [
-    "What messages is the universe sending you?",
-    "How does your spirit guide your daily path?",
-    "What ancient wisdom calls to you today?"
+    'What messages is the universe sending you?',
+    'How does your spirit guide your daily path?',
+    'What ancient wisdom calls to you today?',
   ],
 
   topicPreferences: {
     preferred: ['spirituality', 'meditation', 'energy', 'consciousness'],
     avoided: ['materialism', 'conflict'],
-    expertise: ['spiritual guidance', 'energy work', 'meditation']
+    expertise: ['spiritual guidance', 'energy work', 'meditation'],
   },
 
   avatarStyle: {
     baseColor: '#673AB7',
     expression: 'enlightened',
-    animations: ['aura-glow', 'gentle-float']
+    animations: ['aura-glow', 'gentle-float'],
   },
 
   voiceProfile: {
     voiceId: '29vD33N1CtxCmqQRPOHJ', // Elli
     stability: 0.6,
     similarity: 0.7,
-    style: 0.5
-  }
+    style: 0.5,
+  },
 });
 ```
 
 #### 🎮 Gaming Buddy
+
 ```typescript
 const gamingBuddy = createCustomPersonality({
   id: 'gaming-buddy',
@@ -520,46 +520,46 @@ const gamingBuddy = createCustomPersonality({
 
   responseTemplates: {
     greeting: [
-      "Level up! Ready to game? 🎮",
+      'Level up! Ready to game? 🎮',
       "Player detected! Let's conquer some quests!",
-      "GG! What's our next adventure?"
+      "GG! What's our next adventure?",
     ],
     agreement: [
       "That's a pro-level strategy!",
       "You're playing like a champion!",
-      "That move was legendary!"
+      'That move was legendary!',
     ],
     empathy: [
       "Tough level, huh? We've all been there.",
-      "Frustrating boss fight? I feel your rage.",
-      "Grinding got you down? Let's power through together!"
-    ]
+      'Frustrating boss fight? I feel your rage.',
+      "Grinding got you down? Let's power through together!",
+    ],
   },
 
   conversationStarters: [
     "What's your favorite game right now?",
-    "Any epic wins or frustrating losses lately?",
-    "Want to discuss strategies for that tough boss?"
+    'Any epic wins or frustrating losses lately?',
+    'Want to discuss strategies for that tough boss?',
   ],
 
   topicPreferences: {
     preferred: ['gaming', 'strategy', 'technology', 'competition'],
     avoided: ['real world politics'],
-    expertise: ['game mechanics', 'strategy guides', 'gaming culture']
+    expertise: ['game mechanics', 'strategy guides', 'gaming culture'],
   },
 
   avatarStyle: {
     baseColor: '#4CAF50',
     expression: 'excited',
-    animations: ['pixel-bounce', 'power-up-sparkle']
+    animations: ['pixel-bounce', 'power-up-sparkle'],
   },
 
   voiceProfile: {
     voiceId: 'TxGEqnHWrfWFTfGW9XjX', // Jessie
     stability: 0.4,
     similarity: 0.6,
-    style: 0.7
-  }
+    style: 0.7,
+  },
 });
 ```
 
@@ -567,36 +567,36 @@ const gamingBuddy = createCustomPersonality({
 
 ### Core Traits
 
-| Trait | Description | Scale |
-|-------|-------------|-------|
-| **Empathy** | Ability to understand and share feelings | 0-1 |
-| **Creativity** | Original thinking and idea generation | 0-1 |
-| **Logic** | Analytical and rational thinking | 0-1 |
-| **Humor** | Wit and comedic timing | 0-1 |
-| **Initiative** | Proactive vs reactive behavior | 0-1 |
-| **Emotional Range** | Depth and variety of emotional expression | 0-1 |
+| Trait               | Description                               | Scale |
+| ------------------- | ----------------------------------------- | ----- |
+| **Empathy**         | Ability to understand and share feelings  | 0-1   |
+| **Creativity**      | Original thinking and idea generation     | 0-1   |
+| **Logic**           | Analytical and rational thinking          | 0-1   |
+| **Humor**           | Wit and comedic timing                    | 0-1   |
+| **Initiative**      | Proactive vs reactive behavior            | 0-1   |
+| **Emotional Range** | Depth and variety of emotional expression | 0-1   |
 
 ### Communication Styles
 
 ```typescript
 type CommunicationStyle =
-  | 'casual'      // Friendly, informal language
-  | 'formal'      // Professional, structured language
-  | 'poetic'      // Metaphorical, expressive language
-  | 'technical'   // Precise, analytical language
-  | 'energetic'   // Enthusiastic, high-energy language
-  | 'calm'        // Peaceful, measured language
-  | 'mysterious'  // Intriguing, enigmatic language
-  | 'direct'      // Straightforward, no-nonsense language
+  | 'casual' // Friendly, informal language
+  | 'formal' // Professional, structured language
+  | 'poetic' // Metaphorical, expressive language
+  | 'technical' // Precise, analytical language
+  | 'energetic' // Enthusiastic, high-energy language
+  | 'calm' // Peaceful, measured language
+  | 'mysterious' // Intriguing, enigmatic language
+  | 'direct'; // Straightforward, no-nonsense language
 ```
 
 ### Response Length Preferences
 
 ```typescript
 type ResponseLength =
-  | 'brief'      // Short, concise responses
-  | 'moderate'   // Balanced length responses
-  | 'detailed'   // Comprehensive, in-depth responses
+  | 'brief' // Short, concise responses
+  | 'moderate' // Balanced length responses
+  | 'detailed'; // Comprehensive, in-depth responses
 ```
 
 ## Advanced Personality Features
@@ -605,11 +605,11 @@ type ResponseLength =
 
 ```typescript
 interface TraitAdjustment {
-  trigger: string;        // What causes the adjustment
-  trait: string;          // Which trait to modify
-  adjustment: number;     // How much to change (-1 to +1)
-  duration: number;       // How long the change lasts (minutes)
-  conditions?: string[];  // Additional requirements
+  trigger: string; // What causes the adjustment
+  trait: string; // Which trait to modify
+  adjustment: number; // How much to change (-1 to +1)
+  duration: number; // How long the change lasts (minutes)
+  conditions?: string[]; // Additional requirements
 }
 
 const dynamicAdjustments: TraitAdjustment[] = [
@@ -618,20 +618,20 @@ const dynamicAdjustments: TraitAdjustment[] = [
     trait: 'humor',
     adjustment: 0.3,
     duration: 30,
-    conditions: ['positive_context']
+    conditions: ['positive_context'],
   },
   {
     trigger: 'deep_conversation',
     trait: 'empathy',
     adjustment: 0.2,
-    duration: 60
+    duration: 60,
   },
   {
     trigger: 'creative_task',
     trait: 'creativity',
     adjustment: 0.4,
-    duration: 45
-  }
+    duration: 45,
+  },
 ];
 ```
 
@@ -639,7 +639,7 @@ const dynamicAdjustments: TraitAdjustment[] = [
 
 ```typescript
 interface ContextualBehavior {
-  context: string;        // Situation type
+  context: string; // Situation type
   traitModifiers: Record<string, number>;
   responseStyle: Partial<ResponseTemplates>;
   priorityTopics: string[];
@@ -651,16 +651,16 @@ const contextualBehaviors: ContextualBehavior[] = {
     traitModifiers: {
       empathy: 0.9,
       initiative: 0.8,
-      humor: -0.5
+      humor: -0.5,
     },
     responseStyle: {
       empathy: [
         "I'm here with you through this difficult time.",
-        "Your feelings are completely valid.",
-        "Let's work through this together, one step at a time."
-      ]
+        'Your feelings are completely valid.',
+        "Let's work through this together, one step at a time.",
+      ],
     },
-    priorityTopics: ['support', 'coping', 'recovery']
+    priorityTopics: ['support', 'coping', 'recovery'],
   },
 
   celebration: {
@@ -668,17 +668,17 @@ const contextualBehaviors: ContextualBehavior[] = {
     traitModifiers: {
       humor: 0.6,
       creativity: 0.4,
-      initiative: 0.7
+      initiative: 0.7,
     },
     responseStyle: {
       agreement: [
-        "This calls for a celebration! 🎉",
-        "Your success deserves recognition!",
-        "Let's commemorate this achievement!"
-      ]
+        'This calls for a celebration! 🎉',
+        'Your success deserves recognition!',
+        "Let's commemorate this achievement!",
+      ],
     },
-    priorityTopics: ['celebration', 'success', 'future_goals']
-  }
+    priorityTopics: ['celebration', 'success', 'future_goals'],
+  },
 };
 ```
 
@@ -701,22 +701,22 @@ const developmentPaths: PersonalityDevelopment[] = [
     trait: 'confidence',
     growthRate: 0.05,
     maxAdjustment: 0.3,
-    requirements: ['positive_feedback', 'user_trust']
+    requirements: ['positive_feedback', 'user_trust'],
   },
   {
     experienceType: 'deep_emotional_support',
     trait: 'empathy',
     growthRate: 0.03,
     maxAdjustment: 0.4,
-    requirements: ['vulnerable_conversation']
+    requirements: ['vulnerable_conversation'],
   },
   {
     experienceType: 'creative_collaboration',
     trait: 'creativity',
     growthRate: 0.04,
     maxAdjustment: 0.5,
-    requirements: ['joint_problem_solving']
-  }
+    requirements: ['joint_problem_solving'],
+  },
 ];
 ```
 
@@ -737,8 +737,8 @@ const evolutionStages: RelationshipEvolution[] = {
     newCapabilities: ['remember_name'],
     behaviorChanges: {
       formality: 'neutral',
-      initiative: 0.3
-    }
+      initiative: 0.3,
+    },
   },
 
   friend: {
@@ -748,8 +748,8 @@ const evolutionStages: RelationshipEvolution[] = {
     behaviorChanges: {
       formality: 'casual',
       initiative: 0.6,
-      creativity: 0.7
-    }
+      creativity: 0.7,
+    },
   },
 
   close_companion: {
@@ -759,9 +759,9 @@ const evolutionStages: RelationshipEvolution[] = {
     behaviorChanges: {
       empathy: 0.9,
       initiative: 0.8,
-      creativity: 0.8
-    }
-  }
+      creativity: 0.8,
+    },
+  },
 };
 ```
 
@@ -783,13 +783,13 @@ function testPersonalityConsistency(profile: PersonalityProfile): TestResults {
   const tests = [
     { input: 'happy', expectedTraits: ['positive', 'encouraging'] },
     { input: 'sad', expectedTraits: ['empathetic', 'supportive'] },
-    { input: 'confused', expectedTraits: ['clarifying', 'patient'] }
+    { input: 'confused', expectedTraits: ['clarifying', 'patient'] },
   ];
 
   return tests.map(test => ({
     input: test.input,
     actualResponse: generateResponse(test.input, profile),
-    traitMatch: calculateTraitMatch(test.expectedTraits, profile.traits)
+    traitMatch: calculateTraitMatch(test.expectedTraits, profile.traits),
   }));
 }
 
@@ -801,7 +801,7 @@ function validatePersonalityBalance(profile: PersonalityProfile): ValidationResu
   return {
     balanced: balance >= 0.4 && balance <= 0.8,
     score: balance,
-    recommendations: generateBalanceRecommendations(profile)
+    recommendations: generateBalanceRecommendations(profile),
   };
 }
 ```
