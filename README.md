@@ -1,24 +1,65 @@
-# 🤖 AI Hive Mind
-
 <div align="center">
 
-![AI Hive Mind Banner](banner.svg)
+  <br />
 
-[![Version](https://img.shields.io/github/v/release/jfbinTECHA/Hive-Mind?color=blue&label=version)](https://github.com/jfbinTECHA/Hive-Mind/releases)
-[![License](https://img.shields.io/github/license/jfbinTECHA/Hive-Mind?color=green)](LICENSE)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Next.js](https://img.shields.io/badge/next.js-14.0.0-black.svg)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/typescript-5.0.0-blue.svg)](https://www.typescriptlang.org/)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/jfbinTECHA/Hive-Mind/ci.yml?branch=main&label=build)](https://github.com/jfbinTECHA/Hive-Mind/actions)
-[![Coverage](https://img.shields.io/codecov/c/github/jfbinTECHA/Hive-Mind?color=yellow&label=coverage)](https://codecov.io/gh/jfbinTECHA/Hive-Mind)
-[![GitHub Stars](https://img.shields.io/github/stars/jfbinTECHA/Hive-Mind?style=social)](https://github.com/jfbinTECHA/Hive-Mind/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/jfbinTECHA/Hive-Mind?style=social)](https://github.com/jfbinTECHA/Hive-Mind/network/members)
+  <a href="https://github.com/jfbinTECHA/Hive-Mind">
+    <img src="banner.svg" alt="AI Hive Mind Banner" width="600" />
+  </a>
 
-**An advanced multi-companion AI system with persistent memory, relationship dynamics, and multimodal interactions**
+  <br />
+  <br />
 
-[🚀 Quick Start](#-quick-start) • [📚 Documentation](#-documentation) • [🔌 API](#-api) • [🛠️ Development](#-development) • [🤝 Contributing](#-contributing)
+  <p>
+    <strong>An advanced multi-companion AI system with persistent memory, relationship dynamics, and multimodal interactions</strong>
+  </p>
+
+  <br />
+
+  <p>
+    <a href="#-quick-start"><strong>🚀 Quick Start</strong></a> •
+    <a href="#-documentation"><strong>📚 Documentation</strong></a> •
+    <a href="#-api"><strong>🔌 API</strong></a> •
+    <a href="#-development"><strong>🛠️ Development</strong></a> •
+    <a href="#-contributing"><strong>🤝 Contributing</strong></a>
+  </p>
+
+  <br />
+
+  <p>
+    <a href="https://github.com/jfbinTECHA/Hive-Mind/releases"><img src="https://img.shields.io/github/v/release/jfbinTECHA/Hive-Mind?color=blue&label=version" alt="Version" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/jfbinTECHA/Hive-Mind?color=green" alt="License" /></a>
+    <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg" alt="Node.js Version" /></a>
+    <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/next.js-14.0.0-black.svg" alt="Next.js" /></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/typescript-5.0.0-blue.svg" alt="TypeScript" /></a>
+  </p>
+
+  <p>
+    <a href="https://github.com/jfbinTECHA/Hive-Mind/actions"><img src="https://img.shields.io/github/actions/workflow/status/jfbinTECHA/Hive-Mind/ci.yml?branch=main&label=build" alt="Build Status" /></a>
+    <a href="https://codecov.io/gh/jfbinTECHA/Hive-Mind"><img src="https://img.shields.io/codecov/c/github/jfbinTECHA/Hive-Mind?color=yellow&label=coverage" alt="Coverage" /></a>
+    <a href="https://github.com/jfbinTECHA/Hive-Mind/stargazers"><img src="https://img.shields.io/github/stars/jfbinTECHA/Hive-Mind?style=social" alt="GitHub Stars" /></a>
+    <a href="https://github.com/jfbinTECHA/Hive-Mind/network/members"><img src="https://img.shields.io/github/forks/jfbinTECHA/Hive-Mind?style=social" alt="GitHub Forks" /></a>
+  </p>
+
+  <br />
+
+  <details>
+    <summary><strong>🎯 What makes AI Hive Mind special?</strong></summary>
+    <br />
+    <ul align="left">
+      <li><strong>🧠 Persistent Memory</strong>: Long-term memory with semantic search and relationship context</li>
+      <li><strong>💝 Dynamic Relationships</strong>: AI companions that evolve and form unique bonds</li>
+      <li><strong>🎙️ Multimodal Interactions</strong>: Voice, text, and visual communication</li>
+      <li><strong>🔌 Plugin Architecture</strong>: Extensible system for custom integrations</li>
+      <li><strong>📊 Analytics Dashboard</strong>: Comprehensive insights into AI companion interactions</li>
+      <li><strong>🛡️ Enterprise Security</strong>: Role-based access and audit logging</li>
+    </ul>
+  </details>
 
 </div>
+
+---
+
+## 🌟 Overview
 
 ---
 
