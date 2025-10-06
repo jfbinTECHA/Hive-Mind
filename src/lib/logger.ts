@@ -1,123 +1,132 @@
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+import winston from 'winston';
+import path from 'path';
 
-interface LogEntry {
-  timestamp: string;
-  level: LogLevel;
-  message: string;
-  data?: any;
-  userId?: number | undefined;
-  sessionId?: string | undefined;
+// Define log levels
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
+  debug: 4,
+};
+
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  http: 'magenta',
+  debug: 'white',
+};
+
+winston.addColors(colors);
+
+// Create the logger
+const logger = winston.createLogger({
+  level: (process.env as any).LOG_LEVEL || 'info',
+  levels,
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  defaultMeta: { service: 'ai-hive-mind' },
+  transports: [
+    // Write all logs with importance level of `error` or less to `error.log`
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'error.log'),
+      level: 'error',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
+      ),
+    }),
+    // Write all logs with importance level of `info` or less to `combined.log`
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'combined.log'),
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
+      ),
+    }),
+  ],
+});
+
+// If we're not in production then log to the `console` with a simple format
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize({ all: true }),
+      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+      winston.format.printf(
+        (info: any) => `${info.timestamp} ${info.level}: ${info.message}${info.context ? ` | ${JSON.stringify(info.context)}` : ''}`
+      )
+    ),
+  }));
 }
 
-class Logger {
-  private static instance: Logger;
-  private logs: LogEntry[] = [];
-  private maxLogs = 1000; // Keep last 1000 logs in memory
+// Create a stream object for Morgan HTTP logging
+export const stream = {
+  write: (message: string) => {
+    logger.http(message.trim());
+  },
+};
 
-  static getInstance(): Logger {
-    if (!Logger.instance) {
-      Logger.instance = new Logger();
-    }
-    return Logger.instance;
-  }
+// Helper functions for contextual logging
+export const createContextLogger = (context: string) => ({
+  error: (message: string, meta?: any) => logger.error(message, { context, ...meta }),
+  warn: (message: string, meta?: any) => logger.warn(message, { context, ...meta }),
+  info: (message: string, meta?: any) => logger.info(message, { context, ...meta }),
+  http: (message: string, meta?: any) => logger.http(message, { context, ...meta }),
+  debug: (message: string, meta?: any) => logger.debug(message, { context, ...meta }),
+});
 
-  debug(message: string, data?: any, userId?: number, sessionId?: string) {
-    this.log('debug', message, data, userId, sessionId);
-  }
+// Performance logging helpers
+export const logPerformance = (operation: string, startTime: number, context?: any) => {
+  const duration = Date.now() - startTime;
+  logger.info(`Performance: ${operation}`, {
+    context: 'performance',
+    operation,
+    duration,
+    ...context,
+  });
+  return duration;
+};
 
-  info(message: string, data?: any, userId?: number, sessionId?: string) {
-    this.log('info', message, data, userId, sessionId);
-  }
+// Request logging helper
+export const logRequest = (method: string, url: string, statusCode: number, duration: number, userId?: string) => {
+  logger.info(`Request: ${method} ${url}`, {
+    context: 'request',
+    method,
+    url,
+    statusCode,
+    duration,
+    userId,
+  });
+};
 
-  warn(message: string, data?: any, userId?: number, sessionId?: string) {
-    this.log('warn', message, data, userId, sessionId);
-  }
+// Memory operation logging
+export const logMemoryOperation = (operation: string, memoryId: string, userId: string, duration?: number) => {
+  logger.info(`Memory ${operation}`, {
+    context: 'memory',
+    operation,
+    memoryId,
+    userId,
+    duration,
+  });
+};
 
-  error(message: string, data?: any, userId?: number, sessionId?: string) {
-    this.log('error', message, data, userId, sessionId);
-  }
+// AI interaction logging
+export const logAIInteraction = (companionId: string, userId: string, messageLength: number, responseTime: number) => {
+  logger.info('AI Interaction', {
+    context: 'ai',
+    companionId,
+    userId,
+    messageLength,
+    responseTime,
+  });
+};
 
-  private log(level: LogLevel, message: string, data?: any, userId?: number, sessionId?: string) {
-    const entry: LogEntry = {
-      timestamp: new Date().toISOString(),
-      level,
-      message,
-      data,
-      userId,
-      sessionId,
-    };
-
-    this.logs.push(entry);
-
-    // Keep only the last maxLogs entries
-    if (this.logs.length > this.maxLogs) {
-      this.logs = this.logs.slice(-this.maxLogs);
-    }
-
-    // In production, you would send to a logging service
-    console.log(`[${entry.timestamp}] ${level.toUpperCase()}: ${message}`, data ? data : '');
-  }
-
-  getLogs(level?: LogLevel, limit = 100): LogEntry[] {
-    let filteredLogs = this.logs;
-
-    if (level) {
-      filteredLogs = filteredLogs.filter(log => log.level === level);
-    }
-
-    return filteredLogs.slice(-limit);
-  }
-
-  getStats() {
-    const stats = {
-      total: this.logs.length,
-      byLevel: {
-        debug: 0,
-        info: 0,
-        warn: 0,
-        error: 0,
-      },
-      recentErrors: 0,
-    };
-
-    const now = Date.now();
-    const oneHourAgo = now - (60 * 60 * 1000);
-
-    this.logs.forEach(log => {
-      stats.byLevel[log.level]++;
-
-      if (log.level === 'error' && new Date(log.timestamp).getTime() > oneHourAgo) {
-        stats.recentErrors++;
-      }
-    });
-
-    return stats;
-  }
-}
-
-export const logger = Logger.getInstance();
-
-// Performance monitoring
-export class PerformanceMonitor {
-  private static timers = new Map<string, number>();
-
-  static startTimer(key: string) {
-    this.timers.set(key, Date.now());
-  }
-
-  static endTimer(key: string): number {
-    const startTime = this.timers.get(key);
-    if (!startTime) return 0;
-
-    const duration = Date.now() - startTime;
-    this.timers.delete(key);
-
-    logger.info(`Performance: ${key} took ${duration}ms`);
-    return duration;
-  }
-
-  static measureAsync<T>(key: string, fn: () => Promise<T>): Promise<T> {
-    this.startTimer(key);
-    return fn().finally(() => this.endTimer(key));
-  }
-}
+export { logger };
+export default logger;

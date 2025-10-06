@@ -53,7 +53,7 @@ export class MemoryExtractor {
       lowerMessage.includes('i am')
     ) {
       const nameMatch = message.match(/(?:my name is|i'm|i am)\s+([a-zA-Z\s]+)/i);
-      if (nameMatch) {
+      if (nameMatch && nameMatch[1]) {
         memories.push({
           fact: `User's name is ${nameMatch[1].trim()}`,
           type: 'personal',
@@ -69,7 +69,7 @@ export class MemoryExtractor {
       lowerMessage.includes('in ')
     ) {
       const locationMatch = message.match(/(?:i live|i'm from|in)\s+([a-zA-Z\s,]+)/i);
-      if (locationMatch) {
+      if (locationMatch && locationMatch[1]) {
         memories.push({
           fact: `User lives in ${locationMatch[1].trim()}`,
           type: 'personal',
@@ -85,7 +85,7 @@ export class MemoryExtractor {
       lowerMessage.includes('i enjoy')
     ) {
       const interestMatch = message.match(/(?:i like|i love|i enjoy)\s+(.+?)(?:\.|!|\?|$)/i);
-      if (interestMatch) {
+      if (interestMatch && interestMatch[1]) {
         const interest = interestMatch[1].trim();
         memories.push({
           fact: `User likes ${interest}`,
@@ -101,7 +101,7 @@ export class MemoryExtractor {
       lowerMessage.includes('i dislike')
     ) {
       const dislikeMatch = message.match(/(?:i don't like|i hate|i dislike)\s+(.+?)(?:\.|!|\?|$)/i);
-      if (dislikeMatch) {
+      if (dislikeMatch && dislikeMatch[1]) {
         const dislike = dislikeMatch[1].trim();
         memories.push({
           fact: `User dislikes ${dislike}`,
@@ -118,7 +118,7 @@ export class MemoryExtractor {
       lowerMessage.includes('i did')
     ) {
       const experienceMatch = message.match(/(?:i went|i visited|i did)\s+(.+?)(?:\.|!|\?|$)/i);
-      if (experienceMatch) {
+      if (experienceMatch && experienceMatch[1]) {
         const experience = experienceMatch[1].trim();
         memories.push({
           fact: `User experienced: ${experience}`,
@@ -135,7 +135,7 @@ export class MemoryExtractor {
       lowerMessage.includes('my job')
     ) {
       const workMatch = message.match(/(?:i work as|i'm a|my job is)\s+(.+?)(?:\.|!|\?|$)/i);
-      if (workMatch) {
+      if (workMatch && workMatch[1]) {
         const job = workMatch[1].trim();
         memories.push({
           fact: `User's occupation: ${job}`,
@@ -155,7 +155,7 @@ export class MemoryExtractor {
         lowerMessage.includes('parent'))
     ) {
       const familyMatch = message.match(/my\s+(.+?)(?:\s+is|\s+has|\s+and|\.|\!|\?|$)/i);
-      if (familyMatch) {
+      if (familyMatch && familyMatch[1]) {
         const familyInfo = familyMatch[1].trim();
         memories.push({
           fact: `User's family: ${familyInfo}`,
@@ -172,7 +172,7 @@ export class MemoryExtractor {
       lowerMessage.includes('my goal')
     ) {
       const goalMatch = message.match(/(?:i want|i hope|my goal is)\s+(.+?)(?:\.|!|\?|$)/i);
-      if (goalMatch) {
+      if (goalMatch && goalMatch[1]) {
         const goal = goalMatch[1].trim();
         memories.push({
           fact: `User's goal/aspiration: ${goal}`,
@@ -230,27 +230,85 @@ export class MemoryExtractor {
 }
 
 export class MemoryEmbedder {
+  private static readonly BATCH_SIZE = 10; // Process memories in batches
+  private static readonly EPHEMERAL_TTL = 24 * 60 * 60 * 1000; // 24 hours for ephemeral memories
+
   /**
-   * Generate embeddings for memories and store them
+   * Generate embeddings for memories and store them (with batch processing)
    */
   static async embedAndStoreMemories(
     memories: ExtractedMemory[],
     userId: number,
     aiId: number
   ): Promise<void> {
-    for (const memory of memories) {
+    if (memories.length === 0) return;
+
+    // Process memories in batches for better performance
+    for (let i = 0; i < memories.length; i += this.BATCH_SIZE) {
+      const batch = memories.slice(i, i + this.BATCH_SIZE);
+      await this.processBatch(batch, userId, aiId);
+    }
+  }
+
+  /**
+   * Process a batch of memories
+   */
+  private static async processBatch(
+    memories: ExtractedMemory[],
+    userId: number,
+    aiId: number
+  ): Promise<void> {
+    const promises = memories.map(async (memory) => {
       try {
         // Generate embedding for the fact
         const embedding = await localAIService.generateEmbeddings(memory.fact);
 
         if (embedding && embedding.length > 0) {
+          // Determine TTL based on memory type and confidence
+          const ttl = this.calculateTTL(memory);
+
           // Store in database with embedding
           await Database.createMemory(userId, aiId, memory.fact, memory.type, embedding);
         }
       } catch (error) {
         console.error('Failed to embed and store memory:', error);
       }
+    });
+
+    await Promise.allSettled(promises);
+  }
+
+  /**
+   * Calculate TTL for memory based on type and confidence
+   */
+  private static calculateTTL(memory: ExtractedMemory): number | null {
+    // Ephemeral memories (short-term, low confidence)
+    if (memory.confidence < 0.7) {
+      return this.EPHEMERAL_TTL; // 24 hours
     }
+
+    // Personal and relationship memories are long-term
+    if (memory.type === 'personal' || memory.type === 'relationship') {
+      return null; // No expiration
+    }
+
+    // Preferences and experiences expire after 7 days
+    if (memory.type === 'preference' || memory.type === 'experience') {
+      return 7 * 24 * 60 * 60 * 1000; // 7 days
+    }
+
+    // Knowledge memories expire after 30 days
+    return 30 * 24 * 60 * 60 * 1000; // 30 days
+  }
+
+  /**
+   * Clean up expired ephemeral memories
+   * TODO: Implement when database supports TTL
+   */
+  static async cleanupExpiredMemories(): Promise<number> {
+    // Placeholder for future TTL-based memory cleanup
+    console.log('Memory cleanup not yet implemented');
+    return 0;
   }
 
   /**
