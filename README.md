@@ -3,7 +3,7 @@
   <br />
 
   <a href="https://github.com/jfbinTECHA/Hive-Mind">
-    <img src="banner.svg" alt="AI Hive Mind Banner" width="600" />
+    <img src="public/banner_dark.png" alt="AI Hive Mind Banner" width="600" />
   </a>
 
   <br />
