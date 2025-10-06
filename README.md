@@ -1,6 +1,17 @@
-# AI Hive Mind
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jfbinTECHA/Hive-Mind/main/public/banner_dark.png" alt="AI Hive Mind Banner" width="90%">
+</p>
 
-A comprehensive AI companion chat application with multi-character support, persistent memory, and advanced features.
+<h1 align="center">🧠 Hive Mind — AI Companion Intelligence Network</h1>
+
+<p align="center">
+  <b>Multi-Companion • Emotional Intelligence • Voice • Knowledge Graph</b><br/>
+  <a href="https://github.com/jfbinTECHA/Hive-Mind/stargazers"><img src="https://img.shields.io/github/stars/jfbinTECHA/Hive-Mind?color=00c6d1&style=for-the-badge"></a>
+  <a href="https://github.com/jfbinTECHA/Hive-Mind/issues"><img src="https://img.shields.io/github/issues/jfbinTECHA/Hive-Mind?color=cccccc&style=for-the-badge"></a>
+  <a href="https://vercel.com/jfbintech-1748s-projects"><img src="https://img.shields.io/badge/Deployed-Vercel-000000?style=for-the-badge&logo=vercel"></a>
+</p>
+
+---
 
 ## Features
 
