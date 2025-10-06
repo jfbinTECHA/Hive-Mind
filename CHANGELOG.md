@@ -24,6 +24,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rate limiting to prevent abuse
 - Secure handling of API keys and secrets
 
+## [Planned Versions]
+
+### [v1.1] - User Experience Upgrade (Upcoming)
+**Theme: User Experience Upgrade**
+
+#### Planned Features
+- **Voice Playback Integration**: Real-time audio synthesis for AI responses
+- **Memory Viewer UI**: Interactive interface to browse and manage stored memories
+- **Enhanced Personality Profiles**: Customizable companion traits and behaviors
+- **Improved Chat Interface**: Better UX with message threading and reactions
+- **Offline Mode Enhancements**: Local processing when APIs unavailable
+
+#### Technical Goals
+- Web Audio API integration for voice playback
+- React components for memory visualization
+- Personality customization system
+- Progressive Web App (PWA) features
+
+### [v1.2] - Knowledge & Reflection (Future)
+**Theme: Knowledge & Reflection**
+
+#### Planned Features
+- **Document Upload System**: Support for PDF, DOCX, and text file ingestion
+- **Knowledge Base Integration**: Structured storage and retrieval of uploaded content
+- **Nightly Reflection Summarization**: Automated daily/weekly reflection processing
+- **Content Analysis**: Entity extraction and topic modeling from documents
+- **Smart Search**: Enhanced search across conversations and documents
+
+#### Technical Goals
+- File processing pipeline with text extraction
+- Vector embeddings for document content
+- Scheduled background jobs for reflection processing
+- Advanced NLP for content understanding
+
+### [v2.0] - Swarm Intelligence (Major Release)
+**Theme: Swarm Intelligence**
+
+#### Planned Features
+- **Multi-AI Group Chat**: Simultaneous conversations with multiple companions
+- **Shared Memory Graphs**: Interconnected knowledge across all companions
+- **Companion Network Visualization**: Interactive graphs showing AI relationships
+- **Collaborative Intelligence**: Companions sharing insights and learning from each other
+- **Dynamic Personality Evolution**: Companions adapting based on group interactions
+
+#### Technical Goals
+- Distributed conversation management
+- Graph database integration for relationship mapping
+- Real-time synchronization across multiple AI instances
+- Advanced machine learning for personality dynamics
+- Scalable architecture for multi-companion interactions
+
 ## [0.1.0] - 2024-01-XX
 
 ### Added
