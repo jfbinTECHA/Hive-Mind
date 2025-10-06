@@ -4,13 +4,15 @@
 
 ![AI Hive Mind Banner](banner.svg)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/jfbinTECHA/Hive-Mind)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Version](https://img.shields.io/github/v/release/jfbinTECHA/Hive-Mind?color=blue&label=version)](https://github.com/jfbinTECHA/Hive-Mind/releases)
+[![License](https://img.shields.io/github/license/jfbinTECHA/Hive-Mind?color=green)](LICENSE)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Next.js](https://img.shields.io/badge/next.js-14.0.0-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.0.0-blue.svg)](https://www.typescriptlang.org/)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/coverage-85%25-yellow.svg)]()
+[![Build Status](https://img.shields.io/github/actions/workflow/status/jfbinTECHA/Hive-Mind/ci.yml?branch=main&label=build)](https://github.com/jfbinTECHA/Hive-Mind/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/jfbinTECHA/Hive-Mind?color=yellow&label=coverage)](https://codecov.io/gh/jfbinTECHA/Hive-Mind)
+[![GitHub Stars](https://img.shields.io/github/stars/jfbinTECHA/Hive-Mind?style=social)](https://github.com/jfbinTECHA/Hive-Mind/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/jfbinTECHA/Hive-Mind?style=social)](https://github.com/jfbinTECHA/Hive-Mind/network/members)
 
 **An advanced multi-companion AI system with persistent memory, relationship dynamics, and multimodal interactions**
 
