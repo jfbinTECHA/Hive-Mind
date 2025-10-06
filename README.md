@@ -34,10 +34,9 @@
   </p>
 
   <p>
-    <a href="https://github.com/jfbinTECHA/Hive-Mind/actions"><img src="https://img.shields.io/github/actions/workflow/status/jfbinTECHA/Hive-Mind/ci.yml?branch=main&label=build" alt="Build Status" /></a>
-    <a href="https://codecov.io/gh/jfbinTECHA/Hive-Mind"><img src="https://img.shields.io/codecov/c/github/jfbinTECHA/Hive-Mind?color=yellow&label=coverage" alt="Coverage" /></a>
-    <a href="https://github.com/jfbinTECHA/Hive-Mind/stargazers"><img src="https://img.shields.io/github/stars/jfbinTECHA/Hive-Mind?style=social" alt="GitHub Stars" /></a>
-    <a href="https://github.com/jfbinTECHA/Hive-Mind/network/members"><img src="https://img.shields.io/github/forks/jfbinTECHA/Hive-Mind?style=social" alt="GitHub Forks" /></a>
+    <a href="https://github.com/jfbinTECHA/Hive-Mind/actions"><img src="https://img.shields.io/github/actions/workflow/status/jfbinTECHA/Hive-Mind/deploy.yml?branch=main" alt="Build" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/jfbinTECHA/Hive-Mind" alt="License: MIT" /></a>
+    <a href="https://github.com/jfbinTECHA/Hive-Mind/stargazers"><img src="https://img.shields.io/github/stars/jfbinTECHA/Hive-Mind" alt="Stars" /></a>
   </p>
 
   <br />
