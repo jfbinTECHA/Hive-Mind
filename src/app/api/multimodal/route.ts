@@ -3,191 +3,80 @@ import { multiModalProcessor } from '@/lib/multiModal';
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
-    const { userId, characterId, inputType } = Object.fromEntries(formData);
+    const contentType = request.headers.get('content-type') || '';
 
-    if (!userId || !characterId || !inputType) {
-      return NextResponse.json(
-        { error: 'userId, characterId, and inputType are required' },
-        { status: 400 }
-      );
-    }
+    if (contentType.includes('multipart/form-data')) {
+      // Handle file uploads
+      const formData = await request.formData();
+      const file = formData.get('file') as File;
+      const type = formData.get('type') as string;
+      const companionId = formData.get('companionId') as string;
 
-    let processedInput: any = null;
-
-    switch (inputType) {
-      case 'image':
-        const imageFile = formData.get('file') as File;
-        if (!imageFile) {
-          return NextResponse.json(
-            { error: 'Image file is required' },
-            { status: 400 }
-          );
-        }
-
-        // Convert file to base64
-        const imageBuffer = await imageFile.arrayBuffer();
-        const imageBase64 = `data:${imageFile.type};base64,${Buffer.from(imageBuffer).toString('base64')}`;
-
-        // Process image
-        const imageAnalysis = await multiModalProcessor.processImage(imageBase64);
-
-        processedInput = {
-          type: 'image',
-          content: imageBase64,
-          metadata: {
-            timestamp: new Date(),
-            deviceInfo: {
-              platform: 'web',
-              userAgent: request.headers.get('user-agent') || 'unknown'
-            },
-            processingResults: {
-              imageAnalysis
-            }
-          }
-        };
-        break;
-
-      case 'voice':
-        const audioFile = formData.get('file') as File;
-        if (!audioFile) {
-          return NextResponse.json(
-            { error: 'Audio file is required' },
-            { status: 400 }
-          );
-        }
-
-        // Convert file to base64
-        const audioBuffer = await audioFile.arrayBuffer();
-        const audioBase64 = `data:${audioFile.type};base64,${Buffer.from(audioBuffer).toString('base64')}`;
-
-        // Process voice
-        const voiceAnalysis = await multiModalProcessor.processVoice(audioBase64);
-
-        processedInput = {
-          type: 'voice',
-          content: audioBase64,
-          metadata: {
-            timestamp: new Date(),
-            deviceInfo: {
-              platform: 'web',
-              userAgent: request.headers.get('user-agent') || 'unknown'
-            },
-            processingResults: voiceAnalysis
-          }
-        };
-        break;
-
-      case 'location':
-        const latitude = formData.get('latitude') as string;
-        const longitude = formData.get('longitude') as string;
-        const accuracy = formData.get('accuracy') as string;
-
-        if (!latitude || !longitude) {
-          return NextResponse.json(
-            { error: 'Latitude and longitude are required for location input' },
-            { status: 400 }
-          );
-        }
-
-        // Process location
-        const locationData = await multiModalProcessor.processLocation(
-          parseFloat(latitude),
-          parseFloat(longitude)
-        );
-
-        processedInput = {
-          type: 'location',
-          content: JSON.stringify({
-            latitude: parseFloat(latitude),
-            longitude: parseFloat(longitude),
-            accuracy: accuracy ? parseFloat(accuracy) : undefined
-          }),
-          metadata: {
-            timestamp: new Date(),
-            location: {
-              latitude: parseFloat(latitude),
-              longitude: parseFloat(longitude),
-              accuracy: accuracy ? parseFloat(accuracy) : undefined,
-              placeName: locationData.placeName
-            },
-            deviceInfo: {
-              platform: 'web',
-              userAgent: request.headers.get('user-agent') || 'unknown'
-            },
-            processingResults: {
-              weather: locationData.weather
-            }
-          }
-        };
-        break;
-
-      default:
+      if (!file) {
         return NextResponse.json(
-          { error: 'Invalid input type. Supported types: image, voice, location' },
+          { error: 'No file provided' },
           { status: 400 }
         );
-    }
+      }
 
-    // Store the processed input
-    const storedInput = await multiModalProcessor.storeMultiModalInput(
-      parseInt(userId as string),
-      parseInt(characterId as string),
-      processedInput
-    );
+      // Process the file based on type
+      let result;
+      if (type === 'image') {
+        const imageResult = await multiModalProcessor.processImage(await file.arrayBuffer().then(buf => Buffer.from(buf).toString('base64')), companionId);
+        result = {
+          content: `Image uploaded: ${file.name}. ${imageResult.description || 'An image with objects: ' + imageResult.objects.join(', ')}`,
+          metadata: {
+            fileName: file.name,
+            fileSize: file.size,
+            fileType: file.type,
+            analysis: imageResult
+          }
+        };
+      } else if (type === 'document') {
+        result = await multiModalProcessor.processDocument(file, companionId);
+      } else {
+        return NextResponse.json(
+          { error: 'Unsupported file type' },
+          { status: 400 }
+        );
+      }
 
-    // Generate AI response
-    const conversationHistory: any[] = []; // Would need to fetch recent conversation history
-    const aiResponse = await multiModalProcessor.generateMultiModalResponse(
-      parseInt(userId as string),
-      parseInt(characterId as string),
-      processedInput,
-      conversationHistory
-    );
+      return NextResponse.json({
+        success: true,
+        processedContent: result.content,
+        metadata: result.metadata
+      });
 
-    return NextResponse.json({
-      success: true,
-      input: storedInput,
-      response: aiResponse,
-      analysis: processedInput.metadata.processingResults
-    });
+    } else {
+      // Handle JSON requests (URLs, etc.)
+      const body = await request.json();
+      const { type, sourceUrl, companionId } = body;
 
-  } catch (error) {
-    console.error('Multi-modal API error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
+      if (type === 'url') {
+        if (!sourceUrl) {
+          return NextResponse.json(
+            { error: 'No URL provided' },
+            { status: 400 }
+          );
+        }
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const characterId = searchParams.get('characterId');
-    const limit = searchParams.get('limit') || '20';
+        const result = await multiModalProcessor.processUrl(sourceUrl, companionId);
 
-    if (!userId) {
+        return NextResponse.json({
+          success: true,
+          processedContent: result.content,
+          metadata: result.metadata
+        });
+      }
+
       return NextResponse.json(
-        { error: 'userId parameter is required' },
+        { error: 'Unsupported request type' },
         { status: 400 }
       );
     }
 
-    const inputs = await multiModalProcessor.getMultiModalInputs(
-      parseInt(userId),
-      characterId ? parseInt(characterId) : undefined,
-      parseInt(limit)
-    );
-
-    return NextResponse.json({
-      success: true,
-      inputs
-    });
-
   } catch (error) {
-    console.error('Multi-modal GET API error:', error);
+    console.error('Multimodal processing error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

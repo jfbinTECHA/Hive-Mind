@@ -197,8 +197,43 @@ export class Database {
   }
 
   static async deleteMemory(id: number) {
-    const query = 'DELETE FROM memories WHERE id = $1';
+    const query = 'DELETE FROM memory WHERE id = $1';
     await pool.query(query, [id]);
+  }
+
+  static async updateMemory(id: number, updates: { content?: string; type?: string; tags?: string[] }) {
+    const setParts = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (updates.content !== undefined) {
+      setParts.push(`fact_text = $${paramIndex}`);
+      values.push(updates.content);
+      paramIndex++;
+    }
+
+    if (updates.type !== undefined) {
+      setParts.push(`fact_type = $${paramIndex}`);
+      values.push(updates.type);
+      paramIndex++;
+    }
+
+    if (updates.tags !== undefined) {
+      setParts.push(`tags = $${paramIndex}`);
+      values.push(updates.tags);
+      paramIndex++;
+    }
+
+    if (setParts.length === 0) return;
+
+    const query = `
+      UPDATE memory
+      SET ${setParts.join(', ')}, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $${paramIndex}
+    `;
+    values.push(id);
+
+    await pool.query(query, values);
   }
 
   // Memory Aging System Methods

@@ -3,80 +3,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import ReactMarkdown from 'react-markdown';
-import { Send, Bot, User, Mic, MicOff, Volume2, VolumeX, Settings, Heart, Battery, Eye, Lightbulb } from 'lucide-react';
+import { Bot, User, Heart, Battery, Eye, Lightbulb, Sparkles, Star, Share2 } from 'lucide-react';
 import { avatarEngine, AvatarExpression } from '@/lib/avatarEngine';
+import { ChatInput } from './ChatInput';
+import { reflectionSystem } from '@/lib/reflectionSystem';
+import { evolutionSystem } from '@/lib/evolutionSystem';
+import { sharedMemorySystem } from '@/lib/sharedMemorySystem';
 
-// Speech Recognition types
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
-
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
-  onend: ((event: Event) => void) | null;
-}
-
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
-}
-
-interface SpeechRecognitionErrorEvent extends Event {
-  error: string;
-  message: string;
-}
-
-interface SpeechRecognitionResultList {
-  readonly length: number;
-  item(index: number): SpeechRecognitionResult;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-  readonly length: number;
-  item(index: number): SpeechRecognitionAlternative;
-  [index: number]: SpeechRecognitionAlternative;
-  isFinal: boolean;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
-declare var SpeechRecognition: {
-  prototype: SpeechRecognition;
-  new(): SpeechRecognition;
-};
 
 export function ChatView() {
   const { state, dispatch } = useApp();
-  const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [ttsEnabled, setTtsEnabled] = useState(true);
-  const [messageDelay, setMessageDelay] = useState(1500);
   const [emotionalState, setEmotionalState] = useState<any>(null);
   const [avatarStates, setAvatarStates] = useState<Map<string, any>>(new Map());
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
-  const [voiceLoading, setVoiceLoading] = useState<string | null>(null);
-  const [audioQueue, setAudioQueue] = useState<Array<{ url: string; companionId: string }>>([]);
-  const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -107,198 +48,9 @@ export function ChatView() {
     }
   };
 
-  // Voice functionality
-  const speakText = (text: string, voice?: string) => {
-    if (!ttsEnabled || !('speechSynthesis' in window)) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    // Set voice if specified
-    if (voice) {
-      const voices = speechSynthesis.getVoices();
-      const selectedVoice = voices.find(v => v.name === voice);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-    }
-
-    // Adjust speech settings based on personality
-    const companion = state.companions.find(c => c.id === state.activeCompanion);
-    if (companion) {
-      switch (companion.personality) {
-        case 'friendly':
-          utterance.rate = 1.1;
-          utterance.pitch = 1.2;
-          break;
-        case 'professional':
-          utterance.rate = 0.9;
-          utterance.pitch = 1.0;
-          break;
-        case 'humorous':
-          utterance.rate = 1.3;
-          utterance.pitch = 1.3;
-          break;
-        case 'serious':
-          utterance.rate = 0.8;
-          utterance.pitch = 0.9;
-          break;
-      }
-    }
-
-    speechSynthesis.speak(utterance);
-  };
-
-  const startVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Speech recognition is not supported in this browser. Try Chrome or Edge.');
-      return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognitionRef.current = new SpeechRecognition();
-
-    recognitionRef.current.continuous = false;
-    recognitionRef.current.interimResults = false;
-    recognitionRef.current.lang = 'en-US';
-
-    recognitionRef.current.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setMessage(transcript);
-      setIsListening(false);
-    };
-
-    recognitionRef.current.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-    };
-
-    recognitionRef.current.onend = () => {
-      setIsListening(false);
-    };
-
-    recognitionRef.current.start();
-    setIsListening(true);
-  };
-
-  const stopVoiceInput = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    setIsListening(false);
-  };
-
-  const toggleTTS = () => {
-    setTtsEnabled(!ttsEnabled);
-    if (ttsEnabled) {
-      speechSynthesis.cancel();
-      stopVoicePlayback();
-    }
-  };
-
-  const toggleVoiceGeneration = () => {
-    setVoiceEnabled(!voiceEnabled);
-    if (!voiceEnabled) {
-      // Check if ElevenLabs is available
-      checkVoiceService();
-    }
-  };
-
-  const checkVoiceService = async () => {
-    try {
-      const response = await fetch('/api/voice?action=stats');
-      if (!response.ok) {
-        console.warn('Voice service not available');
-        setVoiceEnabled(false);
-      }
-    } catch (error) {
-      console.warn('Voice service check failed:', error);
-      setVoiceEnabled(false);
-    }
-  };
-
-  const generateVoice = async (text: string, companionId: string, personality: string) => {
-    if (!voiceEnabled) return;
-
-    setVoiceLoading(companionId);
-
-    try {
-      const companion = state.companions.find(c => c.id.toString() === companionId);
-      const emotionalState = companion ? await fetchEmotionalStateForCompanion(companionId) : null;
-
-      const response = await fetch('/api/voice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text,
-          personality,
-          characterId: companionId,
-          emotionalState
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.audioUrl) {
-          // Add to audio queue
-          setAudioQueue(prev => [...prev, { url: data.audioUrl, companionId }]);
-          playNextInQueue();
-        }
-      }
-    } catch (error) {
-      console.error('Voice generation failed:', error);
-      // Fallback to TTS
-      if (ttsEnabled) {
-        const companion = state.companions.find(c => c.id.toString() === companionId);
-        speakText(text, companion?.voice);
-      }
-    } finally {
-      setVoiceLoading(null);
-    }
-  };
-
-  const playNextInQueue = () => {
-    if (audioQueue.length === 0 || currentPlaying) return;
-
-    const nextAudio = audioQueue[0];
-    setCurrentPlaying(nextAudio.companionId);
-
-    if (audioRef.current) {
-      audioRef.current.src = nextAudio.url;
-      audioRef.current.play().catch(error => {
-        console.error('Audio playback failed:', error);
-        setCurrentPlaying(null);
-        setAudioQueue(prev => prev.slice(1));
-        playNextInQueue();
-      });
-    }
-  };
-
-  const stopVoicePlayback = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-    setCurrentPlaying(null);
-    setAudioQueue([]);
-  };
-
-  const fetchEmotionalStateForCompanion = async (companionId: string) => {
-    try {
-      const response = await fetch(`/api/emotion/${companionId}`);
-      if (response.ok) {
-        const data = await response.json();
-        return data.emotionalState;
-      }
-    } catch (error) {
-      console.error('Failed to fetch emotional state for voice:', error);
-    }
-    return null;
-  };
-
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+  const sendMessage = async (message: string, attachments?: { type: string; data: any; metadata?: any }[]) => {
+    if (!message.trim() && (!attachments || attachments.length === 0)) return;
 
     const userMessage = {
       id: Date.now().toString(),
@@ -309,7 +61,6 @@ export function ChatView() {
     };
 
     dispatch({ type: 'ADD_MESSAGE', payload: userMessage });
-    setMessage('');
     setIsTyping(true);
 
     try {
@@ -321,6 +72,7 @@ export function ChatView() {
         },
         body: JSON.stringify({
           message,
+          attachments,
           aiName: state.activeCompanion || 'ai-hive-mind',
           userId: state.user?.id || 'anonymous',
           context: {
@@ -365,12 +117,6 @@ export function ChatView() {
               setAvatarStates(prev => new Map(prev.set(companion.id.toString(), avatarState)));
             }
 
-            // Generate voice or speak the response
-            if (companion && voiceEnabled) {
-              generateVoice(responseData.response, companion.id.toString(), companion.personality);
-            } else if (ttsEnabled) {
-              speakText(responseData.response, companion?.voice);
-            }
           }, index * 1500); // Stagger responses
         });
       } else {
@@ -412,17 +158,19 @@ export function ChatView() {
           }
         }
 
-        // Generate voice or speak the response
-        const activeCompanion = state.companions.find(c => c.id === state.activeCompanion);
-        if (activeCompanion && voiceEnabled) {
-          generateVoice(data.response, activeCompanion.id.toString(), activeCompanion.personality);
-        } else if (ttsEnabled) {
-          speakText(data.response, activeCompanion?.voice);
-        }
       }
 
       // Refresh emotional state after conversation
       await fetchEmotionalState();
+
+      // Check if we should generate a reflection
+      await checkAndGenerateReflection();
+
+      // Check if companion should evolve
+      await checkAndTriggerEvolution();
+
+      // Check for shared memory references
+      await checkSharedMemoryReferences(message, data.response);
 
     } catch (error) {
       console.error('Chat API error:', error);
@@ -438,12 +186,136 @@ export function ChatView() {
 
       dispatch({ type: 'ADD_MESSAGE', payload: aiMessage });
 
-      if (ttsEnabled) {
-        const companion = state.companions.find(c => c.id === state.activeCompanion);
-        speakText(aiResponse, companion?.voice);
-      }
     } finally {
       setIsTyping(false);
+    }
+  };
+
+  const checkAndGenerateReflection = async () => {
+    if (!state.activeCompanion) return;
+
+    const companion = state.companions.find(c => c.id === state.activeCompanion);
+    if (!companion) return;
+
+    // Check different reflection types
+    const reflectionTypes: ('daily' | 'weekly' | 'dream' | 'introspection')[] = ['daily', 'weekly', 'dream', 'introspection'];
+
+    for (const type of reflectionTypes) {
+      if (reflectionSystem.shouldReflect(state.activeCompanion, type)) {
+        try {
+          // Get recent conversation history
+          const recentConversations = state.messages.slice(-20);
+
+          // Get current emotional state
+          const currentEmotionalState = emotionalState || { mood: 0, energy: 0.5, trust: 0.5, curiosity: 0.5 };
+
+          const reflection = await reflectionSystem.generateReflection(
+            state.activeCompanion,
+            type,
+            recentConversations,
+            emotionalState
+          );
+
+          // Add reflection as a special system message
+          const reflectionMessage = {
+            id: `reflection_${reflection.id}`,
+            content: reflection.content,
+            sender: companion.id,
+            timestamp: reflection.timestamp,
+            type: 'system' as const,
+            metadata: {
+              isReflection: true,
+              reflectionType: reflection.type,
+              insights: reflection.insights,
+              emotionalPatterns: reflection.emotionalPatterns
+            }
+          };
+
+          dispatch({ type: 'ADD_MESSAGE', payload: reflectionMessage });
+
+          // Only generate one type of reflection per conversation
+          break;
+        } catch (error) {
+          console.error('Failed to generate reflection:', error);
+        }
+      }
+    }
+  };
+
+  const checkAndTriggerEvolution = async () => {
+    if (!state.activeCompanion) return;
+
+    try {
+      const evolutionEvent = await evolutionSystem.checkEvolution(state.activeCompanion);
+      if (evolutionEvent) {
+        // Add evolution notification as a special system message
+        const evolutionMessage = {
+          id: `evolution_${evolutionEvent.id}`,
+          content: `🎉 **Evolution Complete!** ${evolutionEvent.toStage.unlockMessage}`,
+          sender: state.activeCompanion,
+          timestamp: evolutionEvent.timestamp,
+          type: 'system' as const,
+          metadata: {
+            isEvolution: true,
+            evolutionEvent,
+            fromStage: evolutionEvent.fromStage.name,
+            toStage: evolutionEvent.toStage.name
+          }
+        };
+
+        dispatch({ type: 'ADD_MESSAGE', payload: evolutionMessage });
+
+        // Could trigger celebration animation or sound here
+        console.log('Companion evolved!', evolutionEvent);
+      }
+    } catch (error) {
+      console.error('Evolution check failed:', error);
+    }
+  };
+
+  const checkSharedMemoryReferences = async (userMessage: string, aiResponse: string) => {
+    if (!state.activeCompanion) return;
+
+    try {
+      // Get accessible memories for this companion
+      const accessibleMemories = await sharedMemorySystem.getAccessibleMemories(state.activeCompanion);
+
+      // Check if user message or AI response references shared concepts
+      const relevantMemories = accessibleMemories.filter(memory => {
+        const memoryText = memory.content.toLowerCase();
+        const userText = userMessage.toLowerCase();
+        const aiText = aiResponse.toLowerCase();
+
+        // Simple relevance check - can be made more sophisticated
+        return memoryText.split(' ').some(word =>
+          userText.includes(word) || aiText.includes(word)
+        ) && memory.originalCompanionId !== state.activeCompanion; // Don't reference own memories
+      });
+
+      // If relevant shared memories found, occasionally add a reference
+      if (relevantMemories.length > 0 && Math.random() < 0.3) { // 30% chance
+        const randomMemory = relevantMemories[Math.floor(Math.random() * relevantMemories.length)];
+
+        // Add a shared memory reference message
+        const memoryReferenceMessage = {
+          id: `memory_ref_${Date.now()}`,
+          content: `💭 *Recalling a shared memory...*\n\n"${randomMemory.content}"\n\n*This reminds me of an experience I shared with ${state.companions.find(c => c.id === randomMemory.originalCompanionId)?.name || 'another companion'}.*`,
+          sender: state.activeCompanion,
+          timestamp: new Date(),
+          type: 'system' as const,
+          metadata: {
+            isMemoryReference: true,
+            referencedMemoryId: randomMemory.id,
+            sharedFrom: randomMemory.originalCompanionId
+          }
+        };
+
+        setTimeout(() => {
+          dispatch({ type: 'ADD_MESSAGE', payload: memoryReferenceMessage });
+        }, 2000); // Add after a short delay for natural conversation flow
+      }
+    } catch (error) {
+      console.error('Shared memory reference check failed:', error);
     }
   };
 
@@ -584,18 +456,33 @@ export function ChatView() {
           const isUser = msg.sender === 'user';
           const companion = state.companions.find(c => c.id === msg.sender);
           const avatarState = avatarStates.get(msg.sender);
+          const isReflection = msg.type === 'system' && msg.metadata?.isReflection;
+          const isEvolution = msg.type === 'system' && msg.metadata?.isEvolution;
+          const isMemoryReference = msg.type === 'system' && msg.metadata?.isMemoryReference;
 
           return (
             <div
               key={msg.id}
               className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`flex max-w-xs lg:max-w-md ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+              <div className={`flex max-w-xs lg:max-w-md xl:max-w-lg ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
                 {/* Dynamic Avatar */}
                 <div className="flex-shrink-0">
                   {isUser ? (
                     <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
+                    </div>
+                  ) : isReflection ? (
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-lg shadow-lg">
+                      💭
+                    </div>
+                  ) : isEvolution ? (
+                    <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-lg shadow-lg animate-pulse">
+                      ⭐
+                    </div>
+                  ) : isMemoryReference ? (
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-lg shadow-lg">
+                      🧠
                     </div>
                   ) : (
                     <div
@@ -614,8 +501,34 @@ export function ChatView() {
                 <div className={`mx-2 ${isUser ? 'mr-0' : 'ml-0'}`}>
                   {/* Sender name for AI messages */}
                   {!isUser && (
-                    <div className="text-xs text-gray-400 mb-1">
-                      {companion?.name || 'AI'}
+                    <div className="text-xs text-gray-400 mb-1 flex items-center">
+                      {isReflection ? (
+                        <>
+                          <Sparkles className="w-3 h-3 mr-1 text-purple-400" />
+                          {companion?.name || 'AI'} Reflection
+                          <span className="ml-2 px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs capitalize">
+                            {msg.metadata?.reflectionType}
+                          </span>
+                        </>
+                      ) : isEvolution ? (
+                        <>
+                          <Star className="w-3 h-3 mr-1 text-yellow-400" />
+                          {companion?.name || 'AI'} Evolution
+                          <span className="ml-2 px-2 py-0.5 bg-yellow-500/20 text-yellow-300 rounded text-xs">
+                            {msg.metadata?.fromStage} → {msg.metadata?.toStage}
+                          </span>
+                        </>
+                      ) : isMemoryReference ? (
+                        <>
+                          <Share2 className="w-3 h-3 mr-1 text-blue-400" />
+                          {companion?.name || 'AI'} Memory
+                          <span className="ml-2 px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded text-xs">
+                            Shared from {state.companions.find(c => c.id === msg.metadata?.sharedFrom)?.name || 'another companion'}
+                          </span>
+                        </>
+                      ) : (
+                        companion?.name || 'AI'
+                      )}
                     </div>
                   )}
 
@@ -623,6 +536,12 @@ export function ChatView() {
                     className={`px-4 py-2 rounded-2xl ${
                       isUser
                         ? 'bg-purple-500 text-white'
+                        : isReflection
+                        ? 'bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-sm text-white border border-purple-500/30 shadow-lg'
+                        : isEvolution
+                        ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-sm text-white border border-yellow-500/30 shadow-lg animate-pulse'
+                        : isMemoryReference
+                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm text-white border border-blue-500/30 shadow-lg'
                         : 'bg-white/10 backdrop-blur-sm text-white border border-white/20'
                     }`}
                   >
@@ -630,18 +549,38 @@ export function ChatView() {
                       <ReactMarkdown
                         components={{
                           p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                          em: ({ children }) => <em className="italic">{children}</em>,
+                          strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                          em: ({ children }) => <em className="italic text-purple-200">{children}</em>,
                           code: ({ children }) => (
                             <code className="bg-black/20 px-1 py-0.5 rounded text-xs font-mono">
                               {children}
                             </code>
                           ),
+                          ul: ({ children }) => <ul className="mb-2 text-gray-200">{children}</ul>,
+                          li: ({ children }) => <li className="mb-1 flex items-start"><span className="text-purple-400 mr-2">•</span>{children}</li>,
                         }}
                       >
                         {msg.content}
                       </ReactMarkdown>
                     </div>
+
+                    {/* Reflection insights */}
+                    {isReflection && msg.metadata?.insights && msg.metadata.insights.length > 0 && (
+                      <div className="mt-3 p-3 bg-white/5 rounded border border-white/10">
+                        <h4 className="text-xs font-medium text-purple-300 mb-2 flex items-center">
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          Key Insights
+                        </h4>
+                        <ul className="text-xs text-gray-300 space-y-1">
+                          {msg.metadata.insights.slice(0, 3).map((insight: string, index: number) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-purple-400 mr-2">•</span>
+                              {insight}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                   {/* Timestamp */}
@@ -678,94 +617,15 @@ export function ChatView() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Hidden audio element for voice playback */}
-      <audio
-        ref={audioRef}
-        onEnded={() => {
-          setCurrentPlaying(null);
-          setAudioQueue(prev => prev.slice(1));
-          playNextInQueue();
-        }}
-        onError={() => {
-          setCurrentPlaying(null);
-          setAudioQueue(prev => prev.slice(1));
-          playNextInQueue();
-        }}
-        style={{ display: 'none' }}
+
+      {/* Chat Input */}
+      <ChatInput
+        onSendMessage={sendMessage}
+        disabled={isTyping}
+        placeholder="Type your message..."
+        companionId={state.activeCompanion || undefined}
+        personality={state.companions.find(c => c.id === state.activeCompanion)?.personality}
       />
-
-      {/* Input */}
-      <div className="p-4 border-t border-white/10 backdrop-blur-xl bg-white/5">
-        <div className="flex space-x-2">
-          {/* Voice Input Button */}
-          <Button
-            onClick={isListening ? stopVoiceInput : startVoiceInput}
-            variant="outline"
-            className={`border-white/20 text-white hover:bg-white/10 ${isListening ? 'bg-red-500/20 border-red-500/50' : ''}`}
-            title={isListening ? 'Stop listening' : 'Start voice input'}
-          >
-            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-          </Button>
-
-          <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type your message..."
-            className="flex-1 bg-white/10 border-white/20 text-white placeholder-gray-400"
-          />
-
-          {/* Voice Generation Toggle */}
-          <Button
-            onClick={toggleVoiceGeneration}
-            variant="outline"
-            className={`border-white/20 text-white hover:bg-white/10 ${!voiceEnabled ? 'opacity-50' : voiceLoading ? 'animate-pulse' : ''}`}
-            title={voiceEnabled ? 'Disable ElevenLabs voice generation' : 'Enable ElevenLabs voice generation'}
-          >
-            {voiceLoading ? '🎵' : voiceEnabled ? '🎤' : '🔇'}
-          </Button>
-
-          {/* TTS Toggle */}
-          <Button
-            onClick={toggleTTS}
-            variant="outline"
-            className={`border-white/20 text-white hover:bg-white/10 ${!ttsEnabled ? 'opacity-50' : ''}`}
-            title={ttsEnabled ? 'Disable text-to-speech' : 'Enable text-to-speech'}
-          >
-            {ttsEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          </Button>
-
-          {/* Settings for delay */}
-          <Button
-            onClick={() => {
-              const newDelay = prompt('Message delay (ms):', messageDelay.toString());
-              if (newDelay && !isNaN(Number(newDelay))) {
-                setMessageDelay(Number(newDelay));
-              }
-            }}
-            variant="outline"
-            className="border-white/20 text-white hover:bg-white/10"
-            title="Configure message delay"
-          >
-            <Settings className="w-4 h-4" />
-          </Button>
-
-          <Button
-            onClick={sendMessage}
-            disabled={!message.trim() || isTyping}
-            className="bg-purple-500 hover:bg-purple-600"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Voice status indicator */}
-        {isListening && (
-          <div className="mt-2 text-center">
-            <span className="text-sm text-red-400 animate-pulse">🎤 Listening...</span>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

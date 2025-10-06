@@ -4,6 +4,7 @@ export interface Message {
   sender: 'user' | string; // string for AI companion names
   timestamp: Date;
   type: 'text' | 'system';
+  metadata?: any; // For system messages like reflections
 }
 
 export interface Companion {
@@ -37,7 +38,41 @@ export interface MemoryFact {
   companionId: string;
 }
 
-export type Theme = 'light' | 'dark';
+export interface CustomTheme {
+  name: string;
+  background: {
+    gradient: {
+      colors: string[];
+      direction: 'to right' | 'to bottom' | 'to bottom right' | 'radial';
+      opacity: number;
+    };
+    overlay: {
+      color: string;
+      opacity: number;
+    };
+  };
+  glow: {
+    intensity: number; // 0-1
+    color: string;
+    blur: number; // in pixels
+  };
+  accent: {
+    primary: string;
+    secondary: string;
+    hover: string;
+  };
+  text: {
+    primary: string;
+    secondary: string;
+    muted: string;
+  };
+  border: {
+    color: string;
+    opacity: number;
+  };
+}
+
+export type Theme = 'light' | 'dark' | CustomTheme;
 
 export interface AppState {
   user: User | null;

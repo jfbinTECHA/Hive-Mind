@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import Link from 'next/link';
+import { Sparkles } from 'lucide-react';
 
 export function AuthScreen() {
   const { dispatch } = useApp();
@@ -71,6 +73,17 @@ export function AuthScreen() {
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
+
+            <Link href="/demo" className="block">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full bg-gradient-to-r from-purple-400/20 to-pink-400/20 border-purple-400/50 hover:from-purple-400/30 hover:to-pink-400/30"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Try Interactive Demo
+              </Button>
+            </Link>
 
             <Button
               type="button"

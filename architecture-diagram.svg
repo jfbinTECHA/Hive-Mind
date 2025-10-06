@@ -1,0 +1,222 @@
+<svg width="1000" height="700" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1419;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e3a5f;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Component gradients -->
+    <linearGradient id="uiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#bbdefb;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c8e6c9;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="memoryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fff3e0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffe0b2;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="voiceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fce4ec;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8bbd9;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="dbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e0f2f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b2dfdb;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="apiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e1bee7;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Glow effects -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Arrow markers -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7"
+     refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#06b6d4" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="700" fill="url(#bgGradient)"/>
+
+  <!-- Title -->
+  <text x="500" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">
+    AI Hive Mind Architecture
+  </text>
+
+  <!-- User Layer -->
+  <g transform="translate(50, 80)">
+    <rect x="0" y="0" width="150" height="80" rx="8" fill="url(#uiGradient)" stroke="#1976d2" stroke-width="2"/>
+    <text x="75" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">👤 User</text>
+    <text x="75" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Web Browser</text>
+    <text x="75" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Mobile App</text>
+  </g>
+
+  <!-- UI Layer -->
+  <g transform="translate(250, 80)">
+    <rect x="0" y="0" width="150" height="80" rx="8" fill="url(#uiGradient)" stroke="#1976d2" stroke-width="2"/>
+    <text x="75" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">🖥️ Frontend UI</text>
+    <text x="75" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">React/Next.js</text>
+    <text x="75" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Chat Interface</text>
+  </g>
+
+  <!-- Voice Input -->
+  <g transform="translate(50, 200)">
+    <rect x="0" y="0" width="150" height="60" rx="8" fill="url(#voiceGradient)" stroke="#c2185b" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c2185b">🎤 Voice Input</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Whisper STT</text>
+  </g>
+
+  <!-- API Layer -->
+  <g transform="translate(250, 200)">
+    <rect x="0" y="0" width="150" height="60" rx="8" fill="url(#apiGradient)" stroke="#7b1fa2" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#7b1fa2">🔌 API Routes</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Next.js API</text>
+  </g>
+
+  <!-- AI Companions -->
+  <g transform="translate(500, 200)">
+    <rect x="0" y="0" width="150" height="80" rx="8" fill="url(#aiGradient)" stroke="#388e3c" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#388e3c">🤖 AI Companions</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Ollama Models</text>
+    <text x="75" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Personality Engine</text>
+  </g>
+
+  <!-- Memory System -->
+  <g transform="translate(700, 200)">
+    <rect x="0" y="0" width="150" height="80" rx="8" fill="url(#memoryGradient)" stroke="#f57c00" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#f57c00">🧠 Memory System</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Fact Extraction</text>
+    <text x="75" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Context Injection</text>
+  </g>
+
+  <!-- Vector Database -->
+  <g transform="translate(500, 320)">
+    <rect x="0" y="0" width="150" height="60" rx="8" fill="url(#dbGradient)" stroke="#00695c" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#00695c">🔗 Vector DB</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">PostgreSQL + pgvector</text>
+  </g>
+
+  <!-- Voice Output -->
+  <g transform="translate(700, 320)">
+    <rect x="0" y="0" width="150" height="60" rx="8" fill="url(#voiceGradient)" stroke="#c2185b" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#c2185b">🔊 Voice Output</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">ElevenLabs TTS</text>
+  </g>
+
+  <!-- Redis Cache -->
+  <g transform="translate(250, 320)">
+    <rect x="0" y="0" width="150" height="60" rx="8" fill="url(#dbGradient)" stroke="#00695c" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#00695c">⚡ Redis Cache</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Session & Response Cache</text>
+  </g>
+
+  <!-- PostgreSQL -->
+  <g transform="translate(50, 320)">
+    <rect x="0" y="0" width="150" height="60" rx="8" fill="url(#dbGradient)" stroke="#00695c" stroke-width="2"/>
+    <text x="75" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#00695c">🗄️ PostgreSQL</text>
+    <text x="75" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#424242">Conversations & Users</text>
+  </g>
+
+  <!-- External Services -->
+  <g transform="translate(50, 450)">
+    <rect x="0" y="0" width="200" height="80" rx="8" fill="#f5f5f5" stroke="#9e9e9e" stroke-width="2"/>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#424242">🌐 External Services</text>
+    <text x="100" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">OpenAI (Whisper)</text>
+    <text x="100" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">ElevenLabs (Voice)</text>
+    <text x="100" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Ollama (Local AI)</text>
+  </g>
+
+  <!-- Deployment -->
+  <g transform="translate(300, 450)">
+    <rect x="0" y="0" width="200" height="80" rx="8" fill="#f5f5f5" stroke="#9e9e9e" stroke-width="2"/>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#424242">🚀 Deployment</text>
+    <text x="100" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Vercel/Netlify</text>
+    <text x="100" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Docker Containers</text>
+    <text x="100" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Railway/Fly.io</text>
+  </g>
+
+  <!-- Data Flow Arrows -->
+
+  <!-- User to UI -->
+  <path d="M 125 160 L 275 160" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- UI to API -->
+  <path d="M 325 200 L 325 240" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- Voice Input to API -->
+  <path d="M 175 230 L 250 230" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- API to AI -->
+  <path d="M 400 230 L 500 230" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- AI to Memory -->
+  <path d="M 650 240 L 700 240" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- Memory to Vector DB -->
+  <path d="M 775 280 L 575 320" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- Vector DB to AI (feedback) -->
+  <path d="M 575 260 L 575 240 L 500 240" stroke="#06b6d4" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- AI to Voice Output -->
+  <path d="M 650 240 L 775 320" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- Voice Output to User -->
+  <path d="M 775 380 L 125 380 L 125 160" stroke="#06b6d4" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- API to Databases -->
+  <path d="M 325 260 L 325 320" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowhead)" fill="none"/>
+  <path d="M 325 320 L 175 320" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowhead)" fill="none"/>
+  <path d="M 325 320 L 325 380" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- External Services connections -->
+  <path d="M 150 380 L 150 450" stroke="#9e9e9e" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)" fill="none"/>
+  <path d="M 775 380 L 400 450" stroke="#9e9e9e" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- Labels for data flows -->
+  <text x="200" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#06b6d4">User Input</text>
+  <text x="362" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#06b6d4">API Calls</text>
+  <text x="612" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#06b6d4">AI Processing</text>
+  <text x="575" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#06b6d4">Vector Search</text>
+  <text x="775" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#06b6d4">Voice Synthesis</text>
+  <text x="450" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#06b6d4">Response Output</text>
+
+  <!-- Legend -->
+  <g transform="translate(750, 450)">
+    <rect x="0" y="0" width="200" height="120" rx="8" fill="#ffffff" stroke="#9e9e9e" stroke-width="1" opacity="0.9"/>
+    <text x="100" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#424242">Legend</text>
+
+    <circle cx="20" cy="40" r="6" fill="#06b6d4"/>
+    <text x="35" y="45" font-family="Arial, sans-serif" font-size="10" fill="#424242">Data Flow</text>
+
+    <line x1="15" y1="60" x2="25" y2="60" stroke="#06b6d4" stroke-width="2" stroke-dasharray="3,3"/>
+    <text x="35" y="65" font-family="Arial, sans-serif" font-size="10" fill="#424242">External API</text>
+
+    <rect x="15" y="70" width="10" height="10" rx="2" fill="url(#uiGradient)" stroke="#1976d2" stroke-width="1"/>
+    <text x="35" y="80" font-family="Arial, sans-serif" font-size="10" fill="#424242">UI Components</text>
+
+    <rect x="15" y="85" width="10" height="10" rx="2" fill="url(#dbGradient)" stroke="#00695c" stroke-width="1"/>
+    <text x="35" y="95" font-family="Arial, sans-serif" font-size="10" fill="#424242">Data Storage</text>
+
+    <rect x="15" y="100" width="10" height="10" rx="2" fill="url(#aiGradient)" stroke="#388e3c" stroke-width="1"/>
+    <text x="35" y="110" font-family="Arial, sans-serif" font-size="10" fill="#424242">AI Processing</text>
+  </g>
+</svg>

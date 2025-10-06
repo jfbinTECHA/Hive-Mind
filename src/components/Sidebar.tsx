@@ -4,7 +4,15 @@ import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/Button';
 import { ModelManager } from '@/components/ModelManager';
-import { Users, Plus, Brain, Settings, MessageSquare, Cpu } from 'lucide-react';
+import { CompanionMap } from '@/components/CompanionMap';
+import { ThemeCustomizer } from '@/components/ThemeCustomizer';
+import { ReflectionsPanel } from '@/components/ReflectionsPanel';
+import { EvolutionPanel } from '@/components/EvolutionPanel';
+import { SharedMemoryPanel } from '@/components/SharedMemoryPanel';
+import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
+import { PluginManager } from '@/components/PluginManager';
+import { Users, Plus, Brain, Settings, MessageSquare, Cpu, Database, Palette, Sparkles, Star, Share2, BarChart3, Puzzle } from 'lucide-react';
+import Link from 'next/link';
 
 interface SidebarProps {
   onProfileClick: () => void;
@@ -14,6 +22,12 @@ interface SidebarProps {
 export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
   const { state, dispatch } = useApp();
   const [showModelManager, setShowModelManager] = useState(false);
+  const [showThemeCustomizer, setShowThemeCustomizer] = useState(false);
+  const [showReflectionsPanel, setShowReflectionsPanel] = useState(false);
+  const [showEvolutionPanel, setShowEvolutionPanel] = useState(false);
+  const [showSharedMemoryPanel, setShowSharedMemoryPanel] = useState(false);
+  const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
+  const [showPluginManager, setShowPluginManager] = useState(false);
 
   const addCompanion = async () => {
     const name = prompt('Enter companion name:');
@@ -71,10 +85,13 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
     <div className="w-64 backdrop-blur-xl bg-white/5 border-r border-white/10 flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-white/10">
-        <h2 className="text-lg font-semibold text-white flex items-center">
+        <h2 className="text-lg font-semibold text-white flex items-center mb-3">
           <Brain className="w-5 h-5 mr-2" />
           AI Companions
         </h2>
+        <div className="flex justify-center">
+          <CompanionMap />
+        </div>
       </div>
 
       {/* Companion List */}
@@ -128,13 +145,59 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
           {state.groupChatMode ? 'Group Chat' : 'Single Chat'}
         </Button>
 
+        <Link href="/memory" className="w-full">
+          <Button
+            className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+            variant="ghost"
+          >
+            <Database className="w-4 h-4 mr-2" />
+            Memory Inspector
+          </Button>
+        </Link>
+
         <Button
-          onClick={onMemoryClick}
+          onClick={() => setShowReflectionsPanel(true)}
           className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
           variant="ghost"
         >
-          <MessageSquare className="w-4 h-4 mr-2" />
-          Memory & Logs
+          <Sparkles className="w-4 h-4 mr-2" />
+          AI Reflections
+        </Button>
+
+        <Button
+          onClick={() => setShowEvolutionPanel(true)}
+          className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+          variant="ghost"
+        >
+          <Star className="w-4 h-4 mr-2" />
+          Companion Evolution
+        </Button>
+
+        <Button
+          onClick={() => setShowSharedMemoryPanel(true)}
+          className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+          variant="ghost"
+        >
+          <Share2 className="w-4 h-4 mr-2" />
+          Shared Memories
+        </Button>
+
+        <Button
+          onClick={() => setShowAnalyticsDashboard(true)}
+          className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+          variant="ghost"
+        >
+          <BarChart3 className="w-4 h-4 mr-2" />
+          Analytics
+        </Button>
+
+        <Button
+          onClick={() => setShowPluginManager(true)}
+          className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+          variant="ghost"
+        >
+          <Puzzle className="w-4 h-4 mr-2" />
+          Plugins
         </Button>
 
         <Button
@@ -144,6 +207,15 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
         >
           <Cpu className="w-4 h-4 mr-2" />
           AI Models
+        </Button>
+
+        <Button
+          onClick={() => setShowThemeCustomizer(true)}
+          className="w-full justify-start bg-white/10 hover:bg-white/20 text-white"
+          variant="ghost"
+        >
+          <Palette className="w-4 h-4 mr-2" />
+          Theme Customizer
         </Button>
 
         <Button
@@ -159,6 +231,69 @@ export function Sidebar({ onProfileClick, onMemoryClick }: SidebarProps) {
       {/* Model Manager Modal */}
       {showModelManager && (
         <ModelManager onClose={() => setShowModelManager(false)} />
+      )}
+
+      {/* Theme Customizer Panel */}
+      {showThemeCustomizer && (
+        <ThemeCustomizer onClose={() => setShowThemeCustomizer(false)} />
+      )}
+
+      {/* Reflections Panel */}
+      {showReflectionsPanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-4xl h-3/4">
+            <ReflectionsPanel
+              companionId={state.activeCompanion || undefined}
+              onClose={() => setShowReflectionsPanel(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Evolution Panel */}
+      {showEvolutionPanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-4xl h-3/4">
+            <EvolutionPanel
+              companionId={state.activeCompanion || undefined}
+              onClose={() => setShowEvolutionPanel(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Shared Memory Panel */}
+      {showSharedMemoryPanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-4xl h-3/4">
+            <SharedMemoryPanel
+              companionId={state.activeCompanion || undefined}
+              onClose={() => setShowSharedMemoryPanel(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Analytics Dashboard */}
+      {showAnalyticsDashboard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-6xl h-5/6">
+            <AnalyticsDashboard
+              onClose={() => setShowAnalyticsDashboard(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Plugin Manager */}
+      {showPluginManager && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-7xl h-5/6">
+            <PluginManager
+              onClose={() => setShowPluginManager(false)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

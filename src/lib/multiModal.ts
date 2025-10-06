@@ -81,6 +81,62 @@ export class MultiModalProcessor {
   }
 
   /**
+   * Process document input
+   */
+  async processDocument(file: File, companionId?: string): Promise<{ content: string; metadata: any }> {
+    try {
+      // For now, return basic document info
+      // In a real implementation, you'd use document parsing libraries
+      return {
+        content: `Document uploaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`,
+        metadata: {
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          uploadedAt: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      console.error('Document processing error:', error);
+      return {
+        content: `Document uploaded: ${file.name}`,
+        metadata: {
+          fileName: file.name,
+          error: 'Processing failed'
+        }
+      };
+    }
+  }
+
+  /**
+   * Process URL input
+   */
+  async processUrl(url: string, companionId?: string): Promise<{ content: string; metadata: any }> {
+    try {
+      // For now, return basic URL info
+      // In a real implementation, you'd fetch and analyze the URL content
+      return {
+        content: `URL shared: ${url}`,
+        metadata: {
+          url: url,
+          processedAt: new Date().toISOString(),
+          title: 'Web page', // Would extract actual title
+          description: 'Web content' // Would extract actual description
+        }
+      };
+    } catch (error) {
+      console.error('URL processing error:', error);
+      return {
+        content: `URL shared: ${url}`,
+        metadata: {
+          url: url,
+          error: 'Processing failed'
+        }
+      };
+    }
+  }
+
+  /**
    * Process voice input
    */
   async processVoice(audioData: string, metadata?: any): Promise<VoiceAnalysis> {
