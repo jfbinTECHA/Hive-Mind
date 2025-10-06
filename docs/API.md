@@ -95,6 +95,30 @@ Retrieve conversation history for a user.
 - `startDate` (optional): ISO date string
 - `endDate` (optional): ISO date string
 
+**Examples:**
+
+```bash
+# Get recent conversations
+curl "https://your-domain.com/api/chat/history?limit=10"
+
+# Get conversations with specific companion
+curl "https://your-domain.com/api/chat/history?companionId=friendly-companion&limit=5"
+
+# Get conversations from date range
+curl "https://your-domain.com/api/chat/history?startDate=2024-01-01T00:00:00Z&endDate=2024-01-31T23:59:59Z"
+```
+
+```javascript
+// JavaScript/Node.js example
+const response = await fetch('/api/chat/history?companionId=ai-hive-mind&limit=20');
+const data = await response.json();
+
+console.log(`Found ${data.conversations.length} conversations`);
+data.conversations.forEach(conv => {
+  console.log(`Conversation ${conv.id}: ${conv.messages.length} messages`);
+});
+```
+
 **Response:**
 ```typescript
 interface ChatHistoryResponse {
@@ -120,10 +144,65 @@ interface ChatHistoryResponse {
 }
 ```
 
+**Sample Response:**
+```json
+{
+  "success": true,
+  "conversations": [
+    {
+      "id": "conv_12345",
+      "companionId": "friendly-companion",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Hello! How are you today?",
+          "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+          "role": "assistant",
+          "content": "Hi there! I'm doing great, thank you for asking! It's wonderful to hear from you. How has your day been so far?",
+          "timestamp": "2024-01-15T10:30:02Z",
+          "metadata": {
+            "processingTime": 450,
+            "memoryUsed": 3,
+            "tokensUsed": 28
+          }
+        }
+      ],
+      "startedAt": "2024-01-15T10:30:00Z",
+      "lastActivity": "2024-01-15T10:30:02Z"
+    }
+  ],
+  "pagination": {
+    "total": 1,
+    "limit": 10,
+    "offset": 0,
+    "hasMore": false
+  }
+}
+```
+
 ### 👥 AI Companions
 
 #### GET `/api/companions`
 List all available AI companions.
+
+**Examples:**
+
+```bash
+# Get all companions
+curl https://your-domain.com/api/companions
+```
+
+```javascript
+// JavaScript example
+const response = await fetch('/api/companions');
+const data = await response.json();
+
+data.companions.forEach(companion => {
+  console.log(`${companion.name}: ${companion.personality} (${companion.familiarity}% familiar)`);
+});
+```
 
 **Response:**
 ```typescript
@@ -143,8 +222,87 @@ interface CompanionsResponse {
 }
 ```
 
+**Sample Response:**
+```json
+{
+  "success": true,
+  "companions": [
+    {
+      "id": "comp_123",
+      "name": "Alex",
+      "personality": "friendly",
+      "avatar": "🤖",
+      "traits": ["warm", "empathetic", "encouraging"],
+      "familiarity": 85.5,
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "lastInteraction": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "comp_456",
+      "name": "Jordan",
+      "personality": "professional",
+      "avatar": "👔",
+      "traits": ["analytical", "organized", "reliable"],
+      "familiarity": 72.3,
+      "isActive": true,
+      "createdAt": "2024-01-05T00:00:00Z",
+      "lastInteraction": "2024-01-15T09:15:00Z"
+    }
+  ]
+}
+```
+
 #### POST `/api/companions`
 Create a new AI companion.
+
+**Examples:**
+
+```bash
+# Create a friendly companion
+curl -X POST https://your-domain.com/api/companions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sam",
+    "personality": "friendly",
+    "traits": ["warm", "empathetic", "creative"],
+    "avatar": "😊"
+  }'
+
+# Create a professional companion with voice settings
+curl -X POST https://your-domain.com/api/companions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Dr. Morgan",
+    "personality": "professional",
+    "traits": ["analytical", "organized", "knowledgeable"],
+    "avatar": "👔",
+    "voiceSettings": {
+      "voiceId": "ErXwobaYiN019PkySvjV",
+      "stability": 0.8,
+      "similarity": 0.9
+    }
+  }'
+```
+
+```javascript
+// JavaScript example
+const newCompanion = {
+  name: "Luna",
+  personality: "humorous",
+  traits: ["witty", "playful", "creative"],
+  avatar: "🌙"
+};
+
+const response = await fetch('/api/companions', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(newCompanion)
+});
+
+const data = await response.json();
+console.log(`Created companion: ${data.companion.name} (ID: ${data.companion.id})`);
+```
 
 **Request:**
 ```typescript
@@ -174,6 +332,22 @@ interface CreateCompanionResponse {
     familiarity: number;
     createdAt: string;
   };
+}
+```
+
+**Sample Response:**
+```json
+{
+  "success": true,
+  "companion": {
+    "id": "comp_789",
+    "name": "Sam",
+    "personality": "friendly",
+    "avatar": "😊",
+    "traits": ["warm", "empathetic", "creative"],
+    "familiarity": 0,
+    "createdAt": "2024-01-15T15:30:00Z"
+  }
 }
 ```
 
@@ -212,6 +386,31 @@ Retrieve memories for a specific AI companion.
 - `limit` (optional): Number of memories (default: 20)
 - `search` (optional): Search query for semantic matching
 
+**Examples:**
+
+```bash
+# Get recent memories for a companion
+curl "https://your-domain.com/api/memory/comp_123?limit=10"
+
+# Get only personal memories
+curl "https://your-domain.com/api/memory/comp_123?type=personal&limit=5"
+
+# Search memories semantically
+curl "https://your-domain.com/api/memory/comp_123?search=loves%20music&limit=3"
+```
+
+```javascript
+// JavaScript example
+const companionId = 'comp_123';
+const response = await fetch(`/api/memory/${companionId}?type=personal&limit=5`);
+const data = await response.json();
+
+console.log(`Found ${data.memories.length} personal memories`);
+data.memories.forEach(memory => {
+  console.log(`- ${memory.content} (${memory.confidence}% confidence)`);
+});
+```
+
 **Response:**
 ```typescript
 interface MemoryResponse {
@@ -232,8 +431,89 @@ interface MemoryResponse {
 }
 ```
 
+**Sample Response:**
+```json
+{
+  "success": true,
+  "memories": [
+    {
+      "id": "mem_456",
+      "type": "personal",
+      "content": "User enjoys listening to jazz music and plays piano",
+      "confidence": 0.92,
+      "lastUsed": "2024-01-15T14:30:00Z",
+      "createdAt": "2024-01-10T09:15:00Z",
+      "metadata": {
+        "source": "conversation",
+        "tags": ["music", "hobbies", "jazz"],
+        "embedding": [0.123, 0.456, ...]
+      }
+    },
+    {
+      "id": "mem_789",
+      "type": "preference",
+      "content": "User prefers tea over coffee in the morning",
+      "confidence": 0.88,
+      "lastUsed": "2024-01-14T08:20:00Z",
+      "createdAt": "2024-01-08T07:30:00Z",
+      "metadata": {
+        "source": "conversation",
+        "tags": ["beverages", "morning", "preferences"]
+      }
+    }
+  ]
+}
+```
+
 #### POST `/api/memory/{companionId}`
 Add or update a memory.
+
+**Examples:**
+
+```bash
+# Add a personal memory
+curl -X POST https://your-domain.com/api/memory/comp_123 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "personal",
+    "content": "User has two cats named Whiskers and Mittens",
+    "tags": ["pets", "cats", "family"],
+    "confidence": 0.95
+  }'
+
+# Add a preference memory
+curl -X POST https://your-domain.com/api/memory/comp_123 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "preference",
+    "content": "User prefers outdoor activities on weekends",
+    "tags": ["lifestyle", "weekends", "outdoors"],
+    "confidence": 0.88,
+    "metadata": {
+      "source": "conversation",
+      "topic": "hobbies"
+    }
+  }'
+```
+
+```javascript
+// JavaScript example
+const memoryData = {
+  type: 'experience',
+  content: 'User recently traveled to Japan and loved the food',
+  tags: ['travel', 'japan', 'food', 'culture'],
+  confidence: 0.92
+};
+
+const response = await fetch(`/api/memory/comp_123`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(memoryData)
+});
+
+const data = await response.json();
+console.log(`Memory created with ID: ${data.memory.id}`);
+```
 
 **Request:**
 ```typescript
@@ -260,11 +540,88 @@ interface MemoryCreateResponse {
 }
 ```
 
+**Sample Response:**
+```json
+{
+  "success": true,
+  "memory": {
+    "id": "mem_101",
+    "type": "personal",
+    "content": "User has two cats named Whiskers and Mittens",
+    "confidence": 0.95,
+    "createdAt": "2024-01-15T16:00:00Z"
+  }
+}
+```
+
 #### DELETE `/api/memory/{companionId}/{memoryId}`
 Delete a specific memory.
 
 #### POST `/api/memory/search`
 Search memories across all companions using semantic similarity.
+
+**Examples:**
+
+```bash
+# Search all companions for music-related memories
+curl -X POST https://your-domain.com/api/memory/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "music and instruments",
+    "limit": 5,
+    "threshold": 0.7
+  }'
+
+# Search specific companion
+curl -X POST https://your-domain.com/api/memory/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "favorite foods",
+    "companionId": "comp_123",
+    "limit": 3
+  }'
+```
+
+```javascript
+// JavaScript example
+const searchQuery = {
+  query: "travel experiences",
+  limit: 10,
+  threshold: 0.8
+};
+
+const response = await fetch('/api/memory/search', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(searchQuery)
+});
+
+const data = await response.json();
+console.log(`Found ${data.results.length} relevant memories`);
+
+data.results.forEach(result => {
+  console.log(`${result.similarity.toFixed(2)}: ${result.excerpt}`);
+});
+```
+
+```python
+# Python example
+import requests
+
+search_payload = {
+    "query": "hobbies and interests",
+    "limit": 5,
+    "threshold": 0.75
+}
+
+response = requests.post('https://your-domain.com/api/memory/search', json=search_payload)
+data = response.json()
+
+for result in data['results']:
+    print(f"Similarity: {result['similarity']:.2f}")
+    print(f"Excerpt: {result['excerpt']}")
+    print("---")
+```
 
 **Request:**
 ```typescript
@@ -286,6 +643,49 @@ interface MemorySearchResponse {
     similarity: number;
     excerpt: string;
   }>;
+}
+```
+
+**Sample Response:**
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "memory": {
+        "id": "mem_456",
+        "type": "personal",
+        "content": "User plays guitar and enjoys jazz music concerts",
+        "confidence": 0.91,
+        "lastUsed": "2024-01-14T20:00:00Z",
+        "createdAt": "2024-01-10T15:30:00Z",
+        "metadata": {
+          "source": "conversation",
+          "tags": ["music", "guitar", "jazz"]
+        }
+      },
+      "companionId": "comp_123",
+      "similarity": 0.89,
+      "excerpt": "User plays guitar and enjoys jazz music concerts"
+    },
+    {
+      "memory": {
+        "id": "mem_789",
+        "type": "experience",
+        "content": "User attended a piano concert last month",
+        "confidence": 0.85,
+        "lastUsed": "2024-01-12T18:45:00Z",
+        "createdAt": "2024-01-05T12:00:00Z",
+        "metadata": {
+          "source": "conversation",
+          "tags": ["music", "concert", "piano"]
+        }
+      },
+      "companionId": "comp_456",
+      "similarity": 0.76,
+      "excerpt": "User attended a piano concert last month"
+    }
+  ]
 }
 ```
 
@@ -383,6 +783,53 @@ interface KnowledgeStatsResponse {
 #### POST `/api/voice/transcribe`
 Convert speech to text using Whisper.
 
+**Examples:**
+
+```bash
+# Transcribe an audio file (assuming audio.wav exists)
+curl -X POST https://your-domain.com/api/voice/transcribe \
+  -F "file=@audio.wav" \
+  -F "model=whisper-1" \
+  -F "language=en"
+```
+
+```javascript
+// JavaScript example - transcribe from microphone
+async function transcribeAudio(audioBlob) {
+  const formData = new FormData();
+  formData.append('file', audioBlob, 'recording.webm');
+  formData.append('model', 'whisper-1');
+  formData.append('language', 'en');
+
+  const response = await fetch('/api/voice/transcribe', {
+    method: 'POST',
+    body: formData
+  });
+
+  const data = await response.json();
+  console.log(`Transcription: ${data.transcription}`);
+  console.log(`Confidence: ${(data.confidence * 100).toFixed(1)}%`);
+  return data;
+}
+
+// Usage with MediaRecorder
+async function recordAndTranscribe() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const recorder = new MediaRecorder(stream);
+  const chunks = [];
+
+  recorder.ondataavailable = (e) => chunks.push(e.data);
+  recorder.onstop = async () => {
+    const blob = new Blob(chunks, { type: 'audio/webm' });
+    const result = await transcribeAudio(blob);
+    console.log('Transcribed:', result.transcription);
+  };
+
+  recorder.start();
+  setTimeout(() => recorder.stop(), 5000); // Record for 5 seconds
+}
+```
+
 **Request:**
 - Content-Type: `multipart/form-data`
 - Body: Audio file (WebM, MP3, WAV, etc.)
@@ -402,8 +849,113 @@ interface VoiceTranscribeResponse {
 }
 ```
 
+**Sample Response:**
+```json
+{
+  "success": true,
+  "transcription": "Hello, how are you doing today?",
+  "confidence": 0.95,
+  "language": "en",
+  "duration": 2.3,
+  "metadata": {
+    "model": "whisper-1",
+    "processingTime": 1200
+  }
+}
+```
+
 #### POST `/api/voice/synthesize`
 Convert text to speech using ElevenLabs.
+
+**Examples:**
+
+```bash
+# Generate speech with default settings
+curl -X POST https://your-domain.com/api/voice/synthesize \
+  -H "Content-Type: application/json" \
+  -o speech.mp3 \
+  -d '{
+    "text": "Hello! How are you doing today?",
+    "voiceId": "21m00Tcm4TlvDq8ikWAM"
+  }'
+
+# Generate speech with custom voice settings
+curl -X POST https://your-domain.com/api/voice/synthesize \
+  -H "Content-Type: application/json" \
+  -o speech.mp3 \
+  -d '{
+    "text": "Welcome to our conversation!",
+    "voiceId": "ErXwobaYiN019PkySvjV",
+    "voiceSettings": {
+      "stability": 0.8,
+      "similarity_boost": 0.9,
+      "style": 0.6,
+      "use_speaker_boost": true
+    }
+  }'
+```
+
+```javascript
+// JavaScript example - generate and play speech
+async function generateSpeech(text, voiceId) {
+  const response = await fetch('/api/voice/synthesize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text,
+      voiceId,
+      voiceSettings: {
+        stability: 0.75,
+        similarity_boost: 0.8,
+        style: 0.5,
+        use_speaker_boost: true
+      }
+    })
+  });
+
+  if (response.ok) {
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.play();
+    return audioUrl;
+  } else {
+    throw new Error('Speech generation failed');
+  }
+}
+
+// Usage
+const audioUrl = await generateSpeech("Hello there!", "21m00Tcm4TlvDq8ikWAM");
+```
+
+```python
+# Python example
+import requests
+
+def text_to_speech(text, voice_id, output_file="output.mp3"):
+    payload = {
+        "text": text,
+        "voiceId": voice_id,
+        "voiceSettings": {
+            "stability": 0.8,
+            "similarity_boost": 0.9,
+            "style": 0.7,
+            "use_speaker_boost": True
+        }
+    }
+
+    response = requests.post('https://your-domain.com/api/voice/synthesize', json=payload)
+
+    if response.status_code == 200:
+        with open(output_file, 'wb') as f:
+            f.write(response.content)
+        print(f"Audio saved to {output_file}")
+    else:
+        print(f"Error: {response.status_code}")
+
+# Usage
+text_to_speech("Welcome to AI Hive Mind!", "21m00Tcm4TlvDq8ikWAM")
+```
 
 **Request:**
 ```typescript
@@ -421,7 +973,7 @@ interface VoiceSynthesizeRequest {
 
 **Response:**
 - Content-Type: `audio/mpeg`
-- Body: Audio file data
+- Body: Audio file data (binary)
 
 #### GET `/api/voice/voices`
 List available ElevenLabs voices.
@@ -562,6 +1114,41 @@ interface CompanionAnalyticsResponse {
 #### GET `/api/health`
 System health check.
 
+**Examples:**
+
+```bash
+# Check system health
+curl https://your-domain.com/api/health
+```
+
+```javascript
+// JavaScript health check with retry logic
+async function checkHealth(maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch('/api/health');
+      const health = await response.json();
+
+      if (health.status === 'healthy') {
+        console.log('✅ System is healthy');
+        return health;
+      } else {
+        console.warn(`⚠️ System status: ${health.status}`);
+        if (i < maxRetries - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+    } catch (error) {
+      console.error(`❌ Health check failed (attempt ${i + 1}):`, error);
+      if (i < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+  }
+  throw new Error('Health check failed after all retries');
+}
+```
+
 **Response:**
 ```typescript
 interface HealthResponse {
@@ -579,6 +1166,26 @@ interface HealthResponse {
     cpuUsage: number;
     activeConnections: number;
   };
+}
+```
+
+**Sample Response:**
+```json
+{
+  "success": true,
+  "status": "healthy",
+  "services": {
+    "database": "up",
+    "redis": "up",
+    "ollama": "up",
+    "voiceApis": "up"
+  },
+  "metrics": {
+    "uptime": 3600000,
+    "memoryUsage": 245760000,
+    "cpuUsage": 0.15,
+    "activeConnections": 23
+  }
 }
 ```
 
@@ -613,6 +1220,242 @@ Restore from backup.
 interface RestoreRequest {
   backupId: string;
   confirm: boolean; // Safety confirmation
+}
+```
+
+## Integration Patterns
+
+### Complete Chat Integration
+
+```javascript
+class AIHiveMindClient {
+  constructor(baseUrl = '/api', apiKey = null) {
+    this.baseUrl = baseUrl;
+    this.apiKey = apiKey;
+  }
+
+  async sendMessage(message, companionId = null, options = {}) {
+    const payload = {
+      message,
+      companionId: companionId || 'ai-hive-mind',
+      options: {
+        voice: options.voice || false,
+        temperature: options.temperature || 0.7,
+        ...options
+      }
+    };
+
+    const response = await fetch(`${this.baseUrl}/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(this.apiKey && { 'Authorization': `Bearer ${this.apiKey}` })
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Chat API error: ${error.error?.message || response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
+  async getCompanions() {
+    const response = await fetch(`${this.baseUrl}/companions`);
+    return await response.json();
+  }
+
+  async getChatHistory(companionId = null, limit = 20) {
+    const params = new URLSearchParams();
+    if (companionId) params.set('companionId', companionId);
+    params.set('limit', limit.toString());
+
+    const response = await fetch(`${this.baseUrl}/chat/history?${params}`);
+    return await response.json();
+  }
+
+  async transcribeAudio(audioBlob) {
+    const formData = new FormData();
+    formData.append('file', audioBlob);
+
+    const response = await fetch(`${this.baseUrl}/voice/transcribe`, {
+      method: 'POST',
+      body: formData
+    });
+
+    return await response.json();
+  }
+
+  async generateSpeech(text, voiceId) {
+    const response = await fetch(`${this.baseUrl}/voice/synthesize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, voiceId })
+    });
+
+    if (response.ok) {
+      return await response.blob();
+    } else {
+      throw new Error('Speech generation failed');
+    }
+  }
+}
+
+// Usage example
+const client = new AIHiveMindClient();
+
+async function chatWithAI() {
+  try {
+    // Send a message
+    const response = await client.sendMessage("Hello!", "friendly-companion");
+    console.log("AI Response:", response.response.text);
+
+    // Get chat history
+    const history = await client.getChatHistory("friendly-companion", 5);
+    console.log("Recent conversations:", history.conversations.length);
+
+  } catch (error) {
+    console.error("Integration error:", error);
+  }
+}
+```
+
+### Voice-First Integration
+
+```javascript
+class VoiceChatInterface {
+  constructor(aiClient) {
+    this.aiClient = aiClient;
+    this.mediaRecorder = null;
+    this.audioChunks = [];
+    this.isRecording = false;
+  }
+
+  async startVoiceChat() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(stream);
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+
+        try {
+          // Transcribe speech to text
+          const transcription = await this.aiClient.transcribeAudio(audioBlob);
+          console.log("You said:", transcription.transcription);
+
+          // Send to AI for response
+          const aiResponse = await this.aiClient.sendMessage(
+            transcription.transcription,
+            null,
+            { voice: true }
+          );
+
+          console.log("AI Response:", aiResponse.response.text);
+
+          // Generate speech response
+          if (aiResponse.voice?.audioUrl) {
+            const audio = new Audio(aiResponse.voice.audioUrl);
+            audio.play();
+          }
+
+        } catch (error) {
+          console.error("Voice chat error:", error);
+        }
+
+        this.audioChunks = [];
+      };
+
+      this.mediaRecorder.start();
+      this.isRecording = true;
+      console.log("🎤 Listening... Click stop to send.");
+
+    } catch (error) {
+      console.error("Failed to start voice chat:", error);
+    }
+  }
+
+  stopVoiceChat() {
+    if (this.mediaRecorder && this.isRecording) {
+      this.mediaRecorder.stop();
+      this.isRecording = false;
+      console.log("🛑 Processing your message...");
+    }
+  }
+}
+```
+
+### Error Handling Examples
+
+```javascript
+// Comprehensive error handling
+async function robustChatIntegration(message) {
+  try {
+    // Check system health first
+    const health = await fetch('/api/health').then(r => r.json());
+    if (health.status !== 'healthy') {
+      console.warn('System is not fully healthy:', health.status);
+    }
+
+    // Attempt chat
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+
+      switch (response.status) {
+        case 400:
+          throw new Error(`Invalid request: ${errorData.error?.message || 'Bad request'}`);
+        case 401:
+          throw new Error('Authentication required. Please log in.');
+        case 429:
+          throw new Error('Too many requests. Please wait and try again.');
+        case 503:
+          throw new Error('Service temporarily unavailable. Please try again later.');
+        default:
+          throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network connection failed. Check your internet connection.');
+    }
+    throw error;
+  }
+}
+
+// Usage with retry logic
+async function sendMessageWithRetry(message, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await robustChatIntegration(message);
+    } catch (error) {
+      console.warn(`Attempt ${attempt} failed:`, error.message);
+
+      if (attempt === maxRetries) {
+        throw new Error(`Failed after ${maxRetries} attempts: ${error.message}`);
+      }
+
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+    }
+  }
 }
 ```
 
